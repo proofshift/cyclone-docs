@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Using SWYFT Link — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=22">
+  <link rel="stylesheet" href="css/docs.css?v=23">
 </head>
 <body>
 <div class="layout">
@@ -16,10 +16,7 @@
       <h1>Using SWYFT Link</h1>
       <p class="sec-lead">Four pages: Control, Config, Health, and Firmware.</p>
 
-      <div class="callout warning">
-        <span class="label">Warning</span>
-        <p>Output requires an explicit <strong>Enable</strong>. Pressing <kbd>Space</kbd>, hiding the tab, or closing the page stops every motor SWYFT&nbsp;Link is driving.</p>
-      </div>
+      <p>Output requires an explicit <strong>Enable</strong>. Pressing <kbd>Space</kbd>, hiding the tab, or closing the page stops every motor SWYFT&nbsp;Link is driving.</p>
 
       <h2 id="control">Control</h2>
       <p>Enable, then command the motor and watch it on the live graph. Duty cycle is the mode the motor runs today; current, velocity, and position appear here but do not drive yet. <a href="first-power-up.html">First power-up</a></p>
@@ -42,7 +39,7 @@
       <p>Read active and sticky faults and clear them once the cause is gone. Watch the live gauges — temperature, current, bus voltage, speed — when the motor is hot or the bus is sagging. <a href="faults.html">Faults</a></p>
 
       <h2 id="firmware">Firmware</h2>
-      <p>The Firmware page shows the installed version and flashes updates over USB-C. The status lights go solid white during the transfer, then the motor reboots. If it will not enumerate, recover with <a href="dfu.html">DFU</a>.</p>
+      <p>The Firmware page shows the installed version and flashes updates over USB-C or CAN. The status lights go solid white during the transfer, then the motor reboots. If it will not enumerate, recover with <a href="dfu.html">DFU</a>.</p>
 
       <nav class="pager">
         <a class="prev" href="swyft-link.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Install &amp; connect</span></a>
@@ -59,6 +56,6 @@
     <a href="#firmware">Firmware</a>
   </aside>
 </div>
-<script src="js/docs.js?v=22"></script>
+<script src="js/docs.js?v=23"></script>
 </body>
 </html>

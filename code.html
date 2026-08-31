@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Setup & install — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=22">
+  <link rel="stylesheet" href="css/docs.css?v=23">
 </head>
 <body>
 <div class="layout">
@@ -16,13 +16,8 @@
       <h1>Setup &amp; install</h1>
       <p class="sec-lead">Add the vendor library and drive a motor in a few lines.</p>
 
-      <div class="callout">
-        <span class="label">Before you start</span>
-        <p>A WPILib 2027 robot project, and a Cyclone with a device number assigned (1–62). Java only for now.</p>
-      </div>
-
       <h2 id="vendordep">Install the vendor library</h2>
-      <p>Add <code>SwyftCycloneV4.json</code> (library 0.25.0) to the project’s <code>vendordeps/</code> folder and rebuild. The device class is <code>com.swyftrobotics.cyclone.v4.SwyftCyclone</code>.</p>
+      <p>Download <a href="files/SwyftCycloneV4.json" download="SwyftCycloneV4.json">SwyftCycloneV4.json</a>, add it to the robot project’s <code>vendordeps/</code> folder, and rebuild. The device class is <code>com.swyftrobotics.cyclone.v4.SwyftCyclone</code>.</p>
 
       <h2 id="construct">Construct the motor</h2>
       <p>Construct with the device number you assigned in <a href="swyft-link.html">SWYFT&nbsp;Link</a>. A second constructor, <code>SwyftCyclone(id, canBus)</code>, selects the CAN bus.</p>
@@ -34,7 +29,7 @@ private final SwyftCyclone intake = new SwyftCyclone(5);</code></pre>
       </div>
 
       <h2 id="drive">Drive it</h2>
-      <p>The Cyclone runs on duty cycle: a signed fraction of the bus, −1 to +1. Command it every loop — a setpoint older than 100&nbsp;ms coasts. Set current limits once in <code>robotInit()</code>.</p>
+      <p>Command the Cyclone in one of four modes — duty, velocity, position, or current. The example below uses duty cycle, a signed fraction of the bus from −1 to +1. Set current limits once in <code>robotInit()</code>.</p>
       <div class="code-panel">
         <div class="code-bar">Robot.java</div>
         <pre><code>@Override
@@ -75,6 +70,6 @@ public void disabledInit() {
     <a href="#next">Next</a>
   </aside>
 </div>
-<script src="js/docs.js?v=22"></script>
+<script src="js/docs.js?v=23"></script>
 </body>
 </html>

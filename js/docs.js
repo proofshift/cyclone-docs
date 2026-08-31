@@ -103,6 +103,34 @@
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLb(); });
   }
 
+  // ---- Java syntax highlight + copy button ----
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function highlightJava(raw) {
+    var re = /(\/\/[^\n]*)|("(?:[^"\\]|\\.)*")|(@\w+)|\b(import|package|public|private|protected|final|static|void|class|interface|enum|new|return|if|else|for|while|true|false|null|extends|implements|this|super|boolean|int|double|float|long|char|var|throws|throw|try|catch)\b|\b(\d[\d._]*[fFdDlL]?)\b|\b([A-Z][A-Za-z0-9_]*)\b/g;
+    var out = "", last = 0, m;
+    while ((m = re.exec(raw))) {
+      out += esc(raw.slice(last, m.index));
+      var cls = m[1] ? "tok-com" : m[2] ? "tok-str" : m[3] ? "tok-ann" : m[4] ? "tok-kw" : m[5] ? "tok-num" : "tok-type";
+      out += '<span class="' + cls + '">' + esc(m[0]) + "</span>";
+      last = m.index + m[0].length;
+    }
+    return out + esc(raw.slice(last));
+  }
+  document.querySelectorAll(".code-panel").forEach(function (panel) {
+    var code = panel.querySelector("code");
+    if (code) code.innerHTML = highlightJava(code.textContent);
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "copy-btn"; btn.textContent = "Copy";
+    panel.appendChild(btn);
+    btn.addEventListener("click", function () {
+      var text = code ? code.textContent : "";
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = "Copied"; btn.classList.add("done");
+        setTimeout(function () { btn.textContent = "Copy"; btn.classList.remove("done"); }, 1500);
+      });
+    });
+  });
+
   // ---- animated status lights (tap to play) ----
   document.querySelectorAll(".ledpair").forEach(function (el) {
     el.addEventListener("click", function () { el.classList.toggle("on"); });

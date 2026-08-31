@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Specifications — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=22">
+  <link rel="stylesheet" href="css/docs.css?v=23">
 </head>
 <body>
 <div class="layout">
@@ -15,7 +15,7 @@
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Hardware Reference › Specifications</div>
       <h1>Specifications</h1>
 
-      <figure>
+      <figure class="big">
         <img class="zoomable" src="img/drawing-sr-cyclone-bldc-01.png" alt="SR-CYCLONE-BLDC-01 dimensioned drawing">
         <figcaption>Dimensioned drawing, inches with millimetres in brackets. Click to enlarge · <a href="files/SR-CYCLONE-BLDC-01.pdf">PDF</a></figcaption>
       </figure>
@@ -68,19 +68,18 @@
       <p>Speed and torque trade off across the load range. Free speed (7530&nbsp;RPM) is the no-load maximum and scales with bus voltage; torque rises with stator current, reaching 3.8&nbsp;N·m at the 275&nbsp;A stall point. A heavier load lowers speed and raises current draw. Stall current is a peak, not a continuous rating; the <a href="#thermal">thermal limits</a> bound sustained operation below it.</p>
 
       <h2 id="sensing">Control and sensing</h2>
-      <p class="sec-lead">How the motor commutates, reads shaft position, and takes commands.</p>
+      <p class="sec-lead">The control modes, and the encoder behind them.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
           <tbody>
-            <tr><td>Commutation</td><td>Trapezoidal</td></tr>
+            <tr><td>Control modes</td><td>Duty, velocity, position, current</td></tr>
             <tr><td>Encoder</td><td>14-bit absolute magnetic, 16,384 counts per turn</td></tr>
-            <tr><td>Duty output</td><td>Signed fraction of bus, −1 to 1</td></tr>
-            <tr><td>Closed-loop modes</td><td>Current, velocity, position <span class="uc-tag">Under construction</span></td></tr>
+            <tr><td>Commutation</td><td>Trapezoidal</td></tr>
           </tbody>
         </table>
       </div>
-      <p>The controller energises two of the three phases at a time and steps through six combinations per electrical revolution, reading the 14-bit encoder to choose the step and its timing. Duty cycle sets how much of the bus each step applies, from −1 (full reverse) to +1 (full forward). Closed-loop current, velocity, and position build on this and are still under construction.</p>
+      <p>Command the Cyclone in one of four modes. <strong>Duty</strong> sets output as a fraction of bus power, from −1 (full reverse) to +1 (full forward). <strong>Velocity</strong> holds a target speed, <strong>position</strong> a target angle, and <strong>current</strong> a target torque, each closed on the built-in 14-bit encoder. Pick the mode that matches the mechanism. <a href="code-features.html">Robot code</a></p>
 
       <h2 id="communication">Communication</h2>
       <p class="sec-lead">How the robot reaches the motor and addresses it on the bus.</p>
@@ -127,6 +126,6 @@
     <a href="#thermal">Thermal</a>
   </aside>
 </div>
-<script src="js/docs.js?v=22"></script>
+<script src="js/docs.js?v=23"></script>
 </body>
 </html>

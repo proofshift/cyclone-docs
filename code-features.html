@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Feature guide — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=22">
+  <link rel="stylesheet" href="css/docs.css?v=23">
 </head>
 <body>
 <div class="layout">
@@ -17,15 +17,15 @@
       <p class="sec-lead">Each feature, what it does, and how to call it. Full signatures on the <a href="code-api.html">API reference</a>.</p>
 
       <h2 id="output">Output</h2>
-      <p>Command duty every loop; sign is direction. Duty is a fraction of the bus, not of free speed — <code>0.5</code> is half the bus voltage, and a value past the range clamps to full output. The stator limit does not govern duty.</p>
+      <p>Sign is direction. Duty is a fraction of the bus power, not of free speed — <code>0.5</code> is half the bus voltage, and a value past the range clamps to full output. The stator limit does not govern duty.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Method</th><th>Units</th><th>Runs</th></tr></thead>
           <tbody>
             <tr><td><code>set(d)</code> / <code>setDutyCycle(d)</code></td><td>−1 to 1, fraction of bus</td><td>Yes</td></tr>
-            <tr><td><code>setCurrent(a)</code></td><td>amperes, signed</td><td><span class="uc-tag">Under construction</span></td></tr>
-            <tr><td><code>setVelocity(rpm)</code></td><td>mechanical RPM, signed</td><td><span class="uc-tag">Under construction</span></td></tr>
-            <tr><td><code>setPosition(rad)</code></td><td>rotor radians, signed</td><td><span class="uc-tag">Under construction</span></td></tr>
+            <tr><td><code>setCurrent(a)</code></td><td>amperes, signed</td><td>Yes</td></tr>
+            <tr><td><code>setVelocity(rpm)</code></td><td>mechanical RPM, signed</td><td>Yes</td></tr>
+            <tr><td><code>setPosition(rad)</code></td><td>rotor radians, signed</td><td>Yes</td></tr>
           </tbody>
         </table>
       </div>
@@ -76,14 +76,13 @@ motor.setLEDs(255, 40, 0, LedAnimation.ChaseForward);  // one animation
 motor.clearLEDs();                                     // off</code></pre>
       </div>
 
-      <h2 id="other">Identify, calibrate, save</h2>
+      <h2 id="other">Identify and save</h2>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Method</th><th>Effect</th></tr></thead>
           <tbody>
             <tr><td><code>identify()</code></td><td>Flashes the status lights white to locate the motor.</td></tr>
             <tr><td><code>saveConfiguration()</code></td><td>Persists device config across power loss.</td></tr>
-            <tr><td><code>calibrate()</code> <span class="uc-tag">Under construction</span></td><td>Encoder calibration runs from SWYFT Link over USB-C; the robot-code call is not accepted over CAN.</td></tr>
           </tbody>
         </table>
       </div>
@@ -103,9 +102,9 @@ motor.clearLEDs();                                     // off</code></pre>
     <a href="#neutral">Neutral mode</a>
     <a href="#telemetry">Telemetry</a>
     <a href="#leds">LEDs</a>
-    <a href="#other">Identify, calibrate, save</a>
+    <a href="#other">Identify and save</a>
   </aside>
 </div>
-<script src="js/docs.js?v=22"></script>
+<script src="js/docs.js?v=23"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>API reference — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=22">
+  <link rel="stylesheet" href="css/docs.css?v=23">
 </head>
 <body>
 <div class="layout">
@@ -14,14 +14,18 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › API reference</div>
       <h1>API reference</h1>
-      <p class="sec-lead">The public methods of <code>com.swyftrobotics.cyclone.v4.SwyftCyclone</code>. Worked examples are in the <a href="code-features.html">Feature guide</a>.</p>
+      <p class="sec-lead">Every public method of <code>SwyftCyclone</code>, grouped, with a short example for each. Longer walk-throughs are in the <a href="code-features.html">Feature guide</a>.</p>
 
-      <div class="callout">
-        <span class="label">Note</span>
-        <p>Methods marked <span class="uc-tag">Under construction</span> compile and transmit but the motor does not act on them yet.</p>
+      <h2 id="construct">Construct</h2>
+      <p>Create one <code>SwyftCyclone</code> per motor, with the device number you set in SWYFT&nbsp;Link.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone;
+
+private final SwyftCyclone intake = new SwyftCyclone(5);
+// on a specific CAN bus:
+// new SwyftCyclone(5, 1);</code></pre>
       </div>
-
-      <h2 id="construct">Construction</h2>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Signature</th><th>Description</th></tr></thead>
@@ -33,21 +37,37 @@
         </table>
       </div>
 
-      <h2 id="output">Output</h2>
+      <h2 id="output">Command output</h2>
+      <p>Pick the mode that matches the mechanism: duty for open-loop, or velocity, position, or current for closed-loop.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>intake.setDutyCycle(0.4);        // 40% of bus, forward
+shooter.setVelocity(3000);       // hold 3000 RPM
+arm.setPosition(Math.PI / 2);    // quarter turn
+roller.setCurrent(20);           // 20 A of torque
+intake.disable();                // coast</code></pre>
+      </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Signature</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>void set(double duty)</code> / <code>void setDutyCycle(double duty)</code></td><td>Duty cycle, −1 to 1. Command every loop.</td></tr>
-            <tr><td><code>void setCurrent(double amps)</code></td><td>Torque current. <span class="uc-tag">Under construction</span></td></tr>
-            <tr><td><code>void setVelocity(double rpm)</code></td><td>Closed-loop speed. <span class="uc-tag">Under construction</span></td></tr>
-            <tr><td><code>void setPosition(double rad)</code></td><td>Closed-loop position. <span class="uc-tag">Under construction</span></td></tr>
+            <tr><td><code>void set(double duty)</code> / <code>void setDutyCycle(double duty)</code></td><td>Duty cycle, −1 to 1.</td></tr>
+            <tr><td><code>void setVelocity(double rpm)</code></td><td>Closed-loop mechanical speed.</td></tr>
+            <tr><td><code>void setPosition(double rad)</code></td><td>Closed-loop position.</td></tr>
+            <tr><td><code>void setCurrent(double amps)</code></td><td>Torque current, signed.</td></tr>
             <tr><td><code>void disable()</code></td><td>Coast and drop the setpoint.</td></tr>
           </tbody>
         </table>
       </div>
 
-      <h2 id="config">Configuration</h2>
+      <h2 id="config">Configure</h2>
+      <p>Set limits and neutral mode once at start-up, then save to keep them across a power cycle.</p>
+      <div class="code-panel">
+        <div class="code-bar">robotInit()</div>
+        <pre><code>intake.setTeamLimits(75, 85, 40);   // warn °C, trip °C, stator A
+intake.setNeutralMode(SwyftCyclone.NeutralMode.COAST);
+intake.saveConfiguration();</code></pre>
+      </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Signature</th><th>Description</th></tr></thead>
@@ -55,26 +75,43 @@
             <tr><td><code>void setTeamLimits(double warnC, double tripC, double statorA)</code></td><td>Temperature warning and trip, and stator limit.</td></tr>
             <tr><td><code>void setStatorCurrentLimit(double amps)</code></td><td>Stator limit alone, 1–160 A.</td></tr>
             <tr><td><code>void setNeutralMode(NeutralMode mode)</code></td><td><code>COAST</code> succeeds; <code>BRAKE</code> throws.</td></tr>
-            <tr><td><code>boolean isBrakeModeSupported()</code></td><td>False.</td></tr>
             <tr><td><code>void saveConfiguration()</code></td><td>Persist device config across power loss.</td></tr>
           </tbody>
         </table>
       </div>
 
       <h2 id="faults">Faults and e-stop</h2>
+      <p>Read faults, clear them once the cause is gone, and latch the motor off in an emergency.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>if (intake.hasHardFault()) {
+    intake.clearFaults();        // refused while the cause is present
+}
+intake.estop();                  // latching kill
+intake.releaseEstop();           // then re-arm</code></pre>
+      </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Signature</th><th>Description</th></tr></thead>
           <tbody>
+            <tr><td><code>boolean hasHardFault()</code></td><td>True while a hard fault is latched.</td></tr>
+            <tr><td><code>void clearFaults()</code></td><td>Refused while the cause is present.</td></tr>
             <tr><td><code>void estop()</code></td><td>Latching kill; coasts.</td></tr>
             <tr><td><code>void releaseEstop()</code></td><td>Clear the e-stop latch.</td></tr>
-            <tr><td><code>void clearFaults()</code></td><td>Refused while the cause is present.</td></tr>
-            <tr><td><code>boolean hasHardFault()</code></td><td>True while a hard fault is latched.</td></tr>
           </tbody>
         </table>
       </div>
 
-      <h2 id="telemetry">Telemetry</h2>
+      <h2 id="telemetry">Read telemetry</h2>
+      <p>Check the motor is alive, then read a coherent snapshot or an individual value.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>if (intake.isAlive(0.1)) {
+    double rpm  = intake.getVelocityRpm();
+    double amps = intake.getSupplyCurrent();
+    double temp = intake.getDeviceTemp();
+}</code></pre>
+      </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Signature</th><th>Description</th></tr></thead>
@@ -90,6 +127,17 @@
       </div>
 
       <h2 id="leds">LEDs and identify</h2>
+      <p>Set the middle five user lights, or flash the whole strip to find a motor.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.LedAnimation;
+
+intake.setLEDs(0, 120, 255);                            // all five
+intake.setLED(3, 255, 0, 0);                            // centre
+intake.setLEDs(255, 40, 0, LedAnimation.ChaseForward);  // animation
+intake.clearLEDs();
+intake.identify();                                      // locate it</code></pre>
+      </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Signature</th><th>Description</th></tr></thead>
@@ -112,14 +160,14 @@
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#construct">Construction</a>
-    <a href="#output">Output</a>
-    <a href="#config">Configuration</a>
+    <a href="#construct">Construct</a>
+    <a href="#output">Command output</a>
+    <a href="#config">Configure</a>
     <a href="#faults">Faults and e-stop</a>
-    <a href="#telemetry">Telemetry</a>
+    <a href="#telemetry">Read telemetry</a>
     <a href="#leds">LEDs and identify</a>
   </aside>
 </div>
-<script src="js/docs.js?v=22"></script>
+<script src="js/docs.js?v=23"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>How the limits work — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=22">
+  <link rel="stylesheet" href="css/docs.css?v=23">
 </head>
 <body>
 <div class="layout">
@@ -14,22 +14,22 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Safety &amp; Current Limits › How the limits work</div>
       <h1>How the limits work</h1>
-      <p class="sec-lead">Two current limits protect two different things. Set both.</p>
+      <p class="sec-lead">How the stator and supply current limits protect the motor and the battery.</p>
 
       <h2 id="two">Stator and supply</h2>
-      <p>The Cyclone limits two currents. The <strong>stator limit</strong> caps the current in the windings, which sets torque and protects the motor. The <strong>supply limit</strong> caps the current drawn from the bus, which protects the battery and the branch breaker. Both work by reducing duty cycle, so they hold an average, not an instantaneous ceiling.</p>
+      <p>The Cyclone limits both its <strong>stator</strong> and <strong>supply</strong> current. The stator limit caps the current in the windings, which sets torque and protects the motor. The supply limit caps the current drawn from the bus, which protects the battery and the branch breaker. Both work by reducing duty cycle, so they hold an average, not an instantaneous ceiling.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Limit</th><th>Caps</th><th>Default</th><th>Maximum</th></tr></thead>
           <tbody>
-            <tr><td>Stator</td><td>Winding / torque current</td><td>120 A</td><td>160 A</td></tr>
-            <tr><td>Supply</td><td>Current drawn from the bus</td><td>40 A</td><td>60 A</td></tr>
+            <tr><td>Stator</td><td>Stator / torque current</td><td>120 A</td><td>160 A</td></tr>
+            <tr><td>Supply</td><td>Battery / supply current</td><td>40 A</td><td>60 A</td></tr>
           </tbody>
         </table>
       </div>
-      <p>Duty cycle links the two: supply current is approximately <code>stator × duty</code>. A large winding current draws only a small battery current at low duty — near stall at about 10&nbsp;% duty, roughly 70&nbsp;A in the windings corresponds to about 7&nbsp;A from the pack. That is why the two limits differ, and why one cannot stand in for the other.</p>
+      <p>Duty cycle couples the two. Because the Cyclone is a switching converter, average supply current is the stator current scaled by duty — <code>supply ≈ stator × duty</code>: at low duty a high winding current flows in brief pulses while the battery sees only their average. Near stall at about 10&nbsp;% duty, roughly 70&nbsp;A in the windings pulls about 7&nbsp;A from the pack. This is why a stalled motor can sit far below its supply limit while still pushing the stator limit — so set the stator limit for torque and winding heat, and the supply limit for the load the mechanism puts on the shared battery.</p>
 
-      <h2 id="thermal">The thermal fold</h2>
+      <h2 id="thermal">Thermal fold</h2>
       <p>Current limits set the ceiling; the thermal system governs how long you can hold near it. The controller tracks heat with a current-squared-time (i²t) budget. Brief high current has little effect; sustained high current fills the budget, and past a threshold the controller reduces the current limit in proportion, trading torque for lower temperature. It cuts output at the 85&nbsp;°C trip. Limits sized to the load keep a mechanism below the fold. <a href="power-thermal.html">Power &amp; thermal budget</a></p>
 
       <h2 id="set">Set them from robot code</h2>
@@ -69,11 +69,11 @@ intake.setTeamLimits(75, 85, 40);
   <aside class="toc">
     <p class="toc-title">On this page</p>
     <a href="#two">Stator and supply</a>
-    <a href="#thermal">The thermal fold</a>
+    <a href="#thermal">Thermal fold</a>
     <a href="#set">Set them from robot code</a>
     <a href="#choose">Choosing a value</a>
   </aside>
 </div>
-<script src="js/docs.js?v=22"></script>
+<script src="js/docs.js?v=23"></script>
 </body>
 </html>

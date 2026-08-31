@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Install & connect — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=22">
+  <link rel="stylesheet" href="css/docs.css?v=23">
 </head>
 <body>
 <div class="layout">
@@ -16,35 +16,39 @@
       <h1>Install &amp; connect</h1>
       <p class="sec-lead">Configure and tune a Cyclone from a browser over USB-C, or on the SystemCore over CAN.</p>
 
-      <p><strong>SWYFT&nbsp;Link</strong> is the tool for setting up Cyclones. In a browser it drives one motor over USB-C. On the 2027 SystemCore it reaches every Cyclone on the CAN bus. Both give the same pages: <a href="swyft-link-using.html">Control, Config, Health, and Firmware</a>.</p>
+      <p><strong>SWYFT&nbsp;Link</strong> is the tool for setting up Cyclones. In a browser it drives one motor over USB-C. On the 2027 SystemCore it reaches every Cyclone on the CAN bus. <a href="swyft-link-using.html">Using SWYFT&nbsp;Link</a></p>
 
       <h2 id="usb">Connect over USB-C</h2>
       <ol>
         <li>Plug a Cyclone into your laptop with USB-C.</li>
         <li>Open SWYFT&nbsp;Link in a supported browser. It detects the motor on its own — there is no connect step.</li>
-        <li>The motor’s power leads must be energised (6–24&nbsp;V) for it to spin; USB-C alone does not power the windings.</li>
+        <li>Power the motor from a battery or supply on its power leads (6–24&nbsp;V) for it to spin.</li>
       </ol>
 
       <h2 id="systemcore">Install on the SystemCore</h2>
       <p>Download the package: <a href="files/SWYFT%20Link%202026.08.29.ipk" download="SWYFT Link 2026.08.29.ipk">SWYFT Link 2026.08.29.ipk</a></p>
       <ol>
         <li>Open the SystemCore home page in a browser and select <strong>Add package</strong>.
-          <figure><img class="zoomable" src="img/install-add-package.png" alt="SystemCore home page, Add Package"></figure>
+          <div class="install-step"><div class="install-callout">
+            <img src="img/install-add-package.png" alt="SystemCore home page, Add Package">
+            <svg class="install-arrow" viewBox="0 0 1840 520" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1219.9" y1="426.5" x2="1519.7" y2="204.5" stroke="#dc2020" stroke-width="22.1" stroke-linecap="round"/><polygon points="1573.0,165.0 1516.1,236.7 1487.9,198.6" fill="#dc2020" stroke="#dc2020" stroke-width="5.8" stroke-linejoin="round"/><text x="1180" y="460" fill="#4db8ea" font-size="74" font-weight="700" text-anchor="end" font-family="Inter, system-ui, sans-serif">Add Package</text></svg>
+          </div></div>
         </li>
         <li>Drop the <code>.ipk</code> onto the box, or select it from a folder. It installs on its own.
-          <figure><img class="zoomable" src="img/install-drop-ipk.png" alt="Install package, drop target"></figure>
-          <figure><img class="zoomable" src="img/install-success.png" alt="Installation successful"></figure>
+          <div class="install-step"><div class="install-callout">
+            <img src="img/install-drop-ipk.png" alt="Install package, drop target">
+            <svg class="install-arrow" viewBox="0 0 860 500" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="231.1" y1="432.3" x2="401.1" y2="192.2" stroke="#dc2020" stroke-width="10.3" stroke-linecap="round"/><polygon points="419.0,167.0 404.2,207.0 386.2,194.2" fill="#dc2020" stroke="#dc2020" stroke-width="2.7" stroke-linejoin="round"/><text x="40" y="478" fill="#4db8ea" font-size="36" font-weight="700" text-anchor="start" font-family="Inter, system-ui, sans-serif">Drop the .ipk here</text></svg>
+          </div></div>
+          <div class="install-step"><div class="install-callout"><img src="img/install-success.png" alt="Installation successful"></div></div>
         </li>
         <li>Open the <strong>SWYFT&nbsp;Link</strong> tile from the home page.
-          <figure><img class="zoomable" src="img/install-open-tile.png" alt="SystemCore home page, SWYFT Link tile"></figure>
+          <div class="install-step"><div class="install-callout">
+            <img src="img/install-open-tile.png" alt="SystemCore home page, SWYFT Link tile">
+            <svg class="install-arrow" viewBox="0 0 1840 540" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="1303.8" y1="424.4" x2="1212.0" y2="258.1" stroke="#dc2020" stroke-width="22.1" stroke-linecap="round"/><polygon points="1180.0,200.0 1243.4,266.0 1202.0,288.8" fill="#dc2020" stroke="#dc2020" stroke-width="5.8" stroke-linejoin="round"/><text x="1340" y="520" fill="#4db8ea" font-size="74" font-weight="700" text-anchor="start" font-family="Inter, system-ui, sans-serif">SWYFT Link</text></svg>
+          </div></div>
         </li>
         <li>Cyclones on the CAN bus appear in the device list.</li>
       </ol>
-
-      <div class="callout">
-        <span class="label">Note</span>
-        <p>Anything you can do over USB-C you can do over CAN, and the reverse — the two are equal control paths. Firmware recovery (DFU) is the exception: it runs over USB-C. <a href="dfu.html">Firmware &amp; DFU</a></p>
-      </div>
 
       <nav class="pager">
         <a class="prev" href="code-api.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> API reference</span></a>
@@ -59,6 +63,6 @@
     <a href="#systemcore">Install on the SystemCore</a>
   </aside>
 </div>
-<script src="js/docs.js?v=22"></script>
+<script src="js/docs.js?v=23"></script>
 </body>
 </html>

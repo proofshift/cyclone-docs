@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Status signals — SWYFT Cyclone</title>
+  <link rel="stylesheet" href="css/docs.css?v=24">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-page="code-telemetry.html"></aside>
+
+  <main class="main">
+    <article class="content">
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › Status signals</div>
+      <h1>Status signals</h1>
+      <p class="sec-lead">Read speed, position, current, voltage, temperature, and faults back from a Cyclone.</p>
+
+      <p>A Cyclone streams its state on the bus. Read one value at a time with a getter, or take a coherent snapshot of everything at once with <code>getLatest</code>. Read in a periodic method — the values update on their own; you do not poll the device.</p>
+
+      <h2 id="getters">Read a single value</h2>
+      <p>Each getter returns the latest value for that signal. Use these when you need one or two readings.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>double rpm   = shooter.getVelocityRpm();      // mechanical RPM
+double rad   = arm.getPositionRad();          // rotor radians, signed
+double amps  = intake.getSupplyCurrent();     // bus amperes
+double volts = intake.getSupplyVoltage();     // bus volts
+double temp  = intake.getDeviceTemp();        // °C</code></pre>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Getter</th><th>Returns</th></tr></thead>
+          <tbody>
+            <tr><td><code>double getVelocityRpm()</code></td><td>Mechanical speed, RPM.</td></tr>
+            <tr><td><code>double getPositionRad()</code></td><td>Rotor position, signed radians.</td></tr>
+            <tr><td><code>double getDutyCycle()</code></td><td>Present output, −1 to 1.</td></tr>
+            <tr><td><code>double getSupplyCurrent()</code></td><td>Bus current, amperes.</td></tr>
+            <tr><td><code>double getSupplyVoltage()</code></td><td>Bus voltage, volts.</td></tr>
+            <tr><td><code>double getDeviceTemp()</code></td><td>Board temperature, °C.</td></tr>
+            <tr><td><code>int getI2tPercent()</code></td><td>Thermal budget used, 0–100.</td></tr>
+            <tr><td><code>boolean hasHardFault()</code></td><td>True while a hard fault is latched.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="snapshot">Read a coherent snapshot</h2>
+      <p>Individual getters can read from different bus frames. When several values must agree — logging, or a state check that compares speed against current — take one snapshot with <code>getLatest</code> and read its fields.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCycloneData;
+
+SwyftCycloneData data = shooter.getLatest();
+double rpm  = data.velocityRpm;
+double amps = data.supplyCurrentAmps;
+double temp = data.temperatureC;
+SwyftCycloneData.Mode mode = data.mode;   // DUTY, VELOCITY, POSITION, CURRENT</code></pre>
+      </div>
+
+      <h2 id="alive">Check the motor is answering</h2>
+      <p><code>isAlive</code> is false when no frame has arrived within the age you pass — a disconnected motor, a dead bus, or a wrong device number. Gate control on it so the robot does not act on stale readings.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>if (!intake.isAlive(0.1)) {
+    // no fresh data in 100 ms — check wiring and the device number
+    intake.disable();
+}</code></pre>
+      </div>
+
+      <h2 id="thermal">Watch thermal headroom</h2>
+      <p><code>getI2tPercent</code> reports how much of the thermal budget the motor has used. At 100&nbsp;% the controller is in the thermal fold and trading torque for temperature. Log it during testing to size a limit that keeps a mechanism out of the fold. <a href="power-thermal.html">Power &amp; thermal budget</a></p>
+
+      <h2 id="example">Full example — telemetry to the dashboard</h2>
+      <p>A subsystem <code>periodic</code> that publishes a motor’s state and stops it on a fault.</p>
+      <div class="code-panel">
+        <div class="code-bar">IntakeSubsystem.java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone;
+import com.swyftrobotics.cyclone.v4.SwyftCycloneData;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class IntakeSubsystem extends SubsystemBase {
+    private final SwyftCyclone motor = new SwyftCyclone(5);
+
+    @Override
+    public void periodic() {
+        if (!motor.isAlive(0.1)) {
+            SmartDashboard.putBoolean("Intake/connected", false);
+            return;
+        }
+        SwyftCycloneData data = motor.getLatest();
+        SmartDashboard.putBoolean("Intake/connected", true);
+        SmartDashboard.putNumber("Intake/rpm", data.velocityRpm);
+        SmartDashboard.putNumber("Intake/amps", data.supplyCurrentAmps);
+        SmartDashboard.putNumber("Intake/tempC", data.temperatureC);
+        SmartDashboard.putNumber("Intake/i2t%", data.i2tPercent);
+
+        if (motor.hasHardFault()) {
+            motor.disable();   // read the fault in SWYFT Link
+        }
+    }
+}</code></pre>
+      </div>
+
+      <nav class="pager">
+        <a class="prev" href="code-closedloop.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Closed-loop control</span></a>
+        <a class="next" href="code-api.html"><span class="pg-label">Next</span><span>API reference <span class="chev">›</span></span></a>
+      </nav>
+    </article>
+  </main>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#getters">Read a single value</a>
+    <a href="#snapshot">Read a coherent snapshot</a>
+    <a href="#alive">Check the motor is answering</a>
+    <a href="#thermal">Watch thermal headroom</a>
+    <a href="#example">Full example</a>
+  </aside>
+</div>
+<script src="js/docs.js?v=24"></script>
+</body>
+</html>

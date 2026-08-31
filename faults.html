@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Faults & errors — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=23">
+  <link rel="stylesheet" href="css/docs.css?v=24">
 </head>
 <body>
 <div class="layout">
@@ -47,7 +47,7 @@
         <li>Fix the cause — cool the motor, restore the bus, fix the wiring.</li>
         <li>Clear the fault. From robot code, <code>clearFaults()</code>; it is refused while the cause is still present.</li>
       </ol>
-      <p>An e-stop is separate: it holds the motor off and refuses to re-arm until you release it (<code>releaseEstop()</code>), then clear any remaining fault. <a href="code-features.html">Feature guide</a></p>
+      <p>An e-stop is separate: it holds the motor off and refuses to re-arm until you release it (<code>releaseEstop()</code>), then clear any remaining fault. <a href="code-control.html">Control requests</a></p>
       <div class="callout warning">
         <span class="label">Warning</span>
         <p>An e-stop and most faults coast the output. A load held only by motor torque will drop. Support it before you test an e-stop or clear a fault.</p>
@@ -66,6 +66,6 @@
     <a href="#clear">Clearing a fault</a>
   </aside>
 </div>
-<script src="js/docs.js?v=23"></script>
+<script src="js/docs.js?v=24"></script>
 </body>
 </html>

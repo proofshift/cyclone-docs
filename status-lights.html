@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Status lights — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=23">
+  <link rel="stylesheet" href="css/docs.css?v=24">
 </head>
 <body>
 <div class="layout">
@@ -52,7 +52,7 @@
       </div>
 
       <h2 id="user">Your five lights</h2>
-      <p>Set the middle five from robot code, from SWYFT&nbsp;Link, or from the console. Send colour channels 0–255; the motor caps the brightest channel and scales the rest, so pure white and a dim tint both read cleanly. Colour holds until power is lost, then comes up dark until set again. Setting all five to black hands them back to the controller, which is not the same as off — <code>clearLEDs()</code> is the off path. <a href="code-features.html">Feature guide</a></p>
+      <p>Set the middle five from robot code, from SWYFT&nbsp;Link, or from the console. Send colour channels 0–255; the motor caps the brightest channel and scales the rest, so pure white and a dim tint both read cleanly. Colour holds until power is lost, then comes up dark until set again. Setting all five to black hands them back to the controller, which is not the same as off — <code>clearLEDs()</code> is the off path. <a href="code-api.html#leds">LEDs in the API reference</a></p>
       <div class="callout warning">
         <span class="label">Warning</span>
         <p>A latched fault always paints the two end lights, and your five cannot override it. Do not rely on the middle five as a driver’s only signal.</p>
@@ -62,7 +62,7 @@
       <p>Instead of a solid colour you can run one animation across the five: <strong>Static</strong>, <strong>ChaseForward</strong>, <strong>ChaseReverse</strong>, <strong>Breathe</strong>, or <strong>Rainbow</strong>. Colour and animation are exclusive — setting a colour stops an animation.</p>
 
       <nav class="pager">
-        <a class="prev" href="power-thermal.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Power &amp; thermal budget</span></a>
+        <a class="prev" href="dfu.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Firmware &amp; DFU</span></a>
         <a class="next" href="troubleshooting.html"><span class="pg-label">Next</span><span>Troubleshooting <span class="chev">›</span></span></a>
       </nav>
     </article>
@@ -75,6 +75,6 @@
     <a href="#anim">Animations</a>
   </aside>
 </div>
-<script src="js/docs.js?v=23"></script>
+<script src="js/docs.js?v=24"></script>
 </body>
 </html>

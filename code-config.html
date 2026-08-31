@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Configuration — SWYFT Cyclone</title>
+  <link rel="stylesheet" href="css/docs.css?v=24">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-page="code-config.html"></aside>
+
+  <main class="main">
+    <article class="content">
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › Configuration</div>
+      <h1>Configuration</h1>
+      <p class="sec-lead">Set a device’s current limits, neutral mode, and other persistent settings from robot code.</p>
+
+      <p>A Cyclone holds its settings in on-board configuration. You change them one of two ways: the configurator, which applies a group of settings and reports whether each was accepted, or a small set of direct methods for the most common values. Both write to the device’s live configuration; neither survives a power cycle until you save.</p>
+
+      <h2 id="configurator">The configurator</h2>
+      <p>Call <code>getConfigurator()</code> to reach the settings. Build a configs object, set only the fields you want to change, and apply it. <code>apply</code> blocks until the device answers — call it at start-up, in <code>robotInit()</code>, never in a periodic loop.</p>
+      <div class="code-panel">
+        <div class="code-bar">Robot.java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone;
+import com.swyftrobotics.cyclone.v4.CurrentLimitsConfigs;
+import com.swyftrobotics.cyclone.v4.StatusCode;
+
+private final SwyftCyclone intake = new SwyftCyclone(5);
+
+@Override
+public void robotInit() {
+    var limits = new CurrentLimitsConfigs();
+    limits.StatorCurrentLimit = 40;   // windings, amperes
+    limits.SupplyCurrentLimit = 30;   // bus, amperes
+
+    StatusCode status = intake.getConfigurator().apply(limits);
+    if (!status.isOK()) {
+        System.out.println("Cyclone 5 rejected a limit: " + status.describe());
+    }
+}</code></pre>
+      </div>
+      <p>Every numeric field starts as “leave unchanged”, so an object sets only the fields you name. <code>apply</code> stops at the first field the device refuses and returns that <code>StatusCode</code>; a refused value is never silently clamped. To read the device’s current values back into an object, pass it to <code>refresh</code>.</p>
+
+      <h2 id="limits">Current limits</h2>
+      <p>The two current limits are the settings most teams change. Set them through <code>CurrentLimitsConfigs</code>, above, or with the direct method <code>setTeamLimits</code>, which writes the temperature warning, the temperature trip, and the stator limit in one call.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>intake.setTeamLimits(75, 85, 40);     // warn °C, trip °C, stator A
+intake.setStatorCurrentLimit(40);     // stator limit alone, 1–160 A</code></pre>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Field</th><th>Units</th><th>Range</th></tr></thead>
+          <tbody>
+            <tr><td><code>StatorCurrentLimit</code></td><td>amperes</td><td>1–160</td></tr>
+            <tr><td><code>SupplyCurrentLimit</code></td><td>amperes</td><td>up to 60</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>What the two limits protect, and how to size them, is on <a href="current-limits.html">How the limits work</a>.</p>
+
+      <h2 id="neutral">Neutral mode</h2>
+      <p>When no command is arriving, the Cyclone coasts. Set the neutral mode explicitly with <code>setNeutralMode</code>.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone.NeutralMode;
+
+intake.setNeutralMode(NeutralMode.COAST);</code></pre>
+      </div>
+
+      <h2 id="save">Save to keep across power</h2>
+      <p>An applied setting is live immediately but is lost at the next power cycle. Call <code>saveConfiguration</code> once, after applying, to write the configuration to flash.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>intake.getConfigurator().apply(limits);
+intake.saveConfiguration();   // persist across a power cycle</code></pre>
+      </div>
+      <div class="callout note">
+        <span class="label">Note</span>
+        <p><code>saveConfiguration</code> is refused while the motor is armed. Save during <code>robotInit()</code>, before the motor is enabled.</p>
+      </div>
+
+      <nav class="pager">
+        <a class="prev" href="code.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Setup &amp; install</span></a>
+        <a class="next" href="code-control.html"><span class="pg-label">Next</span><span>Control requests <span class="chev">›</span></span></a>
+      </nav>
+    </article>
+  </main>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#configurator">The configurator</a>
+    <a href="#limits">Current limits</a>
+    <a href="#neutral">Neutral mode</a>
+    <a href="#save">Save to keep across power</a>
+  </aside>
+</div>
+<script src="js/docs.js?v=24"></script>
+</body>
+</html>

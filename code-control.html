@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Control requests — SWYFT Cyclone</title>
+  <link rel="stylesheet" href="css/docs.css?v=24">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-page="code-control.html"></aside>
+
+  <main class="main">
+    <article class="content">
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › Control requests</div>
+      <h1>Control requests</h1>
+      <p class="sec-lead">The four ways to command a Cyclone — duty, velocity, position, and current — plus follower and stop.</p>
+
+      <p>You drive a Cyclone by choosing a control mode and giving it a setpoint. Duty cycle is open-loop; velocity, position, and current are closed-loop and run on the controller. A setpoint is held for about 100&nbsp;ms and then expires, so <strong>command the motor every loop</strong> — from <code>teleopPeriodic</code> or a subsystem <code>periodic</code>. Send <code>NaN</code> or infinity and the command is refused, not clamped.</p>
+
+      <h2 id="duty">Duty cycle</h2>
+      <p>Duty cycle is a signed fraction of the bus voltage, −1 to +1. It is the direct, open-loop mode: <code>0.5</code> applies half the available voltage forward. Use it for hand-driven mechanisms and drivetrains.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>intake.setDutyCycle(operator.getRightY());   // -1 .. +1
+intake.set(0.4);                             // set() is the same call</code></pre>
+      </div>
+
+      <h2 id="velocity">Velocity</h2>
+      <p>Velocity mode holds a mechanical speed in RPM against changing load. The controller closes the loop with its velocity gains — see <a href="code-closedloop.html">Closed-loop control</a>.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>shooter.setVelocity(3000);   // hold 3000 RPM
+shooter.setVelocity(0);      // hold zero — actively resists motion</code></pre>
+      </div>
+
+      <h2 id="position">Position</h2>
+      <p>Position mode drives to a signed, multi-turn rotor angle in radians and holds it. Zero is where the rotor sat at power-on. For a geared mechanism, use the mechanism helpers so you can command output rotations instead of rotor radians.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>arm.setPosition(Math.PI / 2);   // quarter turn from power-on, and hold</code></pre>
+      </div>
+
+      <h2 id="current">Current</h2>
+      <p>Current mode commands a signed torque current in amperes. Torque is proportional to current, so this mode sets force directly — useful for intakes that grip and for mechanisms held against a stop.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>roller.setCurrent(20);    // 20 A of forward torque
+roller.setCurrent(-8);    // 8 A the other way</code></pre>
+      </div>
+      <p>The stator current limit still caps this mode. A request above the limit is held at the limit.</p>
+
+      <h2 id="follower">Follower</h2>
+      <p>A follower mirrors another Cyclone’s output, for the second motor on a shared mechanism. Give it the leader’s device number and whether it is mounted aligned with or opposed to the leader.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.Follower;
+import com.swyftrobotics.cyclone.v4.MotorAlignmentValue;
+
+// leftFollower mirrors device 1, mounted the opposite way
+leftFollower.setControl(new Follower(1, MotorAlignmentValue.Opposed));
+leftFollower.stopFollowing();   // return to direct control</code></pre>
+      </div>
+
+      <h2 id="stop">Stop</h2>
+      <p>Two ways to stop: <code>disable</code> for the normal end of a command, and <code>estop</code> for an emergency.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>intake.disable();        // drop the setpoint and coast
+
+intake.estop();          // latching kill — stays off until released
+intake.releaseEstop();   // first step of re-arming</code></pre>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>void setDutyCycle(double duty)</code> / <code>set(double)</code></td><td>Open-loop duty, −1 to 1.</td></tr>
+            <tr><td><code>void setVelocity(double rpm)</code></td><td>Closed-loop mechanical speed.</td></tr>
+            <tr><td><code>void setPosition(double rad)</code></td><td>Closed-loop rotor position, signed radians.</td></tr>
+            <tr><td><code>void setCurrent(double amps)</code></td><td>Signed torque current.</td></tr>
+            <tr><td><code>void setControl(Follower request)</code></td><td>Mirror another device’s output.</td></tr>
+            <tr><td><code>void disable()</code></td><td>Drop the setpoint and coast.</td></tr>
+            <tr><td><code>void estop()</code> / <code>releaseEstop()</code></td><td>Latching kill, and clear the latch.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <nav class="pager">
+        <a class="prev" href="code-config.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Configuration</span></a>
+        <a class="next" href="code-closedloop.html"><span class="pg-label">Next</span><span>Closed-loop control <span class="chev">›</span></span></a>
+      </nav>
+    </article>
+  </main>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#duty">Duty cycle</a>
+    <a href="#velocity">Velocity</a>
+    <a href="#position">Position</a>
+    <a href="#current">Current</a>
+    <a href="#follower">Follower</a>
+    <a href="#stop">Stop</a>
+  </aside>
+</div>
+<script src="js/docs.js?v=24"></script>
+</body>
+</html>

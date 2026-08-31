@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Setup & install — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=23">
+  <link rel="stylesheet" href="css/docs.css?v=24">
 </head>
 <body>
 <div class="layout">
@@ -16,60 +16,111 @@
       <h1>Setup &amp; install</h1>
       <p class="sec-lead">Add the vendor library and drive a motor in a few lines.</p>
 
-      <h2 id="vendordep">Install the vendor library</h2>
-      <p>Download <a href="files/SwyftCycloneV4.json" download="SwyftCycloneV4.json">SwyftCycloneV4.json</a>, add it to the robot project’s <code>vendordeps/</code> folder, and rebuild. The device class is <code>com.swyftrobotics.cyclone.v4.SwyftCyclone</code>.</p>
+      <p>This page takes a robot project from no vendor library to a Cyclone spinning under joystick control. It assumes the motor is wired (<a href="wiring.html">Wiring</a>) and has a device number set in <a href="swyft-link.html">SWYFT&nbsp;Link</a>.</p>
 
-      <h2 id="construct">Construct the motor</h2>
-      <p>Construct with the device number you assigned in <a href="swyft-link.html">SWYFT&nbsp;Link</a>. A second constructor, <code>SwyftCyclone(id, canBus)</code>, selects the CAN bus.</p>
+      <h2 id="vendordep">1. Install the vendor library</h2>
+      <p>The Cyclone ships as a WPILib vendor dependency for the 2027 season.</p>
+      <ol>
+        <li>Download <a href="files/SwyftCycloneV4.json" download="SwyftCycloneV4.json">SwyftCycloneV4.json</a>.</li>
+        <li>Copy it into the robot project’s <code>vendordeps/</code> folder.</li>
+        <li>Rebuild the project so the build picks up the library.</li>
+      </ol>
+      <p>The device class is <code>com.swyftrobotics.cyclone.v4.SwyftCyclone</code>. If the build cannot resolve it, confirm the <code>.json</code> is in <code>vendordeps/</code> and rebuild.</p>
+
+      <h2 id="construct">2. Construct the motor</h2>
+      <p>Create one <code>SwyftCyclone</code> per physical motor, with the device number you assigned in SWYFT&nbsp;Link. Construct it once, as a field — not inside a periodic method.</p>
       <div class="code-panel">
         <div class="code-bar">Java</div>
         <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone;
 
-private final SwyftCyclone intake = new SwyftCyclone(5);</code></pre>
+// device number 5, on the default CAN bus
+private final SwyftCyclone intake = new SwyftCyclone(5);
+
+// on a specific CAN bus:
+// private final SwyftCyclone intake = new SwyftCyclone(5, 1);</code></pre>
       </div>
 
-      <h2 id="drive">Drive it</h2>
-      <p>Command the Cyclone in one of four modes — duty, velocity, position, or current. The example below uses duty cycle, a signed fraction of the bus from −1 to +1. Set current limits once in <code>robotInit()</code>.</p>
+      <h2 id="limits">3. Set current limits at start-up</h2>
+      <p>Set current limits once, in <code>robotInit()</code>, before the motor is enabled. The limits protect the motor and the battery; size them for the mechanism, not at the ceiling. <a href="current-limits.html">How the limits work</a></p>
       <div class="code-panel">
-        <div class="code-bar">Robot.java</div>
+        <div class="code-bar">Java</div>
         <pre><code>@Override
 public void robotInit() {
     intake.setTeamLimits(75, 85, 40);   // warn °C, trip °C, stator A
-}
+}</code></pre>
+      </div>
 
-@Override
+      <h2 id="drive">4. Drive it every loop</h2>
+      <p>Command the Cyclone in one of four modes — duty, velocity, position, or current (<a href="code-control.html">Control requests</a>). The example below uses duty cycle, a signed fraction of the bus from −1 to +1. A setpoint expires after about 100&nbsp;ms, so command the motor <strong>every loop</strong>, and stop it when the robot is disabled.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>@Override
 public void teleopPeriodic() {
-    intake.setDutyCycle(operator.getRightY());   // every loop
+    intake.setDutyCycle(operator.getRightY());   // -1 .. +1, every loop
 }
 
 @Override
 public void disabledInit() {
-    intake.disable();
+    intake.disable();   // coast when disabled
 }</code></pre>
       </div>
       <p>Set the direction in SWYFT&nbsp;Link, not in the constructor. <a href="orientation.html">Orientation</a></p>
 
+      <h2 id="full">Full first program</h2>
+      <p>The three steps above, as one complete <code>TimedRobot</code>. Deploy this, enable in teleop, and the intake follows the operator’s right stick.</p>
+      <div class="code-panel">
+        <div class="code-bar">Robot.java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+
+public class Robot extends TimedRobot {
+    private final SwyftCyclone intake = new SwyftCyclone(5);
+    private final XboxController operator = new XboxController(0);
+
+    @Override
+    public void robotInit() {
+        intake.setTeamLimits(75, 85, 40);   // warn °C, trip °C, stator A
+    }
+
+    @Override
+    public void teleopPeriodic() {
+        intake.setDutyCycle(operator.getRightY());
+    }
+
+    @Override
+    public void disabledInit() {
+        intake.disable();
+    }
+}</code></pre>
+      </div>
+
       <h2 id="next">Next</h2>
       <ul>
-        <li><a href="code-features.html">Feature guide</a> — output, limits, neutral mode, telemetry, LEDs.</li>
+        <li><a href="code-config.html">Configuration</a> — current limits, neutral mode, saving to the device.</li>
+        <li><a href="code-control.html">Control requests</a> — duty, velocity, position, current, and follower.</li>
+        <li><a href="code-closedloop.html">Closed-loop control</a> — tune velocity and position gains.</li>
+        <li><a href="code-telemetry.html">Status signals</a> — read speed, current, temperature, and faults.</li>
         <li><a href="code-api.html">API reference</a> — every method.</li>
       </ul>
 
       <nav class="pager">
         <a class="prev" href="orientation.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Orientation</span></a>
-        <a class="next" href="code-features.html"><span class="pg-label">Next</span><span>Feature guide <span class="chev">›</span></span></a>
+        <a class="next" href="code-config.html"><span class="pg-label">Next</span><span>Configuration <span class="chev">›</span></span></a>
       </nav>
     </article>
   </main>
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#vendordep">Install the vendor library</a>
-    <a href="#construct">Construct the motor</a>
-    <a href="#drive">Drive it</a>
+    <a href="#vendordep">1. Install the vendor library</a>
+    <a href="#construct">2. Construct the motor</a>
+    <a href="#limits">3. Set current limits</a>
+    <a href="#drive">4. Drive it every loop</a>
+    <a href="#full">Full first program</a>
     <a href="#next">Next</a>
   </aside>
 </div>
-<script src="js/docs.js?v=23"></script>
+<script src="js/docs.js?v=24"></script>
 </body>
 </html>

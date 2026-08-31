@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Closed-loop control — SWYFT Cyclone</title>
+  <link rel="stylesheet" href="css/docs.css?v=24">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-page="code-closedloop.html"></aside>
+
+  <main class="main">
+    <article class="content">
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › Closed-loop control</div>
+      <h1>Closed-loop control</h1>
+      <p class="sec-lead">Tune the velocity and position loops so a Cyclone holds a setpoint under load.</p>
+
+      <p>Velocity, position, and current commands close their loop on the controller, at the motor. The loop compares the setpoint to the encoder and adjusts output to close the gap. Each mechanism needs gains that match its inertia and load; the defaults are a starting point, not a final answer. This page sets the velocity and position gains and walks through tuning one mechanism.</p>
+
+      <h2 id="gains">Set velocity gains</h2>
+      <p>The velocity loop is a PI controller. <code>kP</code> reacts to the present speed error; <code>kI</code> removes the small steady error <code>kP</code> alone leaves behind. Apply them through <code>Slot0Configs</code>.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.Slot0Configs;
+
+var gains = new Slot0Configs();
+gains.kP = 0.0008;   // output per unit of speed error
+gains.kI = 0.004;    // removes steady-state error
+shooter.getConfigurator().apply(gains);
+shooter.saveConfiguration();   // keep the gains across a power cycle</code></pre>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Gain</th><th>Default</th><th>Range</th><th>Raise it when…</th></tr></thead>
+          <tbody>
+            <tr><td><code>kP</code></td><td>0.0006</td><td>0–0.01</td><td>the motor is slow to reach speed</td></tr>
+            <tr><td><code>kI</code></td><td>0.003</td><td>0–0.1</td><td>it settles just short of the target</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="tune">Tune a velocity loop</h2>
+      <p>Tune one mechanism at a time, on the real robot, with the mechanism under its normal load.</p>
+      <ol>
+        <li>Start from the defaults. Command a mid-range speed with <code>setVelocity</code> and watch the measured speed with <code>getVelocityRpm</code>.</li>
+        <li>Raise <code>kP</code> until the motor reaches speed quickly. If it oscillates around the target, <code>kP</code> is too high — lower it until the wobble stops.</li>
+        <li>If the motor holds a speed slightly below the target, raise <code>kI</code> in small steps until the error closes. Too much <code>kI</code> makes it overshoot then swing back.</li>
+        <li>Test at the speeds you actually use, and under the load the mechanism sees in a match. Save when it holds.</li>
+      </ol>
+      <div class="callout tip">
+        <span class="label">Tip</span>
+        <p>A value outside its range is refused, not clamped, and <code>apply</code> returns the failing <code>StatusCode</code>. Check <code>isOK()</code> while tuning so a rejected gain does not look like a bad tune.</p>
+      </div>
+
+      <h2 id="position">Set the position gain</h2>
+      <p>Position mode runs a proportional loop whose output is a velocity request into the velocity loop above. Tune the velocity loop first, then set the position gain <code>PositionKP</code> through <code>ClosedLoopGeneralConfigs</code>.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.ClosedLoopGeneralConfigs;
+
+var pos = new ClosedLoopGeneralConfigs();
+pos.PositionKP = 2.0;   // 0–5.0; higher drives to target faster
+arm.getConfigurator().apply(pos);</code></pre>
+      </div>
+
+      <h2 id="example">Full example — a velocity subsystem</h2>
+      <p>A complete command-based subsystem that configures a shooter, holds a speed, and reports when it is up to speed.</p>
+      <div class="code-panel">
+        <div class="code-bar">ShooterSubsystem.java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone;
+import com.swyftrobotics.cyclone.v4.Slot0Configs;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class ShooterSubsystem extends SubsystemBase {
+    private final SwyftCyclone motor = new SwyftCyclone(9);
+    private double targetRpm = 0;
+
+    public ShooterSubsystem() {
+        // current limits protect the motor; gains make it hold speed
+        motor.setTeamLimits(75, 85, 60);
+
+        var gains = new Slot0Configs();
+        gains.kP = 0.0008;
+        gains.kI = 0.004;
+        motor.getConfigurator().apply(gains);
+        motor.saveConfiguration();
+    }
+
+    /** Command a flywheel speed in RPM. */
+    public void setSpeed(double rpm) {
+        targetRpm = rpm;
+        motor.setVelocity(rpm);
+    }
+
+    public void stop() {
+        targetRpm = 0;
+        motor.disable();
+    }
+
+    /** True once the flywheel is within 100 RPM of target. */
+    public boolean atSpeed() {
+        return Math.abs(motor.getVelocityRpm() - targetRpm) < 100;
+    }
+}</code></pre>
+      </div>
+
+      <nav class="pager">
+        <a class="prev" href="code-control.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Control requests</span></a>
+        <a class="next" href="code-telemetry.html"><span class="pg-label">Next</span><span>Status signals <span class="chev">›</span></span></a>
+      </nav>
+    </article>
+  </main>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#gains">Set velocity gains</a>
+    <a href="#tune">Tune a velocity loop</a>
+    <a href="#position">Set the position gain</a>
+    <a href="#example">Full example</a>
+  </aside>
+</div>
+<script src="js/docs.js?v=24"></script>
+</body>
+</html>

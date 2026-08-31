@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Specifications — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=23">
+  <link rel="stylesheet" href="css/docs.css?v=24">
 </head>
 <body>
 <div class="layout">
@@ -79,7 +79,7 @@
           </tbody>
         </table>
       </div>
-      <p>Command the Cyclone in one of four modes. <strong>Duty</strong> sets output as a fraction of bus power, from −1 (full reverse) to +1 (full forward). <strong>Velocity</strong> holds a target speed, <strong>position</strong> a target angle, and <strong>current</strong> a target torque, each closed on the built-in 14-bit encoder. Pick the mode that matches the mechanism. <a href="code-features.html">Robot code</a></p>
+      <p>Command the Cyclone in one of four modes. <strong>Duty</strong> sets output as a fraction of bus power, from −1 (full reverse) to +1 (full forward). <strong>Velocity</strong> holds a target speed, <strong>position</strong> a target angle, and <strong>current</strong> a target torque, each closed on the built-in 14-bit encoder. Pick the mode that matches the mechanism. <a href="code-control.html">Control requests</a></p>
 
       <h2 id="communication">Communication</h2>
       <p class="sec-lead">How the robot reaches the motor and addresses it on the bus.</p>
@@ -110,7 +110,7 @@
       <p>The controller tracks heat with a current-squared-time (i²t) budget: brief high current has little effect, while sustained high current fills the budget. Past a threshold the controller reduces the current limit in proportion, trading torque for lower temperature, and cuts output at the 85&nbsp;°C trip. Current limits sized to the load keep sustained current below the fold threshold.</p>
 
       <nav class="pager">
-        <a class="prev" href="first-power-up.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> First power-up</span></a>
+        <a class="prev" href="power-thermal.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Power &amp; thermal budget</span></a>
         <a class="next" href="mounting.html"><span class="pg-label">Next</span><span>Mounting <span class="chev">›</span></span></a>
       </nav>
     </article>
@@ -126,6 +126,6 @@
     <a href="#thermal">Thermal</a>
   </aside>
 </div>
-<script src="js/docs.js?v=23"></script>
+<script src="js/docs.js?v=24"></script>
 </body>
 </html>

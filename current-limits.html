@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>How the limits work — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=23">
+  <link rel="stylesheet" href="css/docs.css?v=24">
 </head>
 <body>
 <div class="layout">
@@ -35,16 +35,37 @@
       <h2 id="set">Set them from robot code</h2>
       <p>Set limits once at start-up, in <code>robotInit()</code>. <code>setTeamLimits</code> writes the over-temperature warning, the over-temperature trip, and the stator limit together; <code>setStatorCurrentLimit</code> writes the stator limit alone.</p>
       <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>// warn °C, trip °C, stator A
-intake.setTeamLimits(75, 85, 40);
-// or the stator limit alone:
-// intake.setStatorCurrentLimit(40);</code></pre>
+        <div class="code-bar">Robot.java</div>
+        <pre><code>private final SwyftCyclone drive  = new SwyftCyclone(1);
+private final SwyftCyclone intake = new SwyftCyclone(5);
+
+@Override
+public void robotInit() {
+    // warn °C, trip °C, stator A
+    drive.setTeamLimits(75, 85, 80);
+    intake.setTeamLimits(75, 85, 40);
+}</code></pre>
       </div>
       <p>On this path the warning takes 40–80&nbsp;°C, the trip up to 80&nbsp;°C, and the stator limit 1–160&nbsp;A. A value outside its range is refused, not clamped.</p>
-      <div class="callout uc">
-        <span class="label">Under construction</span>
-        <p>Setting the supply limit from robot code is not finalised on this firmware — set it in <a href="swyft-link.html">SWYFT&nbsp;Link</a> for now.</p>
+
+      <p>To set both current limits together, apply a <code>CurrentLimitsConfigs</code> through the device configurator. Each field defaults to "leave unchanged", so you set only the ones you name.</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>var limits = new CurrentLimitsConfigs();
+limits.StatorCurrentLimit = 40;   // windings, amperes
+limits.SupplyCurrentLimit = 30;   // bus, amperes
+intake.getConfigurator().apply(limits);</code></pre>
+      </div>
+      <p><code>apply</code> returns a <code>StatusCode</code>; check <code>isOK()</code> to confirm the device accepted the value. To make a limit survive a power cycle, call <code>saveConfiguration()</code> after applying it.</p>
+
+      <p>Read the draw and temperature at runtime, and check for a trip:</p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>double amps = intake.getSupplyCurrent();   // bus amperes
+double temp = intake.getDeviceTemp();      // °C
+if (intake.hasHardFault()) {
+    // over-temperature or over-current — read the fault in SWYFT Link
+}</code></pre>
       </div>
 
       <h2 id="choose">Choosing a value</h2>
@@ -60,7 +81,7 @@ intake.setTeamLimits(75, 85, 40);
       </div>
 
       <nav class="pager">
-        <a class="prev" href="orientation.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Orientation</span></a>
+        <a class="prev" href="first-power-up.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> First power-up</span></a>
         <a class="next" href="limits-by-mechanism.html"><span class="pg-label">Next</span><span>Limits by mechanism <span class="chev">›</span></span></a>
       </nav>
     </article>
@@ -74,6 +95,6 @@ intake.setTeamLimits(75, 85, 40);
     <a href="#choose">Choosing a value</a>
   </aside>
 </div>
-<script src="js/docs.js?v=23"></script>
+<script src="js/docs.js?v=24"></script>
 </body>
 </html>

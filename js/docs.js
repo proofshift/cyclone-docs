@@ -28,6 +28,26 @@
     h += '<div class="side-help"><a class="help" href="mailto:support@swyftrobotics.com">'
        + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Help &amp; contact</a></div>';
     side.innerHTML = h;
+
+    // Keep the sidebar scrolled to the same spot across page loads.
+    var scroller = side.querySelector(".nav-scroll");
+    if (scroller) {
+      var saved = null;
+      try { saved = sessionStorage.getItem("navScroll"); } catch (e) {}
+      if (saved !== null) {
+        scroller.scrollTop = parseInt(saved, 10) || 0;
+      } else {
+        var act = scroller.querySelector("a.active");
+        if (act) scroller.scrollTop = act.offsetTop - scroller.clientHeight / 2;
+      }
+      scroller.addEventListener("scroll", function () {
+        try { sessionStorage.setItem("navScroll", scroller.scrollTop); } catch (e) {}
+      }, { passive: true });
+      // Before leaving, store the current spot so the next page restores it.
+      window.addEventListener("beforeunload", function () {
+        try { sessionStorage.setItem("navScroll", scroller.scrollTop); } catch (e) {}
+      });
+    }
   }
 
   // ---- search (⌘K / click) ----

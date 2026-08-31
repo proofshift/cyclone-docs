@@ -3,165 +3,62 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Specifications — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=17">
+  <title>SWYFT Cyclone</title>
+  <link rel="stylesheet" href="css/docs.css?v=18">
 </head>
 <body>
 <div class="layout">
-  <aside class="sidebar">
-    <a class="wordmark" href="index.html">
-      <span class="swyft">SWYFT</span>
-      <span class="robotics">ROBOTICS</span>
-    </a>
-
-    <div class="side-search">
-      <hr>
-      <div class="field" role="button" tabindex="0">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        Search
-      </div>
-      <hr>
-    </div>
-
-    <nav class="nav-group">
-      <p class="nav-eyebrow">Getting started</p>
-      <a href="#">Overview</a>
-      <a href="index.html" class="active">Specifications</a>
-      <a href="#">Wiring</a>
-      <a href="#">First power-up</a>
-    </nav>
-    <nav class="nav-group">
-      <p class="nav-eyebrow">On the robot</p>
-      <a href="#">Mounting</a>
-      <a href="#">Orientation</a>
-      <a href="#">Current limits</a>
-      <a href="#">Status lights</a>
-      <a href="#">Faults</a>
-    </nav>
-    <nav class="nav-group">
-      <p class="nav-eyebrow">Software</p>
-      <a href="#">SWYFT Link</a>
-      <a href="#">Code</a>
-    </nav>
-  </aside>
+  <aside class="sidebar" data-page="index.html"></aside>
 
   <main class="main">
     <article class="content">
-      <div class="breadcrumb"><a href="#">Cyclone</a> › Specifications</div>
-      <h1>Specifications</h1>
+      <div class="breadcrumb">Cyclone › Overview</div>
+      <h1>SWYFT Cyclone</h1>
+      <p class="sec-lead">A brushless motor, its controller, and an absolute encoder in one housing. Built for FRC.</p>
 
       <figure>
-        <img class="zoomable" src="img/drawing-sr-cyclone-bldc-01.png" alt="SR-CYCLONE-BLDC-01 dimensioned drawing">
-        <figcaption>Dimensioned drawing, inches with millimetres in brackets. Click to enlarge · <a href="files/SR-CYCLONE-BLDC-01.pdf">PDF</a></figcaption>
+        <img src="img/side-usb.png" alt="SWYFT Cyclone, USB-C side">
+        <figcaption>Power, CAN, and USB-C all land on the motor. The rear-cover layout is on <a href="wiring.html">Wiring</a>.</figcaption>
       </figure>
 
-      <h2 id="electrical">Electrical</h2>
-      <p class="sec-lead">Bus voltage and the currents the motor draws and limits.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
-          <tbody>
-            <tr><td>Nominal bus</td><td>12 V (FRC)</td></tr>
-            <tr><td>Operating voltage</td><td>6–24 V. The motor will not arm below 6 V and cuts output above 24 V.</td></tr>
-            <tr><td>Continuous current</td><td>40–60 A</td></tr>
-            <tr><td>Stator current limit</td><td>Configurable, default 120 A, up to 160 A</td></tr>
-            <tr><td>Supply current limit</td><td>Configurable, default 40 A, up to 60 A</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>The Cyclone limits two distinct currents. <strong>Stator current</strong> flows in the windings and sets torque; <strong>supply current</strong> is what the battery delivers. Duty cycle links them: supply current is approximately <code>stator × duty</code>, so a large winding current draws only a small battery current at low duty. Near stall at about 10&nbsp;% duty, roughly 70&nbsp;A in the windings corresponds to about 7&nbsp;A from the pack. Set the stator limit to protect the motor and the supply limit to protect the battery and breaker.</p>
+      <h2 id="what">What it is</h2>
+      <p>The Cyclone drives a brushless motor with sensored trapezoidal commutation and reads shaft angle from a built-in 14-bit magnetic encoder. There is no separate controller to wire — power, CAN&nbsp;FD, and USB-C connect at the back of the motor. Set it up from the vendor library in robot code, or from <a href="swyft-link.html">SWYFT&nbsp;Link</a>.</p>
+      <ul>
+        <li>Motor, controller, and absolute encoder in one unit</li>
+        <li>14-bit encoder — 16,384 counts per turn</li>
+        <li>CAN&nbsp;FD and USB-C, each a full control path</li>
+        <li>Configurable stator and supply current limits with thermal protection</li>
+        <li>Direction and offset calibrated on the motor and kept across a re-flash</li>
+        <li>Seven-light status and user LED strip</li>
+        <li>Runs on the 2027 SystemCore</li>
+      </ul>
 
-      <h2 id="performance">Performance</h2>
-      <p class="sec-lead">Speed and torque at the ends of the operating range.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
-          <tbody>
-            <tr><td>Free speed</td><td>7530 RPM</td></tr>
-            <tr><td>Stall torque</td><td>3.8 N·m</td></tr>
-            <tr><td>Stall current</td><td>275 A</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>Speed and torque trade off across the load range. Free speed (7530&nbsp;RPM) is the no-load maximum and scales with bus voltage; torque rises with stator current, reaching 3.8&nbsp;N·m at the 275&nbsp;A stall point. A heavier load lowers speed and raises current draw. Stall current is a peak, not a continuous rating; the <a href="#thermal">thermal limits</a> bound sustained operation below it.</p>
+      <h2 id="control">Control today</h2>
+      <p>Duty-cycle output is the control path the motor runs now: command a signed fraction of the bus, every loop. Closed-loop current, velocity, and position are defined in the API and in SWYFT&nbsp;Link and are marked <span class="uc-tag">Under construction</span> where they appear. <a href="code.html">Robot code</a></p>
 
-      <h2 id="sensing">Control and sensing</h2>
-      <p class="sec-lead">How the motor commutates, reads shaft position, and takes commands.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
-          <tbody>
-            <tr><td>Commutation</td><td>Trapezoidal</td></tr>
-            <tr><td>Encoder</td><td>14-bit absolute magnetic, 16,384 counts per turn</td></tr>
-            <tr><td>Duty output</td><td>Signed fraction of bus, −1 to 1</td></tr>
-            <tr><td>Closed-loop modes</td><td>Current, velocity, position <span class="uc-tag">Under construction</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>The controller energises two of the three phases at a time and steps through six combinations per electrical revolution, reading the 14-bit encoder to choose the step and its timing. Duty cycle sets how much of the bus each step applies, from −1 (full reverse) to +1 (full forward). Closed-loop current, velocity, and position build on this and are still under construction.</p>
-
-      <h2 id="communication">Communication</h2>
-      <p class="sec-lead">How the robot reaches the motor and addresses it on the bus.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
-          <tbody>
-            <tr><td>Interfaces</td><td>CAN FD and USB-C</td></tr>
-            <tr><td>Both interfaces</td><td>Full motor function over CAN or USB-C</td></tr>
-            <tr><td>Device number (CAN ID)</td><td>1–62</td></tr>
-            <tr><td>Control system</td><td>2027 SystemCore</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h2 id="thermal">Thermal</h2>
-      <p class="sec-lead">How the motor protects itself as it heats up.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
-          <tbody>
-            <tr><td>Over-temperature warning</td><td>75 °C default, configurable 40–80 °C</td></tr>
-            <tr><td>Over-temperature trip</td><td>85 °C. Output is cut.</td></tr>
-            <tr><td>Thermal fold</td><td>Current is reduced as the thermal budget fills, before the trip</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>The controller tracks heat with a current-squared-time (i²t) budget: brief high current has little effect, while sustained high current fills the budget. Past a threshold the controller reduces the current limit in proportion, trading torque for lower temperature, and cuts output at the 85&nbsp;°C trip. Current limits sized to the load keep sustained current below the fold threshold.</p>
-
-      <h2 id="mechanical">Mechanical</h2>
-      <p class="sec-lead">Physical envelope, output shaft, and mounting pattern.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
-          <tbody>
-            <tr><td>Body diameter</td><td>1.73 in (44 mm)</td></tr>
-            <tr><td>Body length</td><td>2.7 in (68.5 mm)</td></tr>
-            <tr><td>Overall length, with shaft</td><td>4.17 in (105.86 mm)</td></tr>
-            <tr><td>Shaft stickout</td><td>1.24 in (31.59 mm)</td></tr>
-            <tr><td>Mounting face to USB-C</td><td>2.88 in (73.26 mm)</td></tr>
-            <tr><td>Output shaft</td><td>15T SplineXS</td></tr>
-            <tr><td>Mounting holes</td><td>Eleven 10-32, 10 mm deep, on a Ø1.375 in (34.93 mm) bolt circle</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <h2 id="start">Where to go</h2>
+      <ul>
+        <li><a href="wiring.html">Wiring</a> and <a href="first-power-up.html">First power-up</a> — get a motor running.</li>
+        <li><a href="specifications.html">Specifications</a>, <a href="mounting.html">Mounting</a>, <a href="orientation.html">Orientation</a> — the hardware reference.</li>
+        <li><a href="code.html">Robot code</a> — install the vendor library and drive the motor.</li>
+        <li><a href="swyft-link.html">SWYFT&nbsp;Link</a> — configure, tune, and recover from a browser or the SystemCore.</li>
+        <li><a href="current-limits.html">Safety &amp; current limits</a> — protect the motor and pick limits per mechanism.</li>
+        <li><a href="status-lights.html">Status lights</a> and <a href="troubleshooting.html">Troubleshooting</a> — read the motor and fix problems.</li>
+      </ul>
 
       <nav class="pager">
-        <a class="prev" href="#"><span class="chev">‹</span> Overview</a>
-        <a class="next" href="#">Wiring <span class="chev">›</span></a>
+        <a class="next" href="wiring.html">Wiring <span class="chev">›</span></a>
       </nav>
     </article>
   </main>
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#electrical">Electrical</a>
-    <a href="#performance">Performance</a>
-    <a href="#sensing">Control and sensing</a>
-    <a href="#communication">Communication</a>
-    <a href="#thermal">Thermal</a>
-    <a href="#mechanical">Mechanical</a>
+    <a href="#what">What it is</a>
+    <a href="#control">Control today</a>
+    <a href="#start">Where to go</a>
   </aside>
 </div>
-<script src="js/docs.js?v=17"></script>
+<script src="js/docs.js?v=18"></script>
 </body>
 </html>

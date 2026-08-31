@@ -2,9 +2,9 @@
   // ---- shared sidebar ----
   var NAV = [
     ["Getting Started", [["index.html", "Overview"], ["wiring.html", "Wiring"], ["first-power-up.html", "First power-up"]]],
+    ["Robot Code", [["code.html", "Setup & install"], ["code-config.html", "Configuration"], ["code-control.html", "Control requests"], ["code-closedloop.html", "Closed-loop control"], ["code-telemetry.html", "Status signals"], ["code-api.html", "API reference"]]],
     ["Safety & Current Limits", [["current-limits.html", "How the limits work"], ["limits-by-mechanism.html", "Limits by mechanism"], ["power-thermal.html", "Power & thermal budget"]]],
     ["Hardware Reference", [["specifications.html", "Specifications"], ["mounting.html", "Mounting"], ["orientation.html", "Orientation"]]],
-    ["Robot Code", [["code.html", "Setup & install"], ["code-config.html", "Configuration"], ["code-control.html", "Control requests"], ["code-closedloop.html", "Closed-loop control"], ["code-telemetry.html", "Status signals"], ["code-api.html", "API reference"]]],
     ["SWYFT Link", [["swyft-link.html", "Install & connect"], ["swyft-link-using.html", "Using SWYFT Link"], ["dfu.html", "Firmware & DFU"]]],
     ["Status Lights", [["status-lights.html", "Status lights"]]],
     ["Troubleshooting", [["troubleshooting.html", "Troubleshooting"], ["faults.html", "Faults & errors"]]]

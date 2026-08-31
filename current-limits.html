@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>How the limits work — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=35">
+  <link rel="stylesheet" href="css/docs.css?v=36">
 </head>
 <body>
 <div class="layout">
@@ -46,7 +46,7 @@ public void robotInit() {
     intake.setTeamLimits(75, 85, 40);
 }</code></pre>
       </div>
-      <p>On this path the warning takes 40–80&nbsp;°C, the trip up to 80&nbsp;°C, and the stator limit 1–160&nbsp;A. A value outside its range is refused, not clamped.</p>
+      <p>On this path the warning takes 40–80&nbsp;°C, the trip up to 85&nbsp;°C, and the stator limit 1–160&nbsp;A. A value outside its range is refused, not clamped.</p>
 
       <p>To set both current limits together, apply a <code>CurrentLimitsConfigs</code> through the device configurator. Each field defaults to "leave unchanged", so you set only the ones you name.</p>
       <div class="code-panel">
@@ -95,6 +95,6 @@ if (intake.hasHardFault()) {
     <a href="#choose">Choosing a value</a>
   </aside>
 </div>
-<script src="js/docs.js?v=35"></script>
+<script src="js/docs.js?v=36"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Specifications — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=15">
+  <link rel="stylesheet" href="css/docs.css?v=16">
 </head>
 <body>
 <div class="layout">
@@ -64,7 +64,7 @@
           </tbody>
         </table>
       </div>
-      <p>Two currents matter, and they are not the same. <strong>Stator current</strong> flows in the windings and sets torque; <strong>supply current</strong> is what the battery delivers. Duty cycle links them — the supply draws roughly <code>stator × duty</code>, so a large winding current pulls only a small battery current at low duty. Near stall at about 10&nbsp;% duty, ~70&nbsp;A in the windings is only ~7&nbsp;A from the pack. Set the stator limit to protect the motor and the supply limit to protect the battery and breaker; one does not replace the other.</p>
+      <p>The Cyclone limits two distinct currents. <strong>Stator current</strong> flows in the windings and sets torque; <strong>supply current</strong> is what the battery delivers. Duty cycle links them: supply current is approximately <code>stator × duty</code>, so a large winding current draws only a small battery current at low duty. Near stall at about 10&nbsp;% duty, roughly 70&nbsp;A in the windings corresponds to about 7&nbsp;A from the pack. Set the stator limit to protect the motor and the supply limit to protect the battery and breaker.</p>
 
       <h2 id="performance">Performance</h2>
       <p class="sec-lead">Speed and torque at the ends of the operating range.</p>
@@ -78,7 +78,7 @@
           </tbody>
         </table>
       </div>
-      <p>Speed and torque trade off. Free speed (7530&nbsp;RPM) is the no-load ceiling and scales with bus voltage; torque climbs with stator current to the 3.8&nbsp;N·m stall figure at 275&nbsp;A. Holding a heavier load costs speed and draws more current. Stall is a modeled peak, not a place to live — the <a href="#thermal">thermal</a> system pulls you out of it.</p>
+      <p>Speed and torque trade off across the load range. Free speed (7530&nbsp;RPM) is the no-load maximum and scales with bus voltage; torque rises with stator current, reaching 3.8&nbsp;N·m at the 275&nbsp;A stall point. A heavier load lowers speed and raises current draw. Stall current is a peak, not a continuous rating; the <a href="#thermal">thermal limits</a> bound sustained operation below it.</p>
 
       <h2 id="sensing">Control and sensing</h2>
       <p class="sec-lead">How the motor commutates, reads shaft position, and takes commands.</p>
@@ -121,7 +121,7 @@
           </tbody>
         </table>
       </div>
-      <p>The controller tracks heat with a current-squared-time (i²t) budget: brief high current is fine, sustained high current fills it. Past a threshold it folds the current limit down in proportion — trading torque for temperature — and cuts output entirely at the 85&nbsp;°C trip. Sizing the <a href="#electrical">current limits</a> to the job is what keeps a mechanism out of the fold.</p>
+      <p>The controller tracks heat with a current-squared-time (i²t) budget: brief high current has little effect, while sustained high current fills the budget. Past a threshold the controller reduces the current limit in proportion, trading torque for lower temperature, and cuts output at the 85&nbsp;°C trip. Current limits sized to the load keep sustained current below the fold threshold.</p>
 
       <h2 id="mechanical">Mechanical</h2>
       <p class="sec-lead">Physical envelope, output shaft, and mounting pattern.</p>
@@ -161,6 +161,6 @@
     <a href="#mechanical">Mechanical</a>
   </aside>
 </div>
-<script src="js/docs.js?v=15"></script>
+<script src="js/docs.js?v=16"></script>
 </body>
 </html>

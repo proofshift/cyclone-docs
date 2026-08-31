@@ -9,7 +9,7 @@
 }
 
 :root {
-  --content-width: 46em;
+  --content-width: 56em;
   --sidebar-width: 19em;
   --toc-width: 15em;
   --radius: 0.4rem;
@@ -55,6 +55,8 @@ a:hover { text-decoration: underline; }
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--toc-width);
   align-items: start;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 /* ---- left sidebar ---- */
@@ -67,6 +69,8 @@ a:hover { text-decoration: underline; }
   padding: 30px 16px 40px 22px;
   background: var(--bg-side);
   border-right: 1px solid var(--border);
+  /* extend the sidebar colour into the left gutter to the wall (content stays put) */
+  box-shadow: -100vw 0 0 100vw var(--bg-side);
 }
 .wordmark { display: block; margin: 2px 0 22px; line-height: 1; }
 .wordmark:hover { text-decoration: none; }

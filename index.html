@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Specifications — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=12">
+  <link rel="stylesheet" href="css/docs.css?v=14">
 </head>
 <body>
 <div class="layout">
@@ -64,6 +64,7 @@
           </tbody>
         </table>
       </div>
+      <p>Two currents matter, and they are not the same. <strong>Stator current</strong> flows in the windings and sets torque; <strong>supply current</strong> is what the battery delivers. Duty cycle links them — the supply draws roughly <code>stator × duty</code>, so a large winding current pulls only a small battery current at low duty. Near stall at about 10&nbsp;% duty, ~70&nbsp;A in the windings is only ~7&nbsp;A from the pack. Set the stator limit to protect the motor and the supply limit to protect the battery and breaker; one does not replace the other.</p>
 
       <h2 id="performance">Performance</h2>
       <p class="sec-lead">Speed and torque at the ends of the operating range.</p>
@@ -77,6 +78,7 @@
           </tbody>
         </table>
       </div>
+      <p>Speed and torque trade off. Free speed (7530&nbsp;RPM) is the no-load ceiling and scales with bus voltage; torque climbs with stator current to the 3.8&nbsp;N·m stall figure at 275&nbsp;A. Holding a heavier load costs speed and draws more current. Stall is a modeled peak, not a place to live — the <a href="#thermal">thermal</a> system pulls you out of it.</p>
 
       <h2 id="sensing">Control and sensing</h2>
       <p class="sec-lead">How the motor commutates, reads shaft position, and takes commands.</p>
@@ -91,6 +93,7 @@
           </tbody>
         </table>
       </div>
+      <p>The controller energises two of the three phases at a time and steps through six combinations per electrical revolution, reading the 14-bit encoder to choose the step and its timing. Duty cycle sets how much of the bus each step applies, from −1 (full reverse) to +1 (full forward). Closed-loop current, velocity, and position build on this and are still under construction.</p>
 
       <h2 id="communication">Communication</h2>
       <p class="sec-lead">How the robot reaches the motor and addresses it on the bus.</p>
@@ -118,6 +121,7 @@
           </tbody>
         </table>
       </div>
+      <p>The controller tracks heat with a current-squared-time (i²t) budget: brief high current is fine, sustained high current fills it. Past a threshold it folds the current limit down in proportion — trading torque for temperature — and cuts output entirely at the 85&nbsp;°C trip. Sizing the <a href="#electrical">current limits</a> to the job is what keeps a mechanism out of the fold.</p>
 
       <h2 id="mechanical">Mechanical</h2>
       <p class="sec-lead">Physical envelope, output shaft, and mounting pattern.</p>
@@ -157,6 +161,6 @@
     <a href="#mechanical">Mechanical</a>
   </aside>
 </div>
-<script src="js/docs.js?v=12"></script>
+<script src="js/docs.js?v=14"></script>
 </body>
 </html>

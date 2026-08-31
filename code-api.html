@@ -4,20 +4,122 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>API reference — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=20">
+  <link rel="stylesheet" href="css/docs.css?v=21">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="code-api.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; Robot Code &rsaquo; API reference</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › API reference</div>
       <h1>API reference</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">The public methods of <code>com.swyftrobotics.cyclone.v4.SwyftCyclone</code>. Worked examples are in the <a href="code-features.html">Feature guide</a>.</p>
+
+      <div class="callout">
+        <span class="label">Note</span>
+        <p>Methods marked <span class="uc-tag">Under construction</span> compile and transmit but the motor does not act on them yet.</p>
+      </div>
+
+      <h2 id="construct">Construction</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>SwyftCyclone(int deviceNumber)</code></td><td>Construct on the default CAN bus.</td></tr>
+            <tr><td><code>SwyftCyclone(int deviceNumber, int canBus)</code></td><td>Construct on a specific CAN bus.</td></tr>
+            <tr><td><code>int getDeviceNumber()</code></td><td>The device number (CAN ID), 1–62.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="output">Output</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>void set(double duty)</code> / <code>void setDutyCycle(double duty)</code></td><td>Duty cycle, −1 to 1. Command every loop.</td></tr>
+            <tr><td><code>void setCurrent(double amps)</code></td><td>Torque current. <span class="uc-tag">Under construction</span></td></tr>
+            <tr><td><code>void setVelocity(double rpm)</code></td><td>Closed-loop speed. <span class="uc-tag">Under construction</span></td></tr>
+            <tr><td><code>void setPosition(double rad)</code></td><td>Closed-loop position. <span class="uc-tag">Under construction</span></td></tr>
+            <tr><td><code>void disable()</code></td><td>Coast and drop the setpoint.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="config">Configuration</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>void setTeamLimits(double warnC, double tripC, double statorA)</code></td><td>Temperature warning and trip, and stator limit.</td></tr>
+            <tr><td><code>void setStatorCurrentLimit(double amps)</code></td><td>Stator limit alone, 1–160 A.</td></tr>
+            <tr><td><code>void setNeutralMode(NeutralMode mode)</code></td><td><code>COAST</code> succeeds; <code>BRAKE</code> throws.</td></tr>
+            <tr><td><code>boolean isBrakeModeSupported()</code></td><td>False.</td></tr>
+            <tr><td><code>void saveConfiguration()</code></td><td>Persist device config across power loss.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="faults">Faults and e-stop</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>void estop()</code></td><td>Latching kill; coasts.</td></tr>
+            <tr><td><code>void releaseEstop()</code></td><td>Clear the e-stop latch.</td></tr>
+            <tr><td><code>void clearFaults()</code></td><td>Refused while the cause is present.</td></tr>
+            <tr><td><code>boolean hasHardFault()</code></td><td>True while a hard fault is latched.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="telemetry">Telemetry</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>SwyftCycloneData getLatest()</code></td><td>A coherent snapshot of all telemetry.</td></tr>
+            <tr><td><code>boolean isAlive(double maxAgeSec)</code></td><td>False if no frame arrived within the age.</td></tr>
+            <tr><td><code>double getVelocityRpm()</code></td><td>Mechanical RPM.</td></tr>
+            <tr><td><code>double getSupplyCurrent()</code></td><td>Bus amperes.</td></tr>
+            <tr><td><code>double getSupplyVoltage()</code></td><td>Bus volts.</td></tr>
+            <tr><td><code>double getDeviceTemp()</code></td><td>Board temperature, °C.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="leds">LEDs and identify</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>void setLEDs(int r, int g, int b)</code></td><td>All five user lights, channels 0–255.</td></tr>
+            <tr><td><code>void setLEDs(int r, int g, int b, LedAnimation a)</code></td><td>All five with an animation.</td></tr>
+            <tr><td><code>void setLED(int index, int r, int g, int b)</code></td><td>One user light, index 1–5.</td></tr>
+            <tr><td><code>void clearLEDs()</code></td><td>Turn the user lights off.</td></tr>
+            <tr><td><code>void identify()</code></td><td>Flash the status lights white to locate the motor.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <nav class="pager">
+        <a class="prev" href="code-features.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Feature guide</span></a>
+        <a class="next" href="swyft-link.html"><span class="pg-label">Next</span><span>Install &amp; connect <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#construct">Construction</a>
+    <a href="#output">Output</a>
+    <a href="#config">Configuration</a>
+    <a href="#faults">Faults and e-stop</a>
+    <a href="#telemetry">Telemetry</a>
+    <a href="#leds">LEDs and identify</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=20"></script>
+<script src="js/docs.js?v=21"></script>
 </body>
 </html>

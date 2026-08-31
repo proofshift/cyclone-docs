@@ -3,21 +3,69 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Faults &amp; errors — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=20">
+  <title>Faults & errors — SWYFT Cyclone</title>
+  <link rel="stylesheet" href="css/docs.css?v=21">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="faults.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; Troubleshooting &rsaquo; Faults &amp; errors</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Troubleshooting › Faults &amp; errors</div>
       <h1>Faults &amp; errors</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">A hard fault latches and cuts output. A warning stays live and does not.</p>
+
+      <p>The Cyclone reports two kinds of condition. A <strong>hard fault</strong> latches, de-energises the bridge, and holds the motor off until the cause clears and you clear the fault. A <strong>warning</strong> flags a condition without stopping the motor. The end lights show a latched fault as red and orange alternating. <a href="status-lights.html">Status lights</a></p>
+
+      <h2 id="hard">Hard faults</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fault</th><th>Condition</th></tr></thead>
+          <tbody>
+            <tr><td>Under-voltage</td><td>Bus below the lockout. The motor will not arm.</td></tr>
+            <tr><td>Over-voltage</td><td>Bus above the trip. Output is cut.</td></tr>
+            <tr><td>Over-temperature</td><td>Board temperature reached the trip. Output is cut.</td></tr>
+            <tr><td>Encoder</td><td>Shaft angle became untrustworthy while driving.</td></tr>
+            <tr><td>Gate driver</td><td>The gate driver reported its own fault.</td></tr>
+            <tr><td>Over-current</td><td>Current exceeded the firmware limit.</td></tr>
+            <tr><td>Communication</td><td>The command or heartbeat link went silent past its watchdog.</td></tr>
+            <tr><td>Over-speed</td><td>The rotor ran past its ceiling.</td></tr>
+            <tr><td>Bus sag</td><td>The bus collapsed under load.</td></tr>
+            <tr><td>Stall</td><td>The velocity loop could not move the shaft.</td></tr>
+            <tr><td>E-stop</td><td>A pit or host kill latched the motor off.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="warn">Warnings</h2>
+      <p>Warnings do not stop the motor. They report that a hard fault is near, or that something upstream is degraded: temperature approaching the trip, the bus below the lockout right now (as on USB-C with no battery), CAN traffic dropping, or the enable heartbeat gone stale.</p>
+
+      <h2 id="clear">Clearing a fault</h2>
+      <ol>
+        <li>Read the active fault in <a href="swyft-link.html">SWYFT&nbsp;Link</a>, on the <strong>Health</strong> page.</li>
+        <li>Fix the cause — cool the motor, restore the bus, fix the wiring.</li>
+        <li>Clear the fault. From robot code, <code>clearFaults()</code>; it is refused while the cause is still present.</li>
+      </ol>
+      <p>An e-stop is separate: it holds the motor off and refuses to re-arm until you release it (<code>releaseEstop()</code>), then clear any remaining fault. <a href="code-features.html">Feature guide</a></p>
+      <div class="callout warning">
+        <span class="label">Warning</span>
+        <p>An e-stop and most faults coast the output. A load held only by motor torque will drop. Support it before you test an e-stop or clear a fault.</p>
+      </div>
+
+      <nav class="pager">
+        <a class="prev" href="troubleshooting.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Troubleshooting</span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#hard">Hard faults</a>
+    <a href="#warn">Warnings</a>
+    <a href="#clear">Clearing a fault</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=20"></script>
+<script src="js/docs.js?v=21"></script>
 </body>
 </html>

@@ -3,21 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Firmware &amp; DFU — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=20">
+  <title>Firmware & DFU — SWYFT Cyclone</title>
+  <link rel="stylesheet" href="css/docs.css?v=21">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="dfu.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; SWYFT Link &rsaquo; Firmware &amp; DFU</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › SWYFT Link › Firmware &amp; DFU</div>
       <h1>Firmware &amp; DFU</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">Update firmware over USB-C, and recover a motor that will not enumerate.</p>
+
+      <h2 id="update">Update firmware</h2>
+      <p>Connect the motor over USB-C and open the <strong>Firmware</strong> page in <a href="swyft-link.html">SWYFT&nbsp;Link</a>. It shows the installed version and flashes an update. The status lights go solid white during the transfer, then the motor reboots.</p>
+      <div class="callout">
+        <span class="label">Note</span>
+        <p>Do not remove power or unplug USB-C while the lights are solid white. If a flash is interrupted and the motor will not enumerate afterward, use DFU recovery below.</p>
+      </div>
+
+      <h2 id="dfu">DFU recovery</h2>
+      <p>Use DFU only when a motor will not enumerate — usually after an interrupted flash. It runs over USB-C.</p>
+      <div class="callout warning">
+        <span class="label">Warning</span>
+        <p>Disconnect the battery and every other supply from the power leads first. The power LED beside the DFU pinhole must light from USB alone before you release the button.</p>
+      </div>
+      <ol>
+        <li>Remove all power from the leads — no battery, no PDH, no bench supply.</li>
+        <li>Hold the <strong>DFU</strong> button.</li>
+        <li>While holding, connect USB-C. Wait until the power LED beside the DFU pinhole lights.</li>
+        <li>Release the button.</li>
+        <li>Flash the image from the <strong>Firmware</strong> page.</li>
+        <li>Disconnect USB-C, power the motor normally, and confirm its identity in SWYFT&nbsp;Link.</li>
+      </ol>
+
+      <nav class="pager">
+        <a class="prev" href="swyft-link-using.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Using SWYFT Link</span></a>
+        <a class="next" href="current-limits.html"><span class="pg-label">Next</span><span>How the limits work <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#update">Update firmware</a>
+    <a href="#dfu">DFU recovery</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=20"></script>
+<script src="js/docs.js?v=21"></script>
 </body>
 </html>

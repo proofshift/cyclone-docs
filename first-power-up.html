@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>First power-up — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=20">
+  <link rel="stylesheet" href="css/docs.css?v=21">
 </head>
 <body>
 <div class="layout">
@@ -23,12 +23,12 @@
       </div>
 
       <h2 id="power">Apply power</h2>
-      <p>Energise the bus. The LED beside the DFU pinhole lights when power is present.</p>
+      <p>Energise the bus and watch the status lights under the rear window.</p>
       <ul>
-        <li><strong>That LED and the window are dark:</strong> no power. Recheck the leads and the breaker.</li>
+        <li><strong>The window is dark:</strong> no power. Recheck the leads and the breaker.</li>
         <li><strong>The end lights are red, alternating:</strong> the controller is running but nothing is talking to it. Connect USB-C, or bring up CAN.</li>
       </ul>
-      <p>The full set of light patterns is on <a href="status-lights.html">Status lights</a>.</p>
+      <p>The full set of patterns is on <a href="status-lights.html">Status lights</a>.</p>
 
       <h2 id="configure">Configure first</h2>
       <p>Open <a href="swyft-link.html">SWYFT&nbsp;Link</a> and set these before enabling:</p>
@@ -37,10 +37,6 @@
         <li>The <strong>direction</strong>, if the shaft turns the wrong way. <a href="orientation.html">Orientation</a></li>
         <li>The <strong>stator and supply current limits</strong> for the mechanism. <a href="current-limits.html">Current limits</a></li>
       </ol>
-      <div class="callout">
-        <span class="label">Note</span>
-        <p>If the encoder has not been calibrated on this motor, run calibration from SWYFT&nbsp;Link over USB-C with the shaft free. It turns the shaft to learn the electrical offset and direction, then stores the result on the motor, where it survives a re-flash.</p>
-      </div>
 
       <h2 id="enable">Enable and command it</h2>
       <p>The Cyclone drives on <strong>duty cycle</strong>: a signed fraction of the bus voltage from −1 to +1. Command it every loop — a setpoint older than 100&nbsp;ms coasts the motor.</p>
@@ -88,6 +84,6 @@
     <a href="#trouble">If it does not move</a>
   </aside>
 </div>
-<script src="js/docs.js?v=20"></script>
+<script src="js/docs.js?v=21"></script>
 </body>
 </html>

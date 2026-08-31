@@ -4,20 +4,76 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Status lights — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=20">
+  <link rel="stylesheet" href="css/docs.css?v=21">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="status-lights.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; Status Lights &rsaquo; Status lights</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Status Lights › Status lights</div>
       <h1>Status lights</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">Seven lights: two report the controller, five are yours.</p>
+
+      <p>Under the rear window are seven lights in a row. The two at the ends report controller state and cannot be written by robot code. The five in the middle, numbered 1–5 from left to right, are yours to set. A separate LED beside the DFU pinhole indicates bus power. <a href="wiring.html">Wiring</a></p>
+
+      <div class="figrow">
+        <figure>
+          <img class="zoomable" src="img/status-usb.png" alt="USB side status light">
+          <figcaption>USB side. The end status light is the window next to the screw.</figcaption>
+        </figure>
+        <figure>
+          <img class="zoomable" src="img/status-can.png" alt="CAN side status light">
+          <figcaption>CAN side. The other end status light is next to the screw.</figcaption>
+        </figure>
+      </div>
+
+      <h2 id="patterns">What the end lights mean</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Pattern</th><th>Meaning</th><th>What to do</th></tr></thead>
+          <tbody>
+            <tr><td>Dark</td><td>No power.</td><td>Check the leads, the breaker, and the DFU-side power LED.</td></tr>
+            <tr><td>Red, alternating</td><td>Powered, but nothing is talking to it.</td><td>Connect USB-C, or bring up CAN and check termination.</td></tr>
+            <tr><td>Orange, alternating</td><td>On the bus, but no robot program is addressing it.</td><td>Deploy code, or confirm this device number is constructed.</td></tr>
+            <tr><td>Orange, together</td><td>Program present, robot disabled.</td><td>Enable in the Driver Station.</td></tr>
+            <tr><td>Orange, solid</td><td>Enabled, output at rest.</td><td>Command the motor.</td></tr>
+            <tr><td>Green, solid</td><td>Driving forward.</td><td>—</td></tr>
+            <tr><td>Red, solid</td><td>Driving in reverse.</td><td>—</td></tr>
+            <tr><td>Orange, brief offset flashes</td><td>Over-temperature. Output is cut.</td><td>Let it cool. Lower the stator limit; clear the jam.</td></tr>
+            <tr><td>Red and orange, alternating</td><td>A fault has latched. The motor will not drive.</td><td>Read the fault in SWYFT Link, clear the cause, then clear it. <a href="faults.html">Faults</a></td></tr>
+            <tr><td>Blue, flashing together</td><td>Two devices share this number.</td><td>Give one a different number (1–62).</td></tr>
+            <tr><td>White, flashing</td><td>Identify — you asked this motor to show itself.</td><td>None. It stops after a couple of seconds.</td></tr>
+            <tr><td>White, solid</td><td>Firmware is being written.</td><td>Wait. If it never clears, recover with <a href="dfu.html">DFU</a>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="user">Your five lights</h2>
+      <p>Set the middle five from robot code, from SWYFT&nbsp;Link, or from the console. Send colour channels 0–255; the motor caps the brightest channel and scales the rest, so pure white and a dim tint both read cleanly. Colour holds until power is lost, then comes up dark until set again. Setting all five to black hands them back to the controller, which is not the same as off — <code>clearLEDs()</code> is the off path. <a href="code-features.html">Feature guide</a></p>
+      <div class="callout warning">
+        <span class="label">Warning</span>
+        <p>A latched fault always paints the two end lights, and your five cannot override it. Do not rely on the middle five as a driver’s only signal.</p>
+      </div>
+
+      <h2 id="anim">Animations</h2>
+      <p>Instead of a solid colour you can run one animation across the five: <strong>Static</strong>, <strong>ChaseForward</strong>, <strong>ChaseReverse</strong>, <strong>Breathe</strong>, or <strong>Rainbow</strong>. Colour and animation are exclusive — setting a colour stops an animation.</p>
+
+      <nav class="pager">
+        <a class="prev" href="power-thermal.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Power &amp; thermal budget</span></a>
+        <a class="next" href="troubleshooting.html"><span class="pg-label">Next</span><span>Troubleshooting <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#patterns">End lights</a>
+    <a href="#user">Your five lights</a>
+    <a href="#anim">Animations</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=20"></script>
+<script src="js/docs.js?v=21"></script>
 </body>
 </html>

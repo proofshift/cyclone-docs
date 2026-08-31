@@ -4,20 +4,61 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Using SWYFT Link — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=20">
+  <link rel="stylesheet" href="css/docs.css?v=21">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="swyft-link-using.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; SWYFT Link &rsaquo; Using SWYFT Link</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › SWYFT Link › Using SWYFT Link</div>
       <h1>Using SWYFT Link</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">Four pages: Control, Config, Health, and Firmware.</p>
+
+      <div class="callout warning">
+        <span class="label">Warning</span>
+        <p>Output requires an explicit <strong>Enable</strong>. Pressing <kbd>Space</kbd>, hiding the tab, or closing the page stops every motor SWYFT&nbsp;Link is driving.</p>
+      </div>
+
+      <h2 id="control">Control</h2>
+      <p>Enable, then command the motor and watch it on the live graph. Duty cycle is the mode the motor runs today; current, velocity, and position appear here but do not drive yet. <a href="first-power-up.html">First power-up</a></p>
+      <ul>
+        <li><strong>Identify</strong> flashes the status lights white so you can tell two motors apart.</li>
+        <li>Re-enabling starts from zero, not the last setpoint.</li>
+      </ul>
+
+      <h2 id="config">Config</h2>
+      <p>Set what the motor keeps:</p>
+      <ul>
+        <li><strong>Device number (CAN ID)</strong> — staged until you save; the motor reboots onto the new number.</li>
+        <li><strong>Direction</strong> — which way positive turns, at the output face. <a href="orientation.html">Orientation</a></li>
+        <li><strong>Current limits</strong> — stator and supply for the mechanism. <a href="current-limits.html">Current limits</a></li>
+        <li><strong>Thermal</strong> — the temperature warning; the trip is 85&nbsp;°C.</li>
+      </ul>
+      <p><strong>Apply</strong> changes the running motor; <strong>Save to flash</strong> keeps the change across power. Config is locked while the output is enabled — disable first.</p>
+
+      <h2 id="health">Health</h2>
+      <p>Read active and sticky faults and clear them once the cause is gone. Watch the live gauges — temperature, current, bus voltage, speed — when the motor is hot or the bus is sagging. <a href="faults.html">Faults</a></p>
+
+      <h2 id="firmware">Firmware</h2>
+      <p>The Firmware page shows the installed version and flashes updates over USB-C. The status lights go solid white during the transfer, then the motor reboots. If it will not enumerate, recover with <a href="dfu.html">DFU</a>.</p>
+
+      <nav class="pager">
+        <a class="prev" href="swyft-link.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Install &amp; connect</span></a>
+        <a class="next" href="dfu.html"><span class="pg-label">Next</span><span>Firmware &amp; DFU <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#control">Control</a>
+    <a href="#config">Config</a>
+    <a href="#health">Health</a>
+    <a href="#firmware">Firmware</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=20"></script>
+<script src="js/docs.js?v=21"></script>
 </body>
 </html>

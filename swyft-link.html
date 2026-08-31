@@ -3,21 +3,62 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Install &amp; connect — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=20">
+  <title>Install & connect — SWYFT Cyclone</title>
+  <link rel="stylesheet" href="css/docs.css?v=21">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="swyft-link.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; SWYFT Link &rsaquo; Install</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › SWYFT Link › Install &amp; connect</div>
       <h1>Install &amp; connect</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">Configure and tune a Cyclone from a browser over USB-C, or on the SystemCore over CAN.</p>
+
+      <p><strong>SWYFT&nbsp;Link</strong> is the tool for setting up Cyclones. In a browser it drives one motor over USB-C. On the 2027 SystemCore it reaches every Cyclone on the CAN bus. Both give the same pages: <a href="swyft-link-using.html">Control, Config, Health, and Firmware</a>.</p>
+
+      <h2 id="usb">Connect over USB-C</h2>
+      <ol>
+        <li>Plug a Cyclone into your laptop with USB-C.</li>
+        <li>Open SWYFT&nbsp;Link in a supported browser. It detects the motor on its own — there is no connect step.</li>
+        <li>The motor’s power leads must be energised (6–24&nbsp;V) for it to spin; USB-C alone does not power the windings.</li>
+      </ol>
+
+      <h2 id="systemcore">Install on the SystemCore</h2>
+      <p>Download the package: <a href="files/SWYFT%20Link%202026.08.29.ipk" download="SWYFT Link 2026.08.29.ipk">SWYFT Link 2026.08.29.ipk</a></p>
+      <ol>
+        <li>Open the SystemCore home page in a browser and select <strong>Add package</strong>.
+          <figure><img class="zoomable" src="img/install-add-package.png" alt="SystemCore home page, Add Package"></figure>
+        </li>
+        <li>Drop the <code>.ipk</code> onto the box, or select it from a folder. It installs on its own.
+          <figure><img class="zoomable" src="img/install-drop-ipk.png" alt="Install package, drop target"></figure>
+          <figure><img class="zoomable" src="img/install-success.png" alt="Installation successful"></figure>
+        </li>
+        <li>Open the <strong>SWYFT&nbsp;Link</strong> tile from the home page.
+          <figure><img class="zoomable" src="img/install-open-tile.png" alt="SystemCore home page, SWYFT Link tile"></figure>
+        </li>
+        <li>Cyclones on the CAN bus appear in the device list.</li>
+      </ol>
+
+      <div class="callout">
+        <span class="label">Note</span>
+        <p>Anything you can do over USB-C you can do over CAN, and the reverse — the two are equal control paths. Firmware recovery (DFU) is the exception: it runs over USB-C. <a href="dfu.html">Firmware &amp; DFU</a></p>
+      </div>
+
+      <nav class="pager">
+        <a class="prev" href="code-api.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> API reference</span></a>
+        <a class="next" href="swyft-link-using.html"><span class="pg-label">Next</span><span>Using SWYFT Link <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#usb">Connect over USB-C</a>
+    <a href="#systemcore">Install on the SystemCore</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=20"></script>
+<script src="js/docs.js?v=21"></script>
 </body>
 </html>

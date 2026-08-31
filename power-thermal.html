@@ -3,21 +3,53 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Power &amp; thermal budget — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=20">
+  <title>Power & thermal budget — SWYFT Cyclone</title>
+  <link rel="stylesheet" href="css/docs.css?v=21">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="power-thermal.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; Safety &amp; Current Limits &rsaquo; Power &amp; thermal budget</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Safety &amp; Current Limits › Power &amp; thermal budget</div>
       <h1>Power &amp; thermal budget</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">Divide the battery across mechanisms, and keep each motor out of the fold.</p>
+
+      <h2 id="divide">Dividing power</h2>
+      <p>Every motor draws from one battery through the power distribution hub. The <strong>supply</strong> limit is how you divide that current: it caps what each Cyclone pulls from the bus, independent of the torque it makes. Sum the supply limits you expect to be active at once and keep the total within what the battery and main breaker can deliver — a motor at rest draws almost nothing, so the budget is set by simultaneous demand, not by the count of motors.</p>
+      <ul>
+        <li>Give the drivetrain the largest share; it is the mechanism most often at full draw.</li>
+        <li>Cap superstructure mechanisms (elevator, arm, intake) at what they need, so a stall on one does not starve the drive.</li>
+        <li>Keep each Cyclone’s supply limit at or below its branch breaker.</li>
+      </ul>
+
+      <h2 id="thermal">The thermal budget</h2>
+      <p>Torque costs heat. The controller tracks a current-squared-time (i²t) budget: brief high current has little effect, while sustained high current fills it. Once the budget crosses its threshold the controller <strong>folds</strong> — it reduces the current limit in proportion, so a mechanism held hard for too long quietly loses torque before it reaches the 85&nbsp;°C trip.</p>
+      <p>A fold is a sign the mechanism is asking for more current than it can sustain. The fix is upstream of the limit: gear the mechanism so it does the job at lower current, or lower the stator limit so it never demands more than it can hold.</p>
+
+      <h2 id="extend">Extending usable output</h2>
+      <ul>
+        <li><strong>Gear for the load.</strong> A mechanism that finishes its move at a lower current runs cooler and holds output longer.</li>
+        <li><strong>Do not hold at stall.</strong> Holding a load with motor torque fills the thermal budget fastest. Use a mechanical brake or a holding-current mechanism where possible.</li>
+        <li><strong>Give it air.</strong> Do not seal the rear cover against a plate with no airflow. <a href="mounting.html">Mounting</a></li>
+        <li><strong>Watch the health gauges</strong> in <a href="swyft-link.html">SWYFT&nbsp;Link</a> during practice — temperature climbing toward the warning means the limit is set too high for the duty cycle.</li>
+      </ul>
+
+      <nav class="pager">
+        <a class="prev" href="limits-by-mechanism.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Limits by mechanism</span></a>
+        <a class="next" href="status-lights.html"><span class="pg-label">Next</span><span>Status lights <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#divide">Dividing power</a>
+    <a href="#thermal">The thermal budget</a>
+    <a href="#extend">Extending usable output</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=20"></script>
+<script src="js/docs.js?v=21"></script>
 </body>
 </html>

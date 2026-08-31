@@ -4,20 +4,56 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Limits by mechanism — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=20">
+  <link rel="stylesheet" href="css/docs.css?v=21">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="limits-by-mechanism.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; Safety &amp; Current Limits &rsaquo; Limits by mechanism</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Safety &amp; Current Limits › Limits by mechanism</div>
       <h1>Limits by mechanism</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">Starting points to tune from, not final values.</p>
+
+      <p>Read <a href="current-limits.html">How the limits work</a> first. The values below are conservative starting points for common FRC mechanisms. Set them, run a practice match, then adjust: raise the stator limit only if a move cannot finish and the motor is not hot; keep the supply limit at or below the branch breaker.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Mechanism</th><th>Stator (start)</th><th>Supply (start)</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Drivetrain / traction</td><td>80 A</td><td>Breaker rating</td><td>Wants torque, but is limited by traction and the breaker.</td></tr>
+            <tr><td>Swerve azimuth (steering)</td><td>40 A</td><td>40 A</td><td>Light, fast moves; rarely needs high torque.</td></tr>
+            <tr><td>Elevator / arm</td><td>60 A</td><td>40 A</td><td>Enough to lift the load; hold with a limit or a brake.</td></tr>
+            <tr><td>Intake / feeder</td><td>40 A</td><td>30 A</td><td>Low continuous draw; protect against a jam.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="tune">Tuning from the start point</h2>
+      <ul>
+        <li><strong>The move is sluggish or stalls short.</strong> Raise the stator limit in small steps until it completes, then stop.</li>
+        <li><strong>The motor gets hot or folds.</strong> The mechanism is drawing more than it needs — lower the stator limit, or gear the mechanism down. <a href="power-thermal.html">Power &amp; thermal budget</a></li>
+        <li><strong>The breaker trips.</strong> Lower the supply limit below the breaker rating.</li>
+      </ul>
+
+      <div class="callout warning">
+        <span class="label">Warning</span>
+        <p>A mechanism that can jam (intake, roller, arm against a hard stop) needs a stator limit low enough that a stalled motor does not cook itself before you notice. Do not leave it at the ceiling.</p>
+      </div>
+
+      <nav class="pager">
+        <a class="prev" href="current-limits.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> How the limits work</span></a>
+        <a class="next" href="power-thermal.html"><span class="pg-label">Next</span><span>Power &amp; thermal budget <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#tune">Tuning from the start point</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=20"></script>
+<script src="js/docs.js?v=21"></script>
 </body>
 </html>

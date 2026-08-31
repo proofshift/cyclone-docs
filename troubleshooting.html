@@ -4,20 +4,72 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Troubleshooting — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=20">
+  <link rel="stylesheet" href="css/docs.css?v=21">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="troubleshooting.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; Troubleshooting &rsaquo; Troubleshooting</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Troubleshooting › Troubleshooting</div>
       <h1>Troubleshooting</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">Start at the status lights — they name the problem before the code does.</p>
+
+      <p>Read the two end lights first (<a href="status-lights.html">Status lights</a>), then match the symptom below.</p>
+
+      <h2 id="nomove">The motor will not move</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Window and DFU LED dark</td><td>No power</td><td>Check the leads, polarity, and the breaker.</td></tr>
+            <tr><td>End lights red, alternating</td><td>Nothing is talking to it</td><td>Seat USB-C, or fix CAN wiring and add trunk terminators.</td></tr>
+            <tr><td>End lights orange, alternating</td><td>On the bus, no program addressing it</td><td>Deploy code; confirm the device number is constructed in code.</td></tr>
+            <tr><td>End lights orange, together</td><td>Robot disabled</td><td>Enable in the Driver Station.</td></tr>
+            <tr><td>Orange solid, no motion</td><td>No command, or a stale command</td><td>Command duty every loop; a setpoint older than 100&nbsp;ms coasts.</td></tr>
+            <tr><td>Blue, flashing together</td><td>Duplicate device number</td><td>Give one motor a different number (1–62).</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="behaviour">It moves, but wrong</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td>Turns the wrong way</td><td>Direction not set</td><td>Invert in SWYFT&nbsp;Link, not in code. <a href="orientation.html">Orientation</a></td></tr>
+            <tr><td>Weak or stalls short</td><td>Stator limit too low</td><td>Raise the stator limit in small steps. <a href="current-limits.html">Current limits</a></td></tr>
+            <tr><td>Loses torque under load</td><td>Thermal fold</td><td>Gear down or lower the limit so it does not overheat. <a href="power-thermal.html">Power &amp; thermal budget</a></td></tr>
+            <tr><td>Breaker trips</td><td>Supply draw above the breaker</td><td>Lower the supply limit below the breaker rating.</td></tr>
+            <tr><td>Closed-loop mode does nothing</td><td>Current / velocity / position are under construction</td><td>Use duty cycle. <a href="first-power-up.html">First power-up</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="comms">USB-C or CAN will not connect</h2>
+      <ul>
+        <li><strong>USB-C not detected:</strong> try a data-capable cable and a different port. The motor enumerates as a serial device with no driver — nothing to install.</li>
+        <li><strong>CAN device missing:</strong> confirm H/L are not swapped, the trunk is terminated at both ends, and the device number is unique and in range (1–62).</li>
+        <li><strong>Will not enumerate after a flash:</strong> recover with <a href="dfu.html">DFU</a>.</li>
+      </ul>
+
+      <p>For a latched fault (red and orange alternating), see <a href="faults.html">Faults &amp; errors</a>.</p>
+
+      <nav class="pager">
+        <a class="prev" href="status-lights.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Status lights</span></a>
+        <a class="next" href="faults.html"><span class="pg-label">Next</span><span>Faults &amp; errors <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#nomove">The motor will not move</a>
+    <a href="#behaviour">It moves, but wrong</a>
+    <a href="#comms">USB-C or CAN will not connect</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=20"></script>
+<script src="js/docs.js?v=21"></script>
 </body>
 </html>

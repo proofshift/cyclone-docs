@@ -76,6 +76,13 @@ a:hover { text-decoration: underline; }
   flex-direction: column;
 }
 .nav-scroll { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; margin: 0 -6px; padding: 4px 6px 0; }
+
+/* thin, subtle scrollbars */
+.nav-scroll, .toc, .search-results { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+.nav-scroll::-webkit-scrollbar, .toc::-webkit-scrollbar, .search-results::-webkit-scrollbar { width: 7px; height: 7px; }
+.nav-scroll::-webkit-scrollbar-track, .toc::-webkit-scrollbar-track, .search-results::-webkit-scrollbar-track { background: transparent; }
+.nav-scroll::-webkit-scrollbar-thumb, .toc::-webkit-scrollbar-thumb, .search-results::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+.nav-scroll:hover::-webkit-scrollbar-thumb, .toc:hover::-webkit-scrollbar-thumb { background: #4d545c; }
 .side-help { flex: 0 0 auto; margin-top: 10px; padding-top: 14px; border-top: 1px solid var(--border); }
 .help {
   display: flex;
@@ -186,9 +193,9 @@ tbody tr:nth-child(odd) td { background: var(--row-alt); }
 tbody tr:nth-child(even) td { background: transparent; }
 
 /* ---- figures ---- */
-figure { margin: 1.5rem auto; max-width: 80%; }
+figure { margin: 1.5rem auto; max-width: 520px; }
 figure img { display: block; width: 100%; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; }
-.figrow { display: flex; gap: 16px; margin: 1.5rem auto; max-width: 86%; }
+.figrow { display: flex; gap: 16px; margin: 1.5rem auto; max-width: 680px; }
 .figrow figure { flex: 1 1 0; margin: 0; max-width: none; }
 @media (max-width: 720px) { .figrow { flex-direction: column; } }
 figcaption { color: var(--text-muted); font-size: 14px; margin-top: 8px; }
@@ -262,6 +269,12 @@ figcaption { color: var(--text-muted); font-size: 14px; margin-top: 8px; }
   border: 0;
   border-radius: 0;
 }
+
+/* ---- code blocks ---- */
+.code-panel { margin: 1.3rem 0 1.6rem; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: #0f1113; }
+.code-bar { padding: 8px 14px; font-size: 12.5px; font-weight: 500; color: var(--text-muted); background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+.code-panel pre { margin: 0; padding: 14px 16px; overflow-x: auto; }
+.code-panel code { background: none; border: 0; padding: 0; font-size: 13.5px; line-height: 1.6; color: #cdd6e0; }
 
 /* ---- callouts ---- */
 .callout { margin: 1.5rem 0; padding: 0.8rem 1.05rem 0.85rem; border-left: 3px solid var(--note); background: var(--note-bg); border-radius: 0 var(--radius) var(--radius) 0; }

@@ -4,20 +4,108 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Feature guide — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=20">
+  <link rel="stylesheet" href="css/docs.css?v=21">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="code-features.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; Robot Code &rsaquo; Feature guide</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › Feature guide</div>
       <h1>Feature guide</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">Each feature, what it does, and how to call it. Full signatures on the <a href="code-api.html">API reference</a>.</p>
+
+      <h2 id="output">Output</h2>
+      <p>Command duty every loop; sign is direction. Duty is a fraction of the bus, not of free speed — <code>0.5</code> is half the bus voltage, and a value past the range clamps to full output. The stator limit does not govern duty.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Method</th><th>Units</th><th>Runs</th></tr></thead>
+          <tbody>
+            <tr><td><code>set(d)</code> / <code>setDutyCycle(d)</code></td><td>−1 to 1, fraction of bus</td><td>Yes</td></tr>
+            <tr><td><code>setCurrent(a)</code></td><td>amperes, signed</td><td><span class="uc-tag">Under construction</span></td></tr>
+            <tr><td><code>setVelocity(rpm)</code></td><td>mechanical RPM, signed</td><td><span class="uc-tag">Under construction</span></td></tr>
+            <tr><td><code>setPosition(rad)</code></td><td>rotor radians, signed</td><td><span class="uc-tag">Under construction</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="stop">Stop and e-stop</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Method</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td><code>disable()</code></td><td>Coasts and drops the setpoint.</td></tr>
+            <tr><td><code>estop()</code></td><td>Latching kill. Coasts and refuses re-arm until released.</td></tr>
+            <tr><td><code>releaseEstop()</code></td><td>Clears the e-stop latch.</td></tr>
+            <tr><td><code>clearFaults()</code></td><td>Refused while the cause is present or e-stop is latched.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="limits">Current limits</h2>
+      <p><code>setTeamLimits(warnC, tripC, statorA)</code> writes the temperature warning, the temperature trip, and the stator limit together; <code>setStatorCurrentLimit(a)</code> writes the stator limit alone. Ranges: warning 40–80&nbsp;°C, trip up to 80&nbsp;°C, stator 1–160&nbsp;A. Set the supply limit in SWYFT&nbsp;Link. <a href="current-limits.html">How the limits work</a></p>
+
+      <h2 id="neutral">Neutral mode</h2>
+      <p>The Cyclone coasts when uncommanded. <code>setNeutralMode(NeutralMode.COAST)</code> succeeds; <code>BRAKE</code> throws, and <code>isBrakeModeSupported()</code> is <code>false</code>. Design for coast — holding current, or a mechanical brake on an elevator.</p>
+
+      <h2 id="telemetry">Telemetry</h2>
+      <p><code>getLatest()</code> returns a coherent snapshot; the same values are on individual getters. <code>isAlive(0.1)</code> is <code>false</code> when no frame has arrived in 100&nbsp;ms — otherwise an unplugged motor reads like a stopped one.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Getter</th><th>Returns</th></tr></thead>
+          <tbody>
+            <tr><td><code>getVelocityRpm()</code></td><td>mechanical RPM</td></tr>
+            <tr><td><code>getSupplyCurrent()</code></td><td>bus amperes</td></tr>
+            <tr><td><code>getSupplyVoltage()</code></td><td>bus volts</td></tr>
+            <tr><td><code>getDeviceTemp()</code></td><td>board °C</td></tr>
+            <tr><td><code>hasHardFault()</code></td><td>true while a hard fault is latched</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="leds">LEDs</h2>
+      <p>User lights are 1–5, left to right; the status lights cannot be set. Channels are 0–255; the motor caps the brightest channel and scales the rest. Setting all five to black hands them back to the controller — <code>clearLEDs()</code> is the off path. <a href="status-lights.html">Status lights</a></p>
+      <div class="code-panel">
+        <div class="code-bar">Java</div>
+        <pre><code>import com.swyftrobotics.cyclone.v4.LedAnimation;
+
+motor.setLEDs(0, 120, 255);                            // all five
+motor.setLED(3, 255, 0, 0);                            // centre light
+motor.setLEDs(255, 40, 0, LedAnimation.ChaseForward);  // one animation
+motor.clearLEDs();                                     // off</code></pre>
+      </div>
+
+      <h2 id="other">Identify, calibrate, save</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Method</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td><code>identify()</code></td><td>Flashes the status lights white to locate the motor.</td></tr>
+            <tr><td><code>saveConfiguration()</code></td><td>Persists device config across power loss.</td></tr>
+            <tr><td><code>calibrate()</code> <span class="uc-tag">Under construction</span></td><td>Encoder calibration runs from SWYFT Link over USB-C; the robot-code call is not accepted over CAN.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <nav class="pager">
+        <a class="prev" href="code.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Setup &amp; install</span></a>
+        <a class="next" href="code-api.html"><span class="pg-label">Next</span><span>API reference <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#output">Output</a>
+    <a href="#stop">Stop and e-stop</a>
+    <a href="#limits">Current limits</a>
+    <a href="#neutral">Neutral mode</a>
+    <a href="#telemetry">Telemetry</a>
+    <a href="#leds">LEDs</a>
+    <a href="#other">Identify, calibrate, save</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=20"></script>
+<script src="js/docs.js?v=21"></script>
 </body>
 </html>

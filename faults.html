@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Faults & errors — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=25">
+  <link rel="stylesheet" href="css/docs.css?v=26">
 </head>
 <body>
 <div class="layout">
@@ -21,19 +21,19 @@
       <h2 id="hard">Hard faults</h2>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Fault</th><th>Condition</th></tr></thead>
+          <thead><tr><th>Fault</th><th>Condition</th><th>Possible fix</th></tr></thead>
           <tbody>
-            <tr><td>Under-voltage</td><td>Bus below the lockout. The motor will not arm.</td></tr>
-            <tr><td>Over-voltage</td><td>Bus above the trip. Output is cut.</td></tr>
-            <tr><td>Over-temperature</td><td>Board temperature reached the trip. Output is cut.</td></tr>
-            <tr><td>Encoder</td><td>Shaft angle became untrustworthy while driving.</td></tr>
-            <tr><td>Gate driver</td><td>The gate driver reported its own fault.</td></tr>
-            <tr><td>Over-current</td><td>Current exceeded the firmware limit.</td></tr>
-            <tr><td>Communication</td><td>The command or heartbeat link went silent past its watchdog.</td></tr>
-            <tr><td>Over-speed</td><td>The rotor ran past its ceiling.</td></tr>
-            <tr><td>Bus sag</td><td>The bus collapsed under load.</td></tr>
-            <tr><td>Stall</td><td>The velocity loop could not move the shaft.</td></tr>
-            <tr><td>E-stop</td><td>A pit or host kill latched the motor off.</td></tr>
+            <tr><td>Under-voltage</td><td>Bus below the lockout. The motor will not arm.</td><td>Charge or swap the battery; check the breaker and lead connections. USB-C alone does not power the windings.</td></tr>
+            <tr><td>Over-voltage</td><td>Bus above the trip. Output is cut.</td><td>Keep the bus within 6–24&nbsp;V; check the battery count and that nothing drives it above 24&nbsp;V.</td></tr>
+            <tr><td>Over-temperature</td><td>Board temperature reached the trip. Output is cut.</td><td>Let it cool, then lower the current limit or gear down so it stays out of the <a href="power-thermal.html">thermal fold</a>.</td></tr>
+            <tr><td>Encoder</td><td>Shaft angle became untrustworthy while driving.</td><td>Power-cycle the motor. If it repeats, the motor needs service — <a href="mailto:support@swyftrobotics.com">contact support</a>.</td></tr>
+            <tr><td>Gate driver</td><td>The power stage reported its own fault.</td><td>Power-cycle the motor. If it repeats, take it out of service and <a href="mailto:support@swyftrobotics.com">contact support</a>.</td></tr>
+            <tr><td>Over-current</td><td>Current exceeded the firmware limit.</td><td>Clear any mechanical jam. Lower the load, or raise the <a href="current-limits.html">stator limit</a> if the motor is not hot.</td></tr>
+            <tr><td>Communication</td><td>The command or heartbeat link went silent past its watchdog.</td><td>Check CAN wiring and terminators, or the USB-C cable; confirm the robot program is running and enabled.</td></tr>
+            <tr><td>Over-speed</td><td>The rotor ran past its ceiling.</td><td>Command a lower speed; check the gearing and that the mechanism is not back-driving the motor.</td></tr>
+            <tr><td>Bus sag</td><td>The bus collapsed under load.</td><td>Check battery health and the main connections; lower the <a href="current-limits.html">supply limit</a>; use adequate-gauge leads.</td></tr>
+            <tr><td>Stall</td><td>The velocity loop could not move the shaft.</td><td>Clear the jam. Raise the <a href="current-limits.html">stator limit</a> if the motor is not hot, or gear down for more torque.</td></tr>
+            <tr><td>E-stop</td><td>A pit or host kill latched the motor off.</td><td>Release the e-stop (<code>releaseEstop()</code>), then clear any remaining fault.</td></tr>
           </tbody>
         </table>
       </div>
@@ -66,6 +66,6 @@
     <a href="#clear">Clearing a fault</a>
   </aside>
 </div>
-<script src="js/docs.js?v=25"></script>
+<script src="js/docs.js?v=26"></script>
 </body>
 </html>

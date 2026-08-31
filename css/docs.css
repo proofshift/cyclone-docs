@@ -11,7 +11,7 @@
 
 :root {
   --content-width: 46em;
-  --sidebar-width: 17em;
+  --sidebar-width: 18em;
   --toc-width: 15em;
   --radius: 0.4rem;
 
@@ -25,8 +25,10 @@
   --text-muted: #767b83;
   --border: #e9eaee;
   --border-strong: #d5d8dd;
-  --accent: #2f5bea;
-  --accent-quiet: rgba(47, 91, 234, 0.09);
+  --accent: #2aa4e0;
+  --accent-quiet: rgba(42, 164, 224, 0.12);
+  --wm-sub: #1a1c1f;
+  --nav-active: #e9edf2;
 
   --note: #2f6feb;
   --note-bg: rgba(47, 111, 235, 0.07);
@@ -44,8 +46,10 @@
   --text-muted: #7b818a;
   --border: #2a2e33;
   --border-strong: #3a3f45;
-  --accent: #6fa1ff;
-  --accent-quiet: rgba(111, 161, 255, 0.13);
+  --accent: #4db8ea;
+  --accent-quiet: rgba(77, 184, 234, 0.15);
+  --wm-sub: #ffffff;
+  --nav-active: rgba(255, 255, 255, 0.12);
 
   --note: #6fa1ff;
   --note-bg: rgba(111, 161, 255, 0.10);
@@ -84,6 +88,7 @@ a:hover { text-decoration: underline; }
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 30px 10px 40px 26px;
   border-right: 1px solid var(--border);
 }
@@ -93,18 +98,18 @@ a:hover { text-decoration: underline; }
 .wordmark .swyft {
   display: block;
   font-family: "Ethnocentric", var(--font-sans);
-  font-size: 42px;
+  font-size: 58px;
   color: var(--accent);
-  letter-spacing: 0.01em;
-  line-height: 1;
+  letter-spacing: 0.005em;
+  line-height: 0.92;
 }
 .wordmark .robotics {
   display: block;
   font-family: "Ethnocentric", var(--font-sans);
-  font-size: 16px;
-  color: var(--text);
-  letter-spacing: 0.12em;
-  margin-top: 7px;
+  font-size: 20px;
+  color: var(--wm-sub);
+  letter-spacing: 0.15em;
+  margin-top: 9px;
 }
 
 /* search: no box; sandwiched between two short floating rules */
@@ -124,15 +129,7 @@ a:hover { text-decoration: underline; }
   font-size: 15px;
   cursor: text;
 }
-.side-search .field kbd {
-  margin-left: auto;
-  font-family: var(--font-sans);
-  font-size: 12px;
-  padding: 1px 6px;
-  border: 1px solid var(--border-strong);
-  border-radius: 4px;
-  color: var(--text-muted);
-}
+.side-search .field svg { flex-shrink: 0; opacity: 0.75; }
 
 .nav-group { margin: 0 0 26px; }
 .nav-eyebrow {
@@ -147,16 +144,15 @@ a:hover { text-decoration: underline; }
   display: block;
   padding: 8px 12px;
   border-radius: var(--radius);
-  color: var(--text-secondary);
+  color: var(--accent);
   font-size: 16.5px;
   line-height: 1.35;
 }
-.nav-group a:hover { background: var(--bg-secondary); color: var(--text); text-decoration: none; }
+.nav-group a:hover { background: var(--nav-active); text-decoration: none; }
 .nav-group a.active {
+  background: var(--nav-active);
   color: var(--accent);
-  background: var(--accent-quiet);
   font-weight: 600;
-  box-shadow: inset 2px 0 0 var(--accent);
 }
 
 .side-footer { margin-top: 8px; padding-left: 8px; }

@@ -14,6 +14,7 @@
   var stored;
   try { stored = localStorage.getItem("theme"); } catch (e) {}
   if (stored) setTheme(stored);
+  else if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) setTheme("dark");
 
   var toggle = document.querySelector(".theme-toggle");
   if (toggle) {

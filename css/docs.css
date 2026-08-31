@@ -9,7 +9,7 @@
 }
 
 :root {
-  --content-width: 56em;
+  --content-width: 72em;
   --sidebar-width: 19em;
   --toc-width: 15em;
   --radius: 0.4rem;
@@ -55,7 +55,7 @@ a:hover { text-decoration: underline; }
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--toc-width);
   align-items: start;
-  max-width: 1600px;
+  max-width: 1780px;
   margin: 0 auto;
 }
 

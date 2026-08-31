@@ -1,12 +1,11 @@
 (function () {
   // ---- shared sidebar ----
   var NAV = [
-    ["Getting Started", [["index.html", "Overview"], ["wiring.html", "Wiring"], ["first-power-up.html", "First power-up"]]],
+    ["Getting Started", [["index.html", "Overview"], ["wiring.html", "Wiring"], ["first-power-up.html", "First power-up"], ["status-lights.html", "Status lights"]]],
     ["Robot Code", [["code.html", "Setup & install"], ["code-config.html", "Configuration"], ["code-control.html", "Control requests"], ["code-closedloop.html", "Closed-loop control"], ["code-telemetry.html", "Status signals"], ["code-api.html", "API reference"]]],
     ["Safety & Current Limits", [["current-limits.html", "How the limits work"], ["limits-by-mechanism.html", "Limits by mechanism"], ["power-thermal.html", "Power & thermal budget"]]],
     ["Hardware Reference", [["specifications.html", "Specifications"], ["mounting.html", "Mounting"], ["orientation.html", "Orientation"]]],
     ["SWYFT Link", [["swyft-link.html", "Install & connect"], ["swyft-link-using.html", "Using SWYFT Link"], ["dfu.html", "Firmware & DFU"]]],
-    ["Status Lights", [["status-lights.html", "Status lights"]]],
     ["Troubleshooting", [["troubleshooting.html", "Troubleshooting"], ["faults.html", "Faults & errors"]]]
   ];
   var side = document.querySelector(".sidebar");
@@ -74,7 +73,7 @@
     { t: "How the limits work", u: "current-limits.html", s: "Safety & Current Limits", k: "stator supply current limit duty" },
     { t: "Limits by mechanism", u: "limits-by-mechanism.html", s: "Safety & Current Limits", k: "drivetrain intake elevator arm swerve recommended" },
     { t: "Power & thermal budget", u: "power-thermal.html", s: "Safety & Current Limits", k: "breaker divide heat budget" },
-    { t: "Status lights", u: "status-lights.html", s: "Status Lights", k: "led colours blink fault red green orange" },
+    { t: "Status lights", u: "status-lights.html", s: "Getting Started", k: "led colours blink fault red green orange" },
     { t: "Troubleshooting", u: "troubleshooting.html", s: "Troubleshooting", k: "problem fix not spinning motor" },
     { t: "Faults & errors", u: "faults.html", s: "Troubleshooting", k: "fault error overtemp undervoltage estop encoder" }
   ];

@@ -68,6 +68,8 @@ a:hover { text-decoration: underline; }
   overflow-x: hidden;
   padding: 30px 16px 40px 22px;
   background: var(--bg-side);
+  /* extend the sidebar background to the left wall without moving content */
+  box-shadow: -100vw 0 0 var(--bg-side);
   border-right: 1px solid var(--border);
   /* vertical divider that floats free of the top and bottom edges */
   border-image: linear-gradient(to bottom,
@@ -81,6 +83,7 @@ a:hover { text-decoration: underline; }
   display: block;
   font-family: "Ethnocentric", var(--font-sans);
   font-size: 50px;
+  font-style: italic;
   color: var(--accent);
   letter-spacing: 0.005em;
   line-height: 0.92;
@@ -89,6 +92,7 @@ a:hover { text-decoration: underline; }
   display: block;
   font-family: "Ethnocentric", var(--font-sans);
   font-size: 19px;
+  font-style: italic;
   color: var(--wm-sub);
   letter-spacing: 0.14em;
   margin-top: 8px;
@@ -125,8 +129,8 @@ a:hover { text-decoration: underline; }
   font-size: 16.5px;
   line-height: 1.35;
 }
-.nav-group a:hover { background: var(--nav-active); text-decoration: none; }
-.nav-group a.active { background: var(--nav-active); color: var(--accent); font-weight: 600; }
+.nav-group a:hover { background: rgba(255, 255, 255, 0.05); text-decoration: none; }
+.nav-group a.active { background: none; color: var(--accent); font-weight: 700; }
 
 /* ---- content ---- */
 .main { min-width: 0; padding: 0 44px; }

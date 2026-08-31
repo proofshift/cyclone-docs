@@ -319,6 +319,35 @@ figcaption { color: var(--text-muted); font-size: 14px; margin-top: 8px; }
 .toc a:hover { color: var(--text); text-decoration: none; }
 .toc a.active { color: var(--accent); border-left-color: var(--accent); font-weight: 500; }
 
+/* ---- animated status-light indicator (tap to play) ---- */
+.led-hint { color: var(--text-muted); font-size: 14px; margin: 0 0 0.6rem; }
+.ledpair { display: inline-flex; gap: 6px; vertical-align: middle; margin-right: 8px; cursor: pointer; }
+.ledpair .led {
+  width: 15px; height: 15px; border-radius: 50%;
+  background: #1a1d20; border: 1px solid #2c3136;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.5); flex-shrink: 0;
+}
+@keyframes led-blink { 0%,46%{ background:var(--c); border-color:var(--cb); } 50%,100%{ background:#1a1d20; border-color:#2c3136; } }
+@keyframes led-flash { 0%,10%{ background:var(--c); border-color:var(--cb); } 14%,100%{ background:#1a1d20; border-color:#2c3136; } }
+@keyframes led-fa { 0%,46%{ background:#e32d24; border-color:#9e1e18; } 50%,100%{ background:#e8891c; border-color:#a05e12; } }
+@keyframes led-fb { 0%,46%{ background:#e8891c; border-color:#a05e12; } 50%,100%{ background:#e32d24; border-color:#9e1e18; } }
+.ledpair.on[data-state="off"] .led { background:#1a1d20; }
+.ledpair.on[data-state="red-alt"] .led { --c:#e32d24; --cb:#9e1e18; animation: led-blink .9s infinite; }
+.ledpair.on[data-state="red-alt"] .led:nth-child(2) { animation-delay:.45s; }
+.ledpair.on[data-state="orange-alt"] .led { --c:#e8891c; --cb:#a05e12; animation: led-blink .9s infinite; }
+.ledpair.on[data-state="orange-alt"] .led:nth-child(2) { animation-delay:.45s; }
+.ledpair.on[data-state="orange-together"] .led { --c:#e8891c; --cb:#a05e12; animation: led-blink 1s infinite; }
+.ledpair.on[data-state="orange-solid"] .led { background:#e8891c; border-color:#a05e12; }
+.ledpair.on[data-state="green-solid"] .led { background:#2bb86a; border-color:#1d7a46; }
+.ledpair.on[data-state="red-solid"] .led { background:#e32d24; border-color:#9e1e18; }
+.ledpair.on[data-state="orange-offset"] .led { --c:#e8891c; --cb:#a05e12; animation: led-flash 1.1s infinite; }
+.ledpair.on[data-state="orange-offset"] .led:nth-child(2) { animation-delay:.14s; }
+.ledpair.on[data-state="fault"] .led:nth-child(1) { animation: led-fa .9s infinite; }
+.ledpair.on[data-state="fault"] .led:nth-child(2) { animation: led-fb .9s infinite; }
+.ledpair.on[data-state="blue-together"] .led { --c:#2aa4e0; --cb:#1a6f99; animation: led-blink 1s infinite; }
+.ledpair.on[data-state="white-flash"] .led { --c:#d8dce0; --cb:#9aa0a6; animation: led-blink .5s infinite; }
+.ledpair.on[data-state="white-solid"] .led { background:#d8dce0; border-color:#9aa0a6; }
+
 /* ---- responsive ---- */
 @media (max-width: 1200px) {
   .layout { grid-template-columns: var(--sidebar-width) minmax(0, 1fr); }

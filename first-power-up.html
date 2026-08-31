@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>First power-up — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=21">
+  <link rel="stylesheet" href="css/docs.css?v=22">
 </head>
 <body>
 <div class="layout">
@@ -39,30 +39,27 @@
       </ol>
 
       <h2 id="enable">Enable and command it</h2>
-      <p>The Cyclone drives on <strong>duty cycle</strong>: a signed fraction of the bus voltage from −1 to +1. Command it every loop — a setpoint older than 100&nbsp;ms coasts the motor.</p>
+      <p>The Cyclone drives on <strong>duty cycle</strong>: a signed fraction of the bus voltage, from −1 to +1. Command it over USB-C from a laptop, or over CAN from the SystemCore.</p>
       <ol>
         <li>Keep the shaft clear. Hands off the spline.</li>
         <li>Enable. On a robot, the Driver Station must be connected and enabled — the Cyclone gates output on it.</li>
         <li>Command a small duty, such as <code>0.1</code>, and confirm the shaft turns.</li>
       </ol>
-      <div class="callout uc">
-        <span class="label">Under construction</span>
-        <p>Closed-loop current, velocity, and position modes are defined in the API and in SWYFT&nbsp;Link but do not drive the motor yet. Use duty cycle for now.</p>
-      </div>
 
       <h2 id="good">What good looks like</h2>
-      <p>The end lights turn solid orange when the motor is enabled and idle, solid green while it drives forward, and solid red while it drives in reverse. The shaft turns the direction you expect from the output face; if it does not, set the direction in SWYFT&nbsp;Link rather than negating the command. <a href="orientation.html">Orientation</a></p>
+      <p>The end lights blink orange together when a program is present but the robot is disabled, turn solid orange once it is enabled and idle, solid green while it drives forward, and solid red while it drives in reverse. The shaft turns the direction you expect from the output face; if it does not, set the direction in SWYFT&nbsp;Link rather than negating the command. <a href="orientation.html">Orientation</a></p>
 
       <h2 id="trouble">If it does not move</h2>
+      <p class="led-hint">Tap the lights to play the pattern.</p>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>What you see</th><th>What it means</th></tr></thead>
+          <thead><tr><th>What you see</th><th>What it means</th><th>What to do</th></tr></thead>
           <tbody>
-            <tr><td>Window dark</td><td>No power. Check the leads and breaker.</td></tr>
-            <tr><td>Red, alternating</td><td>Nothing is talking to it. Seat USB-C, or fix CAN wiring and termination.</td></tr>
-            <tr><td>Blue, together</td><td>Two devices share a number. Change one.</td></tr>
-            <tr><td>Orange, enabled, no motion</td><td>No command is arriving, or the last one has gone stale. Command duty every loop.</td></tr>
-            <tr><td>Over-temperature pattern</td><td>Output cut on heat. Let it cool; lower the stator limit. <a href="faults.html">Faults</a></td></tr>
+            <tr><td><span class="ledpair" data-state="off"><span class="led"></span><span class="led"></span></span>Dark</td><td>No power</td><td>Check the leads and breaker.</td></tr>
+            <tr><td><span class="ledpair" data-state="red-alt"><span class="led"></span><span class="led"></span></span>Red, alternating</td><td>Nothing is talking to it</td><td>Seat USB-C, or fix CAN wiring and termination.</td></tr>
+            <tr><td><span class="ledpair" data-state="blue-together"><span class="led"></span><span class="led"></span></span>Blue, together</td><td>Two devices share a number</td><td>Give one a different number (1–62).</td></tr>
+            <tr><td><span class="ledpair" data-state="orange-solid"><span class="led"></span><span class="led"></span></span>Orange, solid</td><td>Enabled, no command arriving</td><td>Send a command — duty, velocity, position, or current.</td></tr>
+            <tr><td><span class="ledpair" data-state="orange-offset"><span class="led"></span><span class="led"></span></span>Orange, brief offset flashes</td><td>Over-temperature; output cut</td><td>Let it cool; lower the stator limit. <a href="faults.html">Faults</a></td></tr>
           </tbody>
         </table>
       </div>
@@ -84,6 +81,6 @@
     <a href="#trouble">If it does not move</a>
   </aside>
 </div>
-<script src="js/docs.js?v=21"></script>
+<script src="js/docs.js?v=22"></script>
 </body>
 </html>

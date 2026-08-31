@@ -103,6 +103,11 @@
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLb(); });
   }
 
+  // ---- animated status lights (tap to play) ----
+  document.querySelectorAll(".ledpair").forEach(function (el) {
+    el.addEventListener("click", function () { el.classList.toggle("on"); });
+  });
+
   // ---- scroll-spy TOC ----
   var links = Array.prototype.slice.call(document.querySelectorAll(".toc a[href^='#']"));
   if (!links.length) return;

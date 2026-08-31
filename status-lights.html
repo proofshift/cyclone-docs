@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Status lights — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=21">
+  <link rel="stylesheet" href="css/docs.css?v=22">
 </head>
 <body>
 <div class="layout">
@@ -30,22 +30,23 @@
       </div>
 
       <h2 id="patterns">What the end lights mean</h2>
+      <p class="led-hint">Tap the lights to play the pattern.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Pattern</th><th>Meaning</th><th>What to do</th></tr></thead>
           <tbody>
-            <tr><td>Dark</td><td>No power.</td><td>Check the leads, the breaker, and the DFU-side power LED.</td></tr>
-            <tr><td>Red, alternating</td><td>Powered, but nothing is talking to it.</td><td>Connect USB-C, or bring up CAN and check termination.</td></tr>
-            <tr><td>Orange, alternating</td><td>On the bus, but no robot program is addressing it.</td><td>Deploy code, or confirm this device number is constructed.</td></tr>
-            <tr><td>Orange, together</td><td>Program present, robot disabled.</td><td>Enable in the Driver Station.</td></tr>
-            <tr><td>Orange, solid</td><td>Enabled, output at rest.</td><td>Command the motor.</td></tr>
-            <tr><td>Green, solid</td><td>Driving forward.</td><td>—</td></tr>
-            <tr><td>Red, solid</td><td>Driving in reverse.</td><td>—</td></tr>
-            <tr><td>Orange, brief offset flashes</td><td>Over-temperature. Output is cut.</td><td>Let it cool. Lower the stator limit; clear the jam.</td></tr>
-            <tr><td>Red and orange, alternating</td><td>A fault has latched. The motor will not drive.</td><td>Read the fault in SWYFT Link, clear the cause, then clear it. <a href="faults.html">Faults</a></td></tr>
-            <tr><td>Blue, flashing together</td><td>Two devices share this number.</td><td>Give one a different number (1–62).</td></tr>
-            <tr><td>White, flashing</td><td>Identify — you asked this motor to show itself.</td><td>None. It stops after a couple of seconds.</td></tr>
-            <tr><td>White, solid</td><td>Firmware is being written.</td><td>Wait. If it never clears, recover with <a href="dfu.html">DFU</a>.</td></tr>
+            <tr><td><span class="ledpair" data-state="off"><span class="led"></span><span class="led"></span></span>Dark</td><td>No power.</td><td>Check the leads and the breaker.</td></tr>
+            <tr><td><span class="ledpair" data-state="red-alt"><span class="led"></span><span class="led"></span></span>Red, alternating</td><td>Powered, but nothing is talking to it.</td><td>Connect USB-C, or bring up CAN and check termination.</td></tr>
+            <tr><td><span class="ledpair" data-state="orange-alt"><span class="led"></span><span class="led"></span></span>Orange, alternating</td><td>On the bus, but no robot program is addressing it.</td><td>Deploy code, or confirm this device number is constructed.</td></tr>
+            <tr><td><span class="ledpair" data-state="orange-together"><span class="led"></span><span class="led"></span></span>Orange, together</td><td>Program present, robot disabled.</td><td>Enable in the Driver Station.</td></tr>
+            <tr><td><span class="ledpair" data-state="orange-solid"><span class="led"></span><span class="led"></span></span>Orange, solid</td><td>Enabled, output at rest.</td><td>Command the motor.</td></tr>
+            <tr><td><span class="ledpair" data-state="green-solid"><span class="led"></span><span class="led"></span></span>Green, solid</td><td>Driving forward.</td><td>—</td></tr>
+            <tr><td><span class="ledpair" data-state="red-solid"><span class="led"></span><span class="led"></span></span>Red, solid</td><td>Driving in reverse.</td><td>—</td></tr>
+            <tr><td><span class="ledpair" data-state="orange-offset"><span class="led"></span><span class="led"></span></span>Orange, brief offset flashes</td><td>Over-temperature. Output is cut.</td><td>Let it cool. Lower the stator limit; clear the jam.</td></tr>
+            <tr><td><span class="ledpair" data-state="fault"><span class="led"></span><span class="led"></span></span>Red and orange, alternating</td><td>A fault has latched. The motor will not drive.</td><td>Read the fault in SWYFT Link, clear the cause, then clear it. <a href="faults.html">Faults</a></td></tr>
+            <tr><td><span class="ledpair" data-state="blue-together"><span class="led"></span><span class="led"></span></span>Blue, flashing together</td><td>Two devices share this number.</td><td>Give one a different number (1–62).</td></tr>
+            <tr><td><span class="ledpair" data-state="white-flash"><span class="led"></span><span class="led"></span></span>White, flashing</td><td>Identify — you asked this motor to show itself.</td><td>None. It stops after a couple of seconds.</td></tr>
+            <tr><td><span class="ledpair" data-state="white-solid"><span class="led"></span><span class="led"></span></span>White, solid</td><td>Firmware is being written.</td><td>Wait. If it never clears, recover with <a href="dfu.html">DFU</a>.</td></tr>
           </tbody>
         </table>
       </div>
@@ -74,6 +75,6 @@
     <a href="#anim">Animations</a>
   </aside>
 </div>
-<script src="js/docs.js?v=21"></script>
+<script src="js/docs.js?v=22"></script>
 </body>
 </html>

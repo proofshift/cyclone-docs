@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Troubleshooting — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=21">
+  <link rel="stylesheet" href="css/docs.css?v=22">
 </head>
 <body>
 <div class="layout">
@@ -19,16 +19,17 @@
       <p>Read the two end lights first (<a href="status-lights.html">Status lights</a>), then match the symptom below.</p>
 
       <h2 id="nomove">The motor will not move</h2>
+      <p class="led-hint">Tap the lights to play the pattern.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
           <tbody>
-            <tr><td>Window and DFU LED dark</td><td>No power</td><td>Check the leads, polarity, and the breaker.</td></tr>
-            <tr><td>End lights red, alternating</td><td>Nothing is talking to it</td><td>Seat USB-C, or fix CAN wiring and add trunk terminators.</td></tr>
-            <tr><td>End lights orange, alternating</td><td>On the bus, no program addressing it</td><td>Deploy code; confirm the device number is constructed in code.</td></tr>
-            <tr><td>End lights orange, together</td><td>Robot disabled</td><td>Enable in the Driver Station.</td></tr>
-            <tr><td>Orange solid, no motion</td><td>No command, or a stale command</td><td>Command duty every loop; a setpoint older than 100&nbsp;ms coasts.</td></tr>
-            <tr><td>Blue, flashing together</td><td>Duplicate device number</td><td>Give one motor a different number (1–62).</td></tr>
+            <tr><td><span class="ledpair" data-state="off"><span class="led"></span><span class="led"></span></span>Dark</td><td>No power</td><td>Check the leads, polarity, and the breaker.</td></tr>
+            <tr><td><span class="ledpair" data-state="red-alt"><span class="led"></span><span class="led"></span></span>Red, alternating</td><td>Nothing is talking to it</td><td>Seat USB-C, or fix CAN wiring and add trunk terminators.</td></tr>
+            <tr><td><span class="ledpair" data-state="orange-alt"><span class="led"></span><span class="led"></span></span>Orange, alternating</td><td>On the bus, no program addressing it</td><td>Deploy code; confirm the device number is constructed in code.</td></tr>
+            <tr><td><span class="ledpair" data-state="orange-together"><span class="led"></span><span class="led"></span></span>Orange, together</td><td>Robot disabled</td><td>Enable in the Driver Station.</td></tr>
+            <tr><td><span class="ledpair" data-state="orange-solid"><span class="led"></span><span class="led"></span></span>Orange, solid</td><td>No command arriving</td><td>Send a command — duty, velocity, position, or current.</td></tr>
+            <tr><td><span class="ledpair" data-state="blue-together"><span class="led"></span><span class="led"></span></span>Blue, flashing together</td><td>Duplicate device number</td><td>Give one motor a different number (1–62).</td></tr>
           </tbody>
         </table>
       </div>
@@ -70,6 +71,6 @@
     <a href="#comms">USB-C or CAN will not connect</a>
   </aside>
 </div>
-<script src="js/docs.js?v=21"></script>
+<script src="js/docs.js?v=22"></script>
 </body>
 </html>

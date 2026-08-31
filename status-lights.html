@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Status lights — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=32">
+  <link rel="stylesheet" href="css/docs.css?v=33">
 </head>
 <body>
 <div class="layout">
@@ -18,13 +18,27 @@
 
       <p>Under the rear window are seven lights in a row. The two at the ends report controller state and cannot be written by robot code. The five in the middle, numbered 1–5 from left to right, are yours to set. A separate LED beside the DFU pinhole indicates bus power. <a href="wiring.html">Wiring</a></p>
 
-      <div class="figrow">
+      <div class="figrow status-figs">
         <figure>
-          <img class="zoomable" src="img/status-usb.png" alt="USB side status light">
+          <span class="fig-annot">
+            <img class="zoomable" src="img/status-usb.png" alt="USB side status light">
+            <svg class="led-arrow" viewBox="0 0 1272 751" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <line x1="560" y1="455" x2="748.4" y2="306.6" stroke="#dc2020" stroke-width="12" stroke-linecap="round"/>
+              <polygon points="772,288 759.5,320.7 737.3,292.5" fill="#dc2020" stroke="#dc2020" stroke-width="4" stroke-linejoin="round"/>
+              <text x="545" y="470" fill="#4db8ea" font-size="34" font-weight="700" text-anchor="end" font-family="Inter, system-ui, sans-serif">End status light</text>
+            </svg>
+          </span>
           <figcaption>USB side. The end status light is the window next to the screw.</figcaption>
         </figure>
         <figure>
-          <img class="zoomable" src="img/status-can.png" alt="CAN side status light">
+          <span class="fig-annot">
+            <img class="zoomable" src="img/status-can.png" alt="CAN side status light">
+            <svg class="led-arrow" viewBox="0 0 1272 751" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <line x1="650" y1="440" x2="531.2" y2="321.2" stroke="#dc2020" stroke-width="12" stroke-linecap="round"/>
+              <polygon points="510,300 518.5,333.9 543.9,308.5" fill="#dc2020" stroke="#dc2020" stroke-width="4" stroke-linejoin="round"/>
+              <text x="665" y="455" fill="#4db8ea" font-size="34" font-weight="700" text-anchor="start" font-family="Inter, system-ui, sans-serif">End status light</text>
+            </svg>
+          </span>
           <figcaption>CAN side. The other end status light is next to the screw.</figcaption>
         </figure>
       </div>
@@ -75,6 +89,6 @@
     <a href="#anim">Animations</a>
   </aside>
 </div>
-<script src="js/docs.js?v=32"></script>
+<script src="js/docs.js?v=33"></script>
 </body>
 </html>

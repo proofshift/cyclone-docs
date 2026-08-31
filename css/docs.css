@@ -75,7 +75,7 @@ a:hover { text-decoration: underline; }
   display: flex;
   flex-direction: column;
 }
-.nav-scroll { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; margin: 0 -6px; padding: 4px 6px 0; }
+.nav-scroll { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; margin: 0 -6px; padding: 4px 6px 0; }
 
 /* thin, subtle scrollbars */
 .nav-scroll, .toc, .search-results { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
@@ -326,7 +326,7 @@ figcaption { color: var(--text-muted); font-size: 14px; margin-top: 8px; }
 .pager .chev { font-weight: 700; }
 
 /* ---- right TOC ---- */
-.toc { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 42px 26px 48px 10px; font-size: 14px; }
+.toc { position: sticky; top: 0; height: 100vh; overflow-y: auto; overscroll-behavior: contain; padding: 42px 26px 48px 10px; font-size: 14px; }
 .toc .toc-title { font-size: 13px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 12px; }
 .toc a { display: block; padding: 5px 0 5px 12px; color: var(--text-muted); border-left: 2px solid var(--border); line-height: 1.4; }
 .toc a.h3 { padding-left: 24px; }

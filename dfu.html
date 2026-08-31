@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Firmware & DFU — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=34">
+  <link rel="stylesheet" href="css/docs.css?v=35">
 </head>
 <body>
 <div class="layout">
@@ -25,6 +25,17 @@
 
       <h2 id="dfu">DFU recovery</h2>
       <p>Use DFU only when a motor will not enumerate — usually after an interrupted flash. It runs over USB-C.</p>
+      <figure class="big">
+        <span class="fig-annot">
+          <img class="zoomable" src="img/status-can.png" alt="Back panel with the DFU button located">
+          <svg class="led-arrow" viewBox="0 0 1272 751" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <line x1="645" y1="236" x2="452.99" y2="241.24" stroke="#dc2020" stroke-width="12" stroke-linecap="round"/>
+            <polygon points="425,242 452.58,226.24 453.4,256.24" fill="#dc2020" stroke="#dc2020" stroke-width="4" stroke-linejoin="round"/>
+            <text x="660" y="248" fill="#4db8ea" font-size="34" font-weight="700" text-anchor="start" font-family="Inter, system-ui, sans-serif">DFU button</text>
+          </svg>
+        </span>
+        <figcaption>The DFU button is behind the pinhole on the back panel, beside the DFU marking. The power LED next to it lights when USB-C alone is powering the motor.</figcaption>
+      </figure>
       <ol>
         <li>Remove all power from the leads first — no battery, no PDH, no bench supply.</li>
         <li>Hold the <strong>DFU</strong> button.</li>
@@ -47,6 +58,6 @@
     <a href="#dfu">DFU recovery</a>
   </aside>
 </div>
-<script src="js/docs.js?v=34"></script>
+<script src="js/docs.js?v=35"></script>
 </body>
 </html>

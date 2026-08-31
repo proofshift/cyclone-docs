@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Limits by mechanism — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=27">
+  <link rel="stylesheet" href="css/docs.css?v=28">
 </head>
 <body>
 <div class="layout">
@@ -22,7 +22,7 @@
         <table>
           <thead><tr><th>Mechanism</th><th>Stator (start)</th><th>Supply (start)</th><th>Why</th></tr></thead>
           <tbody>
-            <tr><td>Drivetrain / traction</td><td>80 A</td><td>Breaker rating</td><td>Wants torque, but is limited by traction and the breaker.</td></tr>
+            <tr><td>Drivetrain / traction</td><td>100–120 A</td><td>60 A</td><td>Wants torque, but is limited by traction and the breaker.</td></tr>
             <tr><td>Swerve azimuth (steering)</td><td>40 A</td><td>40 A</td><td>Light, fast moves; rarely needs high torque.</td></tr>
             <tr><td>Elevator / arm</td><td>60 A</td><td>40 A</td><td>Enough to lift the load; hold with a limit or a brake.</td></tr>
             <tr><td>Intake / feeder</td><td>40 A</td><td>30 A</td><td>Low continuous draw; protect against a jam.</td></tr>
@@ -54,6 +54,6 @@
     <a href="#tune">Tuning from the start point</a>
   </aside>
 </div>
-<script src="js/docs.js?v=27"></script>
+<script src="js/docs.js?v=28"></script>
 </body>
 </html>

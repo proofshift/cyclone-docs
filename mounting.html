@@ -4,20 +4,61 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mounting — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=19">
+  <link rel="stylesheet" href="css/docs.css?v=20">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="mounting.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; Hardware Reference &rsaquo; Mounting</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Hardware Reference › Mounting</div>
       <h1>Mounting</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">Bolt to the front face. Keep the rear connections reachable and cool.</p>
+
+      <figure>
+        <img class="zoomable" src="img/mount-holes.png" alt="Front mounting face with the mounting holes highlighted">
+        <figcaption>The front face. The highlighted holes are the mounting pattern; the output shaft is at the centre.</figcaption>
+      </figure>
+
+      <h2 id="pattern">Mounting pattern</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Holes</td><td>Eleven #10-32 blind holes</td></tr>
+            <tr><td>Depth</td><td>10 mm</td></tr>
+            <tr><td>Bolt circle</td><td>Ø1.375 in (34.93 mm)</td></tr>
+            <tr><td>Spacing</td><td>30° apart</td></tr>
+            <tr><td>Output shaft</td><td>15T SplineXS</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Full dimensions and the drawing are on <a href="specifications.html#mechanical">Specifications</a>.</p>
+      <div class="callout warning">
+        <span class="label">Warning</span>
+        <p>The holes are blind and 10 mm deep. A screw that bottoms out can lock the rotor. Size each screw so its engagement is less than 10 mm (plate thickness plus engagement equals screw length), and check one against a spare hole before assembling.</p>
+      </div>
+
+      <h2 id="access">Keep it reachable and cool</h2>
+      <ul>
+        <li>Leave USB-C, CAN, the DFU pinhole, and the status window accessible after the motor is installed — you will use them to configure, recover, and read the motor in the pit.</li>
+        <li>Do not seal the rear cover against a plate with no airflow. The Cyclone folds current and trips on heat, and a smothered motor gives that back as lost output. <a href="faults.html">Faults</a></li>
+      </ul>
+
+      <nav class="pager">
+        <a class="prev" href="specifications.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Specifications</span></a>
+        <a class="next" href="orientation.html"><span class="pg-label">Next</span><span>Orientation <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#pattern">Mounting pattern</a>
+    <a href="#access">Keep it reachable and cool</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=19"></script>
+<script src="js/docs.js?v=20"></script>
 </body>
 </html>

@@ -4,20 +4,54 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Orientation — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=19">
+  <link rel="stylesheet" href="css/docs.css?v=20">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="orientation.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; Hardware Reference &rsaquo; Orientation</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Hardware Reference › Orientation</div>
       <h1>Orientation</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">Positive direction is defined at the output-shaft face, and set on the device.</p>
+
+      <p>A positive command turns the shaft one way; direction is read looking at the <strong>output-shaft face</strong>, not the rear cover.</p>
+
+      <div class="figrow">
+        <figure>
+          <img src="img/orient-cw.png" alt="Clockwise at the output face">
+          <figcaption><strong>Clockwise</strong> — a positive command turns this way.</figcaption>
+        </figure>
+        <figure>
+          <img src="img/orient-ccw.png" alt="Counter-clockwise at the output face">
+          <figcaption><strong>Counter-clockwise</strong> — a negative command turns this way.</figcaption>
+        </figure>
+      </div>
+
+      <h2 id="invert">Inverting</h2>
+      <p>If a mechanism runs backwards, invert the motor rather than negating every command in code. The setting lives on the device — in <a href="swyft-link.html">SWYFT&nbsp;Link</a> under Motor Output — and applies to the command and to the telemetry sign together.</p>
+
+      <h2 id="convention">Pick one convention</h2>
+      <p>Choose a single robot-wide meaning for positive — for example, positive extends an elevator or drives a wheel forward — and invert each Cyclone so its positive matches. Setting direction on the device keeps robot code reading the same sign everywhere.</p>
+      <div class="callout">
+        <span class="label">Note</span>
+        <p>Confirm the shipped direction on the motor and set it deliberately during setup rather than assuming it.</p>
+      </div>
+
+      <nav class="pager">
+        <a class="prev" href="mounting.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Mounting</span></a>
+        <a class="next" href="code.html"><span class="pg-label">Next</span><span>Setup &amp; install <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#invert">Inverting</a>
+    <a href="#convention">Pick one convention</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=19"></script>
+<script src="js/docs.js?v=20"></script>
 </body>
 </html>

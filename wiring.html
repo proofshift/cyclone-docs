@@ -4,20 +4,87 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Wiring — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=19">
+  <link rel="stylesheet" href="css/docs.css?v=20">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar" data-page="wiring.html"></aside>
+
   <main class="main">
     <article class="content">
-      <div class="breadcrumb">Cyclone &rsaquo; Getting Started &rsaquo; Wiring</div>
+      <div class="breadcrumb"><a href="index.html">Cyclone</a> › Getting Started › Wiring</div>
       <h1>Wiring</h1>
-      <div class="callout uc"><span class="label">Under construction</span><p>This page is being written.</p></div>
+      <p class="sec-lead">Power, CAN FD, and USB-C all connect at the back of the motor.</p>
+
+      <figure>
+        <img class="zoomable" src="img/rear.png" alt="Rear cover of the Cyclone showing the ports">
+        <figcaption>The rear cover. Power leads exit the bottom; USB-C and CAN sit in the side pockets; the DFU pinhole and its power LED are near the top, under the status window.</figcaption>
+      </figure>
+
+      <h2 id="ports">Connections</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Connection</th><th>What it is</th></tr></thead>
+          <tbody>
+            <tr><td>Power leads</td><td>Bus positive (red) and negative (black), out the bottom of the cover</td></tr>
+            <tr><td>CAN</td><td>CAN FD — CAN&nbsp;H and CAN&nbsp;L</td></tr>
+            <tr><td>USB-C</td><td>Full control, configuration, telemetry, and firmware</td></tr>
+            <tr><td>DFU pinhole</td><td>Firmware-recovery button, beside a power LED. <a href="dfu.html">Firmware &amp; DFU</a></td></tr>
+            <tr><td>Status window</td><td>Seven lights; the two ends report controller state. <a href="status-lights.html">Status lights</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="power">Power</h2>
+      <p>Wire the leads to bus positive and negative — <strong>red to positive, black to negative</strong>. The Cyclone operates from 6 to 24&nbsp;V; it will not arm below 6&nbsp;V and cuts output above 24&nbsp;V. Size the branch breaker and wire gauge to the supply current the mechanism draws, and set the <a href="current-limits.html">supply limit</a> to match.</p>
+      <p>The small LED beside the DFU pinhole is lit whenever bus power is present. It is a power indicator, not a status code. If that LED and both end lights are dark, the motor has no power — check the leads and the breaker before looking at CAN or code.</p>
+      <div class="callout warning">
+        <span class="label">Warning</span>
+        <p>Confirm polarity before the first enable: red to positive, black to negative, checked against your harness.</p>
+      </div>
+
+      <h2 id="can">CAN FD</h2>
+      <figure>
+        <img class="zoomable" src="img/side-can.png" alt="CAN side of the Cyclone">
+        <figcaption>The CAN port is in the side pocket marked CAN.</figcaption>
+      </figure>
+      <p>Crimp CAN&nbsp;H and CAN&nbsp;L to the same conductors as the rest of the bus; reversing them stops communication. Give each Cyclone a unique <a href="specifications.html#communication">device number (CAN ID)</a> from 1 to 62. Two devices sharing a number will not run, and the end lights show blue. <a href="status-lights.html">Status lights</a></p>
+      <div class="callout">
+        <span class="label">Note</span>
+        <p>Terminate the CAN trunk at its two ends, not at the motor. A bus with no end terminators can look like a motor that will not talk.</p>
+      </div>
+
+      <h2 id="usb">USB-C</h2>
+      <figure>
+        <img class="zoomable" src="img/side-usb.png" alt="USB-C side of the Cyclone">
+        <figcaption>USB-C is in the side pocket marked USB.</figcaption>
+      </figure>
+      <p>USB-C is a full control path — configuration, telemetry, firmware, and output — and enumerates as a standard serial device, with no driver to install. Open <a href="swyft-link.html">SWYFT&nbsp;Link</a> in a browser and connect this port. Anything you can do over CAN you can do over USB-C, and the reverse. Command a motor from one place at a time.</p>
+
+      <h2 id="check">Before you enable</h2>
+      <ol>
+        <li>Motor held or mounted with the shaft free. <a href="mounting.html">Mounting</a></li>
+        <li>Power leads on the correct polarity; the DFU-adjacent LED is lit.</li>
+        <li>On CAN: H and L match the bus, the trunk is terminated at both ends, and the device number is unique.</li>
+        <li>Current limits set for the mechanism. <a href="current-limits.html">Current limits</a></li>
+      </ol>
+
+      <nav class="pager">
+        <a class="prev" href="index.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Overview</span></a>
+        <a class="next" href="first-power-up.html"><span class="pg-label">Next</span><span>First power-up <span class="chev">›</span></span></a>
+      </nav>
     </article>
   </main>
-  <aside class="toc"></aside>
+
+  <aside class="toc">
+    <p class="toc-title">On this page</p>
+    <a href="#ports">Connections</a>
+    <a href="#power">Power</a>
+    <a href="#can">CAN FD</a>
+    <a href="#usb">USB-C</a>
+    <a href="#check">Before you enable</a>
+  </aside>
 </div>
-<script src="js/docs.js?v=19"></script>
+<script src="js/docs.js?v=20"></script>
 </body>
 </html>

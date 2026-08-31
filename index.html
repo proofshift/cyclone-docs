@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Specifications — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css">
+  <link rel="stylesheet" href="css/docs.css?v=9">
 </head>
 <body>
 <div class="layout">
@@ -70,6 +70,7 @@
           <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
           <tbody>
             <tr><td>Free speed</td><td>7530 RPM</td></tr>
+            <tr><td>Stall torque</td><td>3.8 N·m</td></tr>
             <tr><td>Stall current</td><td>275 A</td></tr>
           </tbody>
         </table>
@@ -80,7 +81,7 @@
         <table>
           <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
           <tbody>
-            <tr><td>Commutation</td><td>Sensored six-step (trapezoidal)</td></tr>
+            <tr><td>Commutation</td><td>Trapezoidal</td></tr>
             <tr><td>Encoder</td><td>14-bit absolute magnetic, 16,384 counts per turn</td></tr>
             <tr><td>Duty output</td><td>Signed fraction of bus, −1 to 1</td></tr>
             <tr><td>Closed-loop modes</td><td>Current, velocity, position <span class="uc-tag">Under construction</span></td></tr>
@@ -95,7 +96,7 @@
           <tbody>
             <tr><td>Interfaces</td><td>CAN FD and USB-C</td></tr>
             <tr><td>Both interfaces</td><td>Full control, configuration, telemetry, and firmware update — either one does everything</td></tr>
-            <tr><td>Device number</td><td>1–62</td></tr>
+            <tr><td>Device number (CAN ID)</td><td>1–62</td></tr>
             <tr><td>Control system</td><td>2027 SystemCore</td></tr>
           </tbody>
         </table>
@@ -129,8 +130,8 @@
         </table>
       </div>
       <figure>
-        <a href="files/SR-CYCLONE-BLDC-01.pdf"><img src="img/drawing-sr-cyclone-bldc-01.png" alt="SR-CYCLONE-BLDC-01 dimensioned drawing"></a>
-        <figcaption>Dimensioned drawing, inches with millimetres in brackets. <a href="files/SR-CYCLONE-BLDC-01.pdf">PDF</a></figcaption>
+        <img class="zoomable" src="img/drawing-sr-cyclone-bldc-01.png" alt="SR-CYCLONE-BLDC-01 dimensioned drawing">
+        <figcaption>Dimensioned drawing, inches with millimetres in brackets. Click to enlarge · <a href="files/SR-CYCLONE-BLDC-01.pdf">PDF</a></figcaption>
       </figure>
 
       <nav class="pager">
@@ -150,6 +151,6 @@
     <a href="#mechanical">Mechanical</a>
   </aside>
 </div>
-<script src="js/docs.js"></script>
+<script src="js/docs.js?v=9"></script>
 </body>
 </html>

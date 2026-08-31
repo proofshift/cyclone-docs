@@ -1,4 +1,24 @@
 (function () {
+  // ---- image lightbox (enlarge in the same window) ----
+  var zoomables = document.querySelectorAll(".zoomable");
+  if (zoomables.length) {
+    var lb = document.createElement("div");
+    lb.className = "lightbox";
+    var lbImg = document.createElement("img");
+    lb.appendChild(lbImg);
+    document.body.appendChild(lb);
+    function closeLb() { lb.classList.remove("open"); }
+    zoomables.forEach(function (el) {
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        lbImg.src = el.getAttribute("data-full") || el.getAttribute("src");
+        lb.classList.add("open");
+      });
+    });
+    lb.addEventListener("click", closeLb);
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLb(); });
+  }
+
   // ---- scroll-spy TOC ----
   var links = Array.prototype.slice.call(document.querySelectorAll(".toc a[href^='#']"));
   if (!links.length) return;

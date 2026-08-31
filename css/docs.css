@@ -71,11 +71,6 @@ a:hover { text-decoration: underline; }
   /* extend the sidebar background to the left wall without moving content */
   box-shadow: -100vw 0 0 var(--bg-side);
   border-right: 1px solid var(--border);
-  /* vertical divider that floats free of the top and bottom edges */
-  border-image: linear-gradient(to bottom,
-      transparent 0, transparent 44px,
-      var(--border) 44px, var(--border) calc(100% - 44px),
-      transparent calc(100% - 44px), transparent 100%) 1;
 }
 .wordmark { display: block; margin: 2px 0 22px; line-height: 1; }
 .wordmark:hover { text-decoration: none; }
@@ -83,7 +78,6 @@ a:hover { text-decoration: underline; }
   display: block;
   font-family: "Ethnocentric", var(--font-sans);
   font-size: 50px;
-  font-style: italic;
   color: var(--accent);
   letter-spacing: 0.005em;
   line-height: 0.92;
@@ -92,7 +86,6 @@ a:hover { text-decoration: underline; }
   display: block;
   font-family: "Ethnocentric", var(--font-sans);
   font-size: 19px;
-  font-style: italic;
   color: var(--wm-sub);
   letter-spacing: 0.14em;
   margin-top: 8px;
@@ -130,7 +123,7 @@ a:hover { text-decoration: underline; }
   line-height: 1.35;
 }
 .nav-group a:hover { background: rgba(255, 255, 255, 0.05); text-decoration: none; }
-.nav-group a.active { background: none; color: var(--accent); font-weight: 700; }
+.nav-group a.active { background: none; color: var(--accent); font-weight: 700; font-style: italic; }
 
 /* ---- content ---- */
 .main { min-width: 0; padding: 0 44px; }
@@ -178,6 +171,30 @@ tbody tr:nth-child(even) td { background: transparent; }
 figure { margin: 1.5rem 0; }
 figure img { display: block; width: 100%; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; }
 figcaption { color: var(--text-muted); font-size: 14px; margin-top: 8px; }
+.zoomable { cursor: zoom-in; }
+
+/* in-window image lightbox — fits the viewport height */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.92);
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+.lightbox.open { display: flex; }
+.lightbox img {
+  width: auto;
+  height: auto;
+  max-width: 100vw;
+  max-height: 100vh;
+  object-fit: contain;
+  background: #fff;
+  border: 0;
+  border-radius: 0;
+}
 
 /* ---- callouts ---- */
 .callout { margin: 1.5rem 0; padding: 0.8rem 1.05rem 0.85rem; border-left: 3px solid var(--note); background: var(--note-bg); border-radius: 0 var(--radius) var(--radius) 0; }

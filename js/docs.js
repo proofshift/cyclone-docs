@@ -114,12 +114,25 @@
   if (zoomables.length) {
     var lb = document.createElement("div");
     lb.className = "lightbox";
+    var lbArt = document.createElement("div");
+    lbArt.style.cssText = "position:relative;line-height:0";
     var lbImg = document.createElement("img");
-    lb.appendChild(lbImg);
+    lbArt.appendChild(lbImg);
+    lb.appendChild(lbArt);
     document.body.appendChild(lb);
     function closeLb() { lb.classList.remove("open"); }
     zoomables.forEach(function (el) {
-      el.addEventListener("click", function (e) { e.preventDefault(); lbImg.src = el.getAttribute("src"); lb.classList.add("open"); });
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        lbImg.src = el.getAttribute("src");
+        lbImg.alt = el.getAttribute("alt") || "Enlarged illustration";
+        var previous = lbArt.querySelector("svg");
+        if (previous) previous.remove();
+        var callout = el.closest(".install-callout");
+        var annotation = callout && callout.querySelector(".install-arrow");
+        if (annotation) lbArt.appendChild(annotation.cloneNode(true));
+        lb.classList.add("open");
+      });
     });
     lb.addEventListener("click", closeLb);
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLb(); });
@@ -154,8 +167,32 @@
   });
 
   // ---- animated status lights (tap to play) ----
-  document.querySelectorAll(".ledpair").forEach(function (el) {
-    el.addEventListener("click", function () { el.classList.toggle("on"); });
+  var patterns = Array.prototype.slice.call(document.querySelectorAll(".ledpair"));
+  patterns.forEach(function (el) {
+    el.classList.remove("on");
+    el.setAttribute("role", "button");
+    el.setAttribute("tabindex", "0");
+    el.setAttribute("aria-pressed", "false");
+    var cell = el.closest("td, th");
+    el.setAttribute("aria-label", "Play pattern: " + (cell ? cell.textContent.trim() : el.dataset.state));
+    function toggle() {
+      var play = !el.classList.contains("on");
+      patterns.forEach(function (other) {
+        other.classList.remove("on");
+        other.setAttribute("aria-pressed", "false");
+      });
+      if (play) {
+        el.classList.add("on");
+        el.setAttribute("aria-pressed", "true");
+      }
+    }
+    el.addEventListener("click", toggle);
+    el.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        if (!event.repeat) toggle();
+      }
+    });
   });
 
   // ---- scroll-spy TOC ----

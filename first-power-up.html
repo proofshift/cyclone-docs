@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>First power-up — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,56 +14,34 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Getting Started › First power-up</div>
       <h1>First power-up</h1>
-      <p class="sec-lead">From a cold motor to the first turn of the shaft.</p>
+      <p class="sec-lead">Choose a first test on your robot through SystemCore, or a direct USB-C test before CAN is connected.</p>
 
-      <p>Work through this once with the shaft free. Finish <a href="wiring.html">Wiring</a> first.</p>
-      <div class="callout">
-        <span class="label">Before you start</span>
-        <p>Clamp or mount the motor so the shaft can spin freely and nothing can be caught by it.</p>
-      </div>
 
-      <h2 id="power">Apply power</h2>
-      <p>Energise the bus and watch the status lights under the rear window.</p>
-      <ul>
-        <li><strong>The window is dark:</strong> no power. Recheck the leads and the breaker.</li>
-        <li><strong>The end lights are red, alternating:</strong> the controller is running but nothing is talking to it. Connect USB-C, or bring up CAN.</li>
-      </ul>
-      <p>The full set of patterns is on <a href="status-lights.html">Status lights</a>.</p>
+<p><a href="#power">SystemCore / CAN test</a> uses the robot battery and Driver Station. <a href="#usb-test">Standalone USB-C test</a> uses your laptop and a 12 V battery, without CAN or Driver Station.</p>
+<p>This procedure assumes the Cyclone is mounted on your robot, powered from an output on the robot’s power distribution hub, and connected to SystemCore over CAN. Start with the robot disabled in Driver Station.</p>
+<h2 id="power">Power the robot</h2>
+<ol><li>Check the motor mounting, red and black power connections, CAN connectors, and the motor’s breaker or fuse. Finish <a href="wiring.html">Wiring</a> before applying power.</li><li>Connect a charged robot battery and turn on the main breaker.</li><li>Connect Driver Station to SystemCore. Keep the robot disabled while identifying devices and applying configuration.</li><li>Check the Cyclone’s status lights. If the controller remains dark, turn the robot off and check its power wires and the breaker or fuse for that output. Red alternating end lights mean it has not received a host or robot signal.</li></ol>
+<h2 id="configure">Identify and configure each motor</h2>
+<ol><li>Open SWYFT Link from the SystemCore home page.</li><li>Select a Cyclone and use Identify to confirm which physical motor you are configuring.</li><li>Assign a device number from 1 to 62 that is unique on the bus. Use that same number in robot code so commands reach the intended motor.</li><li>Set the stator current limit (current inside the motor) and supply current limit (current drawn from the battery) for the mechanism. Check that each setting was accepted; see <a href="current-limits.html">Current limits</a>.</li><li>Save settings intended to persist, then verify them after a power cycle. Set Coast or Brake again whenever the motor restarts. Set the gear ratio and wrapping options again when your robot program starts.</li></ol>
+<h2 id="enable">Test one mechanism</h2>
+<p>Support the robot or mechanism so the test cannot move the robot unexpectedly or drop a load. Check the full travel of arms and elevators, and keep people clear of wheels, belts, and shafts.</p>
+<ol><li>Use one command source for the test: your robot program or SWYFT Link. Stop any other program that commands the same motor.</li><li>Begin with a small duty request, such as <code>0.10</code>, where the mechanism can move safely. Keep Driver Station Disable within reach.</li><li>Enable through Driver Station for the test. The Cyclone also requires the motor to be enabled in your code or SWYFT Link, with commands sent repeatedly; enabling Driver Station alone does not command motion.</li><li>Check physical direction, reported velocity, current, and supply voltage. If motion is wrong, disable before changing the configuration or code.</li><li>Disable the robot and confirm output stops. Test this before using higher output or a loaded mechanism.</li></ol>
+<h2 id="good">Expected indications</h2>
+<p>With a live robot signal and disabled output, the end lights flash orange together. Enabled neutral output is solid orange. Forward drive is solid green; reverse drive is solid red. These report controller state, not whether the mechanism is moving in your intended direction. See <a href="orientation.html">Orientation</a> and the complete <a href="status-lights.html">light reference</a>.</p>
+<h2 id="trouble">If the motor does not move</h2>
+<p>Read the message in SWYFT Link before increasing the command. A refusal means a command was not accepted; a fault means the controller detected a problem. Check Driver Station state, device number, supply voltage during the attempt, and the configured control mode. Velocity and position control need tuning values called gains. Start with duty control, which directly requests an output percentage, when checking basic operation. If voltage drops under load, inspect the battery and power connections. See <a href="troubleshooting.html">Troubleshooting</a>.</p>
 
-      <h2 id="configure">Configure first</h2>
-      <p>Open <a href="swyft-link.html">SWYFT&nbsp;Link</a> and set these before enabling:</p>
-      <ol>
-        <li>The <strong>device number</strong> (CAN ID), unique on the bus.</li>
-        <li>The <strong>direction</strong>, if the shaft turns the wrong way. <a href="orientation.html">Orientation</a></li>
-        <li>The <strong>stator and supply current limits</strong> for the mechanism. <a href="current-limits.html">Current limits</a></li>
-      </ol>
 
-      <h2 id="enable">Enable and command it</h2>
-      <p>The Cyclone drives on <strong>duty cycle</strong>: a signed fraction of the bus voltage, from −1 to +1. Command it over USB-C from a laptop, or over CAN from the SystemCore.</p>
-      <ol>
-        <li>Keep the shaft clear. Hands off the spline.</li>
-        <li>Enable. On a robot, the Driver Station must be connected and enabled — the Cyclone gates output on it.</li>
-        <li>Command a small duty, such as <code>0.1</code>, and confirm the shaft turns.</li>
-      </ol>
-
-      <h2 id="good">What good looks like</h2>
-      <p>The end lights blink orange together when a program is present but the robot is disabled, turn solid orange once it is enabled and idle, solid green while it drives forward, and solid red while it drives in reverse. The shaft turns the direction you expect from the output face; if it does not, set the direction in SWYFT&nbsp;Link rather than negating the command. <a href="orientation.html">Orientation</a></p>
-
-      <h2 id="trouble">If it does not move</h2>
-      <p class="led-hint">Tap the lights to play the pattern.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>What you see</th><th>What it means</th><th>What to do</th></tr></thead>
-          <tbody>
-            <tr><td><span class="ledpair" data-state="off"><span class="led"></span><span class="led"></span></span>Dark</td><td>No power</td><td>Check the leads and breaker.</td></tr>
-            <tr><td><span class="ledpair" data-state="red-alt"><span class="led"></span><span class="led"></span></span>Red, alternating</td><td>Nothing is talking to it</td><td>Seat USB-C, or fix CAN wiring and termination.</td></tr>
-            <tr><td><span class="ledpair" data-state="blue-together"><span class="led"></span><span class="led"></span></span>Blue, together</td><td>Two devices share a number</td><td>Give one a different number (1–62).</td></tr>
-            <tr><td><span class="ledpair" data-state="orange-solid"><span class="led"></span><span class="led"></span></span>Orange, solid</td><td>Enabled, no command arriving</td><td>Send a command — duty, velocity, position, or current.</td></tr>
-            <tr><td><span class="ledpair" data-state="orange-offset"><span class="led"></span><span class="led"></span></span>Orange, brief offset flashes</td><td>Over-temperature; output cut</td><td>Let it cool; lower the stator limit. <a href="faults.html">Faults</a></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>More at <a href="troubleshooting.html">Troubleshooting</a>.</p>
+<h2 id="usb-test">First run over USB-C</h2>
+<p>Use this path for a secured motor off the robot, or a quick check before connecting the CAN bus. You need a laptop with Google Chrome, a USB-C data cable, and a 12 V FRC battery with a fused or breaker-protected connection to the motor. USB powers settings and updates; battery power runs the motor.</p>
+<ol><li>Secure the motor and support any attached mechanism. Keep hands, loose clothing, and cables clear of the shaft. Keep battery power switched off while making the red positive and black negative connections.</li>
+<li>Connect the USB-C data cable. <a href="https://swyft-link.vercel.app/" target="_blank" rel="noopener">Open SWYFT Link in Google Chrome</a>, choose <strong>Connect over USB-C</strong>, and select the Cyclone serial port.</li>
+<li>Confirm the device and firmware, then use <strong>Identify</strong> to check the physical motor. Configure the current limits for your test and check that the settings were accepted.</li>
+<li>Turn on the 12 V battery connection. Check the supply-voltage reading in SWYFT Link.</li>
+<li>On <strong>Control</strong>, select <strong>Duty Cycle</strong> and start at zero. With the mechanism clear, select <strong>ENABLE</strong>. Enter a small request such as <strong>10%</strong> in the percent field and choose <strong>Send</strong>. A loaded mechanism may need a different test; do not increase the request just because it did not move.</li>
+<li>Check direction, measured speed, current, and supply voltage. Select <strong>DISABLE</strong> to stop output, and confirm that the mechanism stops as expected before testing again. Keep this control within reach throughout the test.</li></ol>
+<p>The app uses percent for duty: enter <code>10</code> for 10%. Java uses a fraction: <code>setDutyCycle(0.10)</code> requests the same 10%. Do not confuse the two.</p>
+<p><strong>USB-C on a robot:</strong> standalone USB-C testing does not need Driver Station. If the Cyclone is also receiving a robot signal over CAN, USB-C commands still follow Driver Station enable permission. A USB cable does not override a disabled robot.</p><p>If connection or motion fails, use the <a href="troubleshooting.html#usb-connection">USB-C connection checks</a>. No Driver Station connection is needed for this standalone procedure.</p>
 
       <nav class="pager">
         <a class="prev" href="wiring.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Wiring</span></a>
@@ -74,13 +52,14 @@
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#power">Apply power</a>
-    <a href="#configure">Configure first</a>
-    <a href="#enable">Enable and command it</a>
-    <a href="#good">What good looks like</a>
-    <a href="#trouble">If it does not move</a>
+    <a href="#usb-test">First run over USB-C</a>
+    <a href="#power">Power the robot</a>
+    <a href="#configure">Identify and configure each motor</a>
+    <a href="#enable">Test one mechanism</a>
+    <a href="#good">Expected indications</a>
+    <a href="#trouble">If the motor does not move</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

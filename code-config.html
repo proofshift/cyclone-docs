@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Configuration — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,72 +14,23 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › Configuration</div>
       <h1>Configuration</h1>
-      <p class="sec-lead">Set a device’s current limits, neutral mode, and other persistent settings from robot code.</p>
+      <p class="sec-lead">Set current limits and neutral behavior, check configuration results, and save supported settings.</p>
 
-      <p>A Cyclone holds its settings in on-board configuration. You change them one of two ways: the configurator, which applies a group of settings and reports whether each was accepted, or a small set of direct methods for the most common values. Both write to the device’s live configuration; neither survives a power cycle until you save.</p>
 
-      <h2 id="configurator">The configurator</h2>
-      <p>Call <code>getConfigurator()</code> to reach the settings. Build a configs object, set only the fields you want to change, and apply it. <code>apply</code> blocks until the device answers — call it at start-up, in <code>robotInit()</code>, never in a periodic loop.</p>
-      <div class="code-panel">
-        <div class="code-bar">Robot.java</div>
-        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone;
-import com.swyftrobotics.cyclone.v4.CurrentLimitsConfigs;
-import com.swyftrobotics.cyclone.v4.StatusCode;
-
-private final SwyftCyclone intake = new SwyftCyclone(5);
-
-@Override
-public void robotInit() {
-    var limits = new CurrentLimitsConfigs();
-    limits.StatorCurrentLimit = 40;   // windings, amperes
-    limits.SupplyCurrentLimit = 30;   // bus, amperes
-
-    StatusCode status = intake.getConfigurator().apply(limits);
-    if (!status.isOK()) {
-        System.out.println("Cyclone 5 rejected a limit: " + status.describe());
-    }
-}</code></pre>
-      </div>
-      <p>Every numeric field starts as “leave unchanged”, so an object sets only the fields you name. <code>apply</code> stops at the first field the device refuses and returns that <code>StatusCode</code>; a refused value is never silently clamped. To read the device’s current values back into an object, pass it to <code>refresh</code>.</p>
-
-      <h2 id="limits">Current limits</h2>
-      <p>The two current limits are the settings most teams change. Set them through <code>CurrentLimitsConfigs</code>, above, or with the direct method <code>setTeamLimits</code>, which writes the temperature warning, the temperature trip, and the stator limit in one call.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>intake.setTeamLimits(75, 85, 40);     // warn °C, trip °C, stator A
-intake.setStatorCurrentLimit(40);     // stator limit alone, 1–160 A</code></pre>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Field</th><th>Units</th><th>Range</th></tr></thead>
-          <tbody>
-            <tr><td><code>StatorCurrentLimit</code></td><td>amperes</td><td>1–160</td></tr>
-            <tr><td><code>SupplyCurrentLimit</code></td><td>amperes</td><td>up to 60</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>What the two limits protect, and how to size them, is on <a href="current-limits.html">How the limits work</a>.</p>
-
-      <h2 id="neutral">Neutral mode</h2>
-      <p>When no command is arriving, the Cyclone coasts. Set the neutral mode explicitly with <code>setNeutralMode</code>.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone.NeutralMode;
-
-intake.setNeutralMode(NeutralMode.COAST);</code></pre>
-      </div>
-
-      <h2 id="save">Save to keep across power</h2>
-      <p>An applied setting is live immediately but is lost at the next power cycle. Call <code>saveConfiguration</code> once, after applying, to write the configuration to flash.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>intake.getConfigurator().apply(limits);
-intake.saveConfiguration();   // persist across a power cycle</code></pre>
-      </div>
-      <div class="callout note">
-        <span class="label">Note</span>
-        <p><code>saveConfiguration</code> is refused while the motor is armed. Save during <code>robotInit()</code>, before the motor is enabled.</p>
-      </div>
+<span id="configurator"></span><span id="limits"></span>
+<h2 id="current">Set current limits explicitly</h2><div class="code-panel"><div class="code-bar">Java</div><pre><code>CurrentLimitsConfigs limits = new CurrentLimitsConfigs()
+    .withStatorCurrentLimit(30)
+    .withSupplyCurrentLimit(20);
+StatusCode result = motor.getConfigurator().apply(limits);
+if (!result.isOK()) {
+    System.err.println(result.describe());
+}</code></pre></div><div class="table-wrap"><table><thead><tr><th scope="col">Field</th><th scope="col">Unit</th><th scope="col">Accepted team range</th></tr></thead><tbody><tr><th scope="row">StatorCurrentLimit</th><td>A</td><td>1–95</td></tr><tr><th scope="row">SupplyCurrentLimit</th><td>A</td><td>1–40</td></tr></tbody></table></div><p>Unset fields are left alone. Do not set unsupported fields merely because a class contains them. In particular, the configurable lower supply-current limit and lower-time fields are refused by this library.</p>
+<h2 id="save">What survives a restart?</h2><div class="table-wrap"><table><thead><tr><th scope="col">Setting</th><th scope="col">Persistence / action</th></tr></thead><tbody><tr><th scope="row">Current limits</th><td>Apply the limits and check the result. After saving and restarting, check the values reported by the motor rather than assuming they were restored.</td></tr><tr><th scope="row">Velocity gains</th><td>Set with <code>setVelocityGain()</code>; <code>saveConfiguration()</code> persists the supported gain fields.</td></tr><tr><th scope="row">Coast / Brake neutral mode</th><td>Resets when the motor restarts. Set it again at startup; Save does not keep this setting.</td></tr><tr><th scope="row">Mechanism ratio and wrap</th><td>Stored in your robot program, not on the motor. Set it again when the program starts.</td></tr><tr><th scope="row">Software limits</th><td>The public configurator refuses them. Implement mechanism travel limits and homing in your robot code.</td></tr></tbody></table></div><div class="code-panel"><div class="code-bar">Java</div><pre><code>// Call after intentionally configuring a stopped controller.
+// Do not write flash from a periodic control loop.
+motor.saveConfiguration();</code></pre></div>
+<h2 id="neutral">Choose neutral behavior</h2><p>Neutral behavior determines what happens when the controller applies no driving output. Coast lets the shaft turn freely. Brake electrically resists rotation, but does not hold a commanded position or replace a mechanical brake. Its braking current is not adjustable through this API.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>StatusCode result = motor.setNeutralMode(SwyftCyclone.NeutralMode.BRAKE);
+if (!result.isOK()) System.err.println(result.describe());</code></pre></div>
+<h2 id="refusals">Handling a configuration failure</h2><p>Range errors, unsupported fields and setting changes attempted while the motor is enabled are different problems. Print <code>StatusCode.describe()</code>, stop the motor when requested, and retry only the intended setting. Read back or inspect the live result before relying on it.</p>
 
       <nav class="pager">
         <a class="prev" href="code.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Setup &amp; install</span></a>
@@ -90,12 +41,12 @@ intake.saveConfiguration();   // persist across a power cycle</code></pre>
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#configurator">The configurator</a>
-    <a href="#limits">Current limits</a>
-    <a href="#neutral">Neutral mode</a>
-    <a href="#save">Save to keep across power</a>
+    <a href="#current">Set current limits explicitly</a>
+    <a href="#save">What survives a restart?</a>
+    <a href="#neutral">Choose neutral behavior</a>
+    <a href="#refusals">Handling a configuration failure</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

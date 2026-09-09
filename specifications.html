@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Specifications — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -44,42 +44,30 @@
           <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
           <tbody>
             <tr><td>Nominal bus</td><td>12 V (FRC)</td></tr>
-            <tr><td>Operating voltage</td><td>6–24 V. The motor will not arm below 6 V and cuts output above 24 V.</td></tr>
-            <tr><td>Continuous current</td><td>40–60 A</td></tr>
-            <tr><td>Stator current limit</td><td>Configurable, default 120 A, up to 160 A</td></tr>
-            <tr><td>Supply current limit</td><td>Configurable, default 40 A, up to 60 A</td></tr>
+            <tr><td>Power-input protection</td><td>Reverse-polarity protection. Connect red to positive (+) and black to negative (−).</td></tr>
+
+
+            <tr><td>Stator current limit</td><td>Configurable, 1–95 A; verify the live setting</td></tr>
+            <tr><td>Supply current limit</td><td>Configurable, 1–40 A; verify the live setting</td></tr>
           </tbody>
         </table>
       </div>
       <p>The Cyclone limits two distinct currents. <strong>Stator current</strong> flows in the windings and sets torque; <strong>supply current</strong> is what the battery delivers. Duty cycle links them: supply current is approximately <code>stator × duty</code>, so a large winding current draws only a small battery current at low duty. Near stall at about 10&nbsp;% duty, roughly 70&nbsp;A in the windings corresponds to about 7&nbsp;A from the pack. Set the stator limit to protect the motor and the supply limit to protect the battery and breaker.</p>
 
-      <h2 id="performance">Performance</h2>
-      <p class="sec-lead">Speed and torque at the ends of the operating range.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
-          <tbody>
-            <tr><td>Free speed</td><td>7530 RPM</td></tr>
-            <tr><td>Stall torque</td><td>3.8 N·m</td></tr>
-            <tr><td>Stall current</td><td>275 A</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>Speed and torque trade off across the load range. Free speed (7530&nbsp;RPM) is the no-load maximum and scales with bus voltage; torque rises with stator current, reaching 3.8&nbsp;N·m at the 275&nbsp;A stall point. A heavier load lowers speed and raises current draw. Stall current is a peak, not a continuous rating; the <a href="#thermal">thermal limits</a> bound sustained operation below it.</p>
-
-      <h2 id="sensing">Control and sensing</h2>
+      <h2 id="performance">Mechanism performance</h2><p>Choose gearing and current limits for the load and measure the result on your robot. A software current-limit ceiling is not a continuous-current or stall-performance rating. This reference does not provide a verified torque-speed curve.</p>
+<h2 id="sensing">Control and sensing</h2>
       <p class="sec-lead">The control modes, and the encoder behind them.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
           <tbody>
-            <tr><td>Control modes</td><td>Duty, velocity, position, current</td></tr>
+            <tr><td>Control modes</td><td>Duty, velocity, position (public Java API)</td></tr>
             <tr><td>Encoder</td><td>14-bit absolute magnetic, 16,384 counts per turn</td></tr>
-            <tr><td>Commutation</td><td>Trapezoidal</td></tr>
+            <tr><td>Commutation</td><td>Trapezoidal: the controller switches the motor coils in a repeating sequence using encoder feedback.</td></tr>
           </tbody>
         </table>
       </div>
-      <p>Command the Cyclone in one of four modes. <strong>Duty</strong> sets output as a fraction of bus power, from −1 (full reverse) to +1 (full forward). <strong>Velocity</strong> holds a target speed, <strong>position</strong> a target angle, and <strong>current</strong> a target torque, each closed on the built-in 14-bit encoder. Pick the mode that matches the mechanism. <a href="code-control.html">Control requests</a></p>
+      <p>Duty requests a signed output fraction. Velocity uses rotor RPM; position uses rotor radians and requires configured gains and a known mechanism reference. Public Java current control is not supported. See <a href="code-control.html">Control requests</a>.</p>
 
       <h2 id="communication">Communication</h2>
       <p class="sec-lead">How the robot reaches the motor and addresses it on the bus.</p>
@@ -87,8 +75,9 @@
         <table>
           <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
           <tbody>
-            <tr><td>Interfaces</td><td>CAN FD and USB-C</td></tr>
-            <tr><td>Both interfaces</td><td>Full motor function over CAN or USB-C</td></tr>
+            <tr><td>Interfaces</td><td>CAN and USB-C</td></tr>
+            <tr><td>Both interfaces</td><td>Control, configuration, telemetry, and updates; available operations depend on the release</td></tr>
+            <tr><td>CAN wiring</td><td>H (yellow), L (green); two 2-pin Molex connectors, one male and one female</td></tr>
             <tr><td>Device number (CAN ID)</td><td>1–62</td></tr>
             <tr><td>Control system</td><td>2027 SystemCore</td></tr>
           </tbody>
@@ -101,13 +90,13 @@
         <table>
           <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
           <tbody>
-            <tr><td>Over-temperature warning</td><td>75 °C default, configurable 40–80 °C</td></tr>
-            <tr><td>Over-temperature trip</td><td>85 °C. Output is cut.</td></tr>
-            <tr><td>Thermal fold</td><td>Current is reduced as the thermal budget fills, before the trip</td></tr>
+            <tr><td>Over-temperature warning</td><td>65 °C default, configurable 40–80 °C</td></tr>
+            <tr><td>Over-temperature trip</td><td>80 °C. Output is cut.</td></tr>
+            <tr><td>Thermal fold</td><td>With thermal fold enabled, the allowed stator current decreases between 70°C and 75°C, reaching 12 A</td></tr>
           </tbody>
         </table>
       </div>
-      <p>The controller tracks heat with a current-squared-time (i²t) budget: brief high current has little effect, while sustained high current fills the budget. Past a threshold the controller reduces the current limit in proportion, trading torque for lower temperature, and cuts output at the 85&nbsp;°C trip. Current limits sized to the load keep sustained current below the fold threshold.</p>
+      <p>Thermal derating means reducing the allowed current as the controller board gets hotter. With default fold settings, the stator ceiling decreases from 70°C to a 12 A floor at 75°C; a lower base is not raised. A separate sustained 80°C condition stops output. See <a href="power-thermal.html">Power &amp; thermal budget</a>.</p>
 
       <nav class="pager">
         <a class="prev" href="power-thermal.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Power &amp; thermal budget</span></a>
@@ -126,6 +115,6 @@
     <a href="#thermal">Thermal</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

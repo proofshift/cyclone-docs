@@ -1,0 +1,24 @@
+{
+    "fileName": "SwyftCycloneV4.json",
+    "name": "Swyft Robotics Cyclone V4",
+    "version": "0.28.0",
+    "wpilibYear": "2027_alpha5",
+    "uuid": "1079e18a-9f8a-4235-b3b2-c440cbcb4725",
+    "mavenUrls": [
+        "https://cyclone.docs.swyftrobotics.com/files/vendor-lib/releases"
+    ],
+    "jsonUrl": "https://cyclone.docs.swyftrobotics.com/files/vendor-lib/2027/SwyftCycloneV4.json",
+    "javaDependencies": [
+        {
+            "groupId": "com.swyftrobotics",
+            "artifactId": "cyclone-v4",
+            "version": "0.28.0"
+        }
+    ],
+    "jniDependencies": [
+        
+    ],
+    "cppDependencies": [
+        
+    ]
+}

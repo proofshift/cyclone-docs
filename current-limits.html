@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>How the limits work — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,71 +14,31 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Safety &amp; Current Limits › How the limits work</div>
       <h1>How the limits work</h1>
-      <p class="sec-lead">How the stator and supply current limits protect the motor and the battery.</p>
+      <p class="sec-lead">Set torque-related current and battery current separately for each mechanism.</p>
 
-      <h2 id="two">Stator and supply</h2>
-      <p>The Cyclone limits both its <strong>stator</strong> and <strong>supply</strong> current. The stator limit caps the current in the windings, which sets torque and protects the motor. The supply limit caps the current drawn from the bus, which protects the battery and the branch breaker. Both work by reducing duty cycle, so they hold an average, not an instantaneous ceiling.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Limit</th><th>Caps</th><th>Default</th><th>Maximum</th></tr></thead>
-          <tbody>
-            <tr><td>Stator</td><td>Stator / torque current</td><td>120 A</td><td>160 A</td></tr>
-            <tr><td>Supply</td><td>Battery / supply current</td><td>40 A</td><td>60 A</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>Duty cycle couples the two. Because the Cyclone is a switching converter, average supply current is the stator current scaled by duty — <code>supply ≈ stator × duty</code>: at low duty a high winding current flows in brief pulses while the battery sees only their average. Near stall at about 10&nbsp;% duty, roughly 70&nbsp;A in the windings pulls about 7&nbsp;A from the pack. This is why a stalled motor can sit far below its supply limit while still pushing the stator limit — so set the stator limit for torque and winding heat, and the supply limit for the load the mechanism puts on the shared battery.</p>
 
-      <h2 id="thermal">Thermal fold</h2>
-      <p>Current limits set the ceiling; the thermal system governs how long you can hold near it. The controller tracks heat with a current-squared-time (i²t) budget. Brief high current has little effect; sustained high current fills the budget, and past a threshold the controller reduces the current limit in proportion, trading torque for lower temperature. It cuts output at the 85&nbsp;°C trip. Limits sized to the load keep a mechanism below the fold. <a href="power-thermal.html">Power &amp; thermal budget</a></p>
+<h2 id="two">Stator and supply current</h2>
+<p><strong>Stator current</strong> flows in the motor’s coils, called windings and is related to torque and heating. <strong>Supply current</strong> is drawn from the robot battery through the power distribution hub and the motor’s breaker or fuse. Set both limits: a low battery-current reading does not mean the windings are carrying little current.</p>
+<div class="table-wrap"><table><thead><tr><th>Setting</th><th>Accepted range</th><th>Use</th></tr></thead><tbody><tr><td>Stator current limit</td><td>1–95 A</td><td>Limit torque demand and winding current.</td></tr><tr><td>Supply current limit</td><td>1–40 A</td><td>Limit the mechanism’s contribution to battery load.</td></tr></tbody></table></div>
+<p>While the motor is driving steadily, <code>supply current ≈ stator current × duty magnitude</code>. For example, 60 A stator current at 50% duty corresponds to about 30 A supply current. This is an approximation. Actual current also depends on electrical losses, sudden changes in load, and energy returned to the battery while slowing down.</p>
+<p>The firmware reduces the commanded motor output in response to measured current. This is not an instantaneous short-circuit limit and does not guarantee that the motor’s breaker will never trip. Keep the robot’s normal electrical protection in place.</p>
+<h2 id="set">Apply limits in robot code</h2>
+<p>Configure the motor while the robot is disabled. This example shows the supported fields; 30 A and 20 A are illustrative values, not recommendations for every mechanism.</p>
+<div class="code-panel"><div class="code-bar">Java</div><pre><code>CurrentLimitsConfigs limits = new CurrentLimitsConfigs()
+    .withStatorCurrentLimit(30)
+    .withSupplyCurrentLimit(20);
+StatusCode result = motor.getConfigurator().apply(limits);
+if (!result.isOK()) System.err.println(result.describe());</code></pre></div>
+<p>Check the live values in SWYFT Link after applying them. Save supported settings when needed, and verify the restored values after a restart. Do not rely on a generic factory-default number in place of checking your motor’s configuration.</p>
+<h2 id="choose">Choose limits for the mechanism</h2>
+<p>Use the mechanism’s gearing, load, breaker or fuse, and measured behavior. Run representative starts, stops, and loaded moves. Record stator current, supply current, battery voltage, and temperature. Test combinations that occur in a match, such as accelerating while operating an intake or elevator.</p>
+<p>The setting maximum is not a continuous motor rating or a recommended target. If a move fails, check whether output is limited, the mechanism is binding, or voltage is falling before raising the limit. See <a href="limits-by-mechanism.html">Limits by mechanism</a>.</p>
+<h2 id="stall">Holding against a stop</h2>
+<p>Firmware 0.166.0 adds a current budget for a motor that is commanded to drive but turns very slowly. With stall protection enabled, the stator ceiling is 60 A after the burst budget is spent, or 40 A when the board is hot. Your configured limit still applies if it is lower. Stopping and restarting does not restore the burst budget.</p>
+<p>The controller starts with that budget spent. A continuous 30-second cool recovery interval is needed before a new burst is available. The burst allows up to 1.5 seconds of accumulated stalled operation, subject to your current settings and the other thermal limits. This is not a promise that a mechanism can hold a load indefinitely; choose gearing and limits for the actual load.</p>
+<h2 id="thermal">Temperature derating</h2>
+<p>Thermal fold means the controller lowers the allowed current as it heats up. With this feature enabled and its default settings, the stator current limit starts decreasing at 70°C and reaches 12 A at 75°C. If you set a limit below 12 A, it stays at that lower value. Output stops if the board temperature remains at 80°C or above long enough to trigger thermal protection. This protection uses board temperature; it is not a winding-temperature measurement. See <a href="power-thermal.html">Power &amp; thermal budget</a>.</p>
 
-      <h2 id="set">Set them from robot code</h2>
-      <p>Set limits once at start-up, in <code>robotInit()</code>. <code>setTeamLimits</code> writes the over-temperature warning, the over-temperature trip, and the stator limit together; <code>setStatorCurrentLimit</code> writes the stator limit alone.</p>
-      <div class="code-panel">
-        <div class="code-bar">Robot.java</div>
-        <pre><code>private final SwyftCyclone drive  = new SwyftCyclone(1);
-private final SwyftCyclone intake = new SwyftCyclone(5);
-
-@Override
-public void robotInit() {
-    // warn °C, trip °C, stator A
-    drive.setTeamLimits(75, 85, 80);
-    intake.setTeamLimits(75, 85, 40);
-}</code></pre>
-      </div>
-      <p>On this path the warning takes 40–80&nbsp;°C, the trip up to 85&nbsp;°C, and the stator limit 1–160&nbsp;A. A value outside its range is refused, not clamped.</p>
-
-      <p>To set both current limits together, apply a <code>CurrentLimitsConfigs</code> through the device configurator. Each field defaults to "leave unchanged", so you set only the ones you name.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>var limits = new CurrentLimitsConfigs();
-limits.StatorCurrentLimit = 40;   // windings, amperes
-limits.SupplyCurrentLimit = 30;   // bus, amperes
-intake.getConfigurator().apply(limits);</code></pre>
-      </div>
-      <p><code>apply</code> returns a <code>StatusCode</code>; check <code>isOK()</code> to confirm the device accepted the value. To make a limit survive a power cycle, call <code>saveConfiguration()</code> after applying it.</p>
-
-      <p>Read the draw and temperature at runtime, and check for a trip:</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>double amps = intake.getSupplyCurrent();   // bus amperes
-double temp = intake.getDeviceTemp();      // °C
-if (intake.hasHardFault()) {
-    // over-temperature or over-current — read the fault in SWYFT Link
-}</code></pre>
-      </div>
-
-      <h2 id="choose">Choosing a value</h2>
-      <p>Start at the mechanism’s real need, not the ceiling, then adjust after a real run.</p>
-      <ul>
-        <li>Set the stator limit to the torque the mechanism needs. Raise it only if a move cannot finish and the motor is not hot.</li>
-        <li>Keep the supply limit at or below the branch breaker so the limit acts before the breaker trips.</li>
-        <li>Per-mechanism starting points are on <a href="limits-by-mechanism.html">Limits by mechanism</a>.</li>
-      </ul>
-      <div class="callout warning">
-        <span class="label">Warning</span>
-        <p>Do not leave a mechanism at the 160 A stator ceiling. A limit that matches the job protects the motor and keeps it out of the thermal fold.</p>
-      </div>
 
       <nav class="pager">
         <a class="prev" href="code-api.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> API reference</span></a>
@@ -89,12 +49,13 @@ if (intake.hasHardFault()) {
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#two">Stator and supply</a>
-    <a href="#thermal">Thermal fold</a>
-    <a href="#set">Set them from robot code</a>
-    <a href="#choose">Choosing a value</a>
+    <a href="#two">Stator and supply current</a>
+    <a href="#set">Apply limits in robot code</a>
+    <a href="#choose">Choose limits for the mechanism</a>
+    <a href="#stall">Holding against a stop</a>
+    <a href="#thermal">Temperature derating</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

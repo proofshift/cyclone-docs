@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>API reference — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,142 +14,64 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › API reference</div>
       <h1>API reference</h1>
-      <p class="sec-lead">Every public method of <code>SwyftCyclone</code>, grouped, with a short example for each. Task walk-throughs are in <a href="code-control.html">Control requests</a>, <a href="code-closedloop.html">Closed-loop control</a>, and <a href="code-telemetry.html">Status signals</a>.</p>
+      <p class="sec-lead">Java methods for controlling, configuring, and monitoring a Cyclone.</p>
 
-      <h2 id="construct">Construct</h2>
-      <p>Create one <code>SwyftCyclone</code> per motor, with the device number you set in SWYFT&nbsp;Link.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone;
 
-private final SwyftCyclone intake = new SwyftCyclone(5);
-// on a specific CAN bus:
-// new SwyftCyclone(5, 1);</code></pre>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><code>SwyftCyclone(int deviceNumber)</code></td><td>Construct on the default CAN bus.</td></tr>
-            <tr><td><code>SwyftCyclone(int deviceNumber, int canBus)</code></td><td>Construct on a specific CAN bus.</td></tr>
-            <tr><td><code>int getDeviceNumber()</code></td><td>The device number (CAN ID), 1–62.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h2 id="output">Command output</h2>
-      <p>Pick the mode that matches the mechanism: duty for open-loop, or velocity, position, or current for closed-loop.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>intake.setDutyCycle(0.4);        // 40% of bus, forward
-shooter.setVelocity(3000);       // hold 3000 RPM
-arm.setPosition(Math.PI / 2);    // quarter turn
-roller.setCurrent(20);           // 20 A of torque
-intake.disable();                // coast</code></pre>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><code>void set(double duty)</code> / <code>void setDutyCycle(double duty)</code></td><td>Duty cycle, −1 to 1.</td></tr>
-            <tr><td><code>void setVelocity(double rpm)</code></td><td>Closed-loop mechanical speed.</td></tr>
-            <tr><td><code>void setPosition(double rad)</code></td><td>Closed-loop position.</td></tr>
-            <tr><td><code>void setCurrent(double amps)</code></td><td>Torque current, signed.</td></tr>
-            <tr><td><code>void disable()</code></td><td>Coast and drop the setpoint.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h2 id="config">Configure</h2>
-      <p>Set limits and neutral mode once at start-up, then save to keep them across a power cycle.</p>
-      <div class="code-panel">
-        <div class="code-bar">robotInit()</div>
-        <pre><code>intake.setTeamLimits(75, 85, 40);   // warn °C, trip °C, stator A
-intake.setNeutralMode(SwyftCyclone.NeutralMode.COAST);
-intake.saveConfiguration();</code></pre>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><code>void setTeamLimits(double warnC, double tripC, double statorA)</code></td><td>Temperature warning and trip, and stator limit.</td></tr>
-            <tr><td><code>void setStatorCurrentLimit(double amps)</code></td><td>Stator limit alone, 1–160 A.</td></tr>
-            <tr><td><code>void setNeutralMode(NeutralMode mode)</code></td><td><code>COAST</code> succeeds; <code>BRAKE</code> throws.</td></tr>
-            <tr><td><code>void saveConfiguration()</code></td><td>Persist device config across power loss.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h2 id="faults">Faults and e-stop</h2>
-      <p>Read faults, clear them once the cause is gone, and latch the motor off in an emergency.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>if (intake.hasHardFault()) {
-    intake.clearFaults();        // refused while the cause is present
+<span id="config"></span><span id="construct"></span><span id="faults"></span><span id="leds"></span><span id="output"></span><span id="telemetry"></span>
+<h2 id="motion">Motor commands and setup</h2><div class="table-wrap"><table><thead><tr><th scope="col">Call</th><th scope="col">Purpose</th></tr></thead><tbody><tr><th scope="row">new SwyftCyclone(id)</th><td>Create the controller object; use a unique device number.</td></tr><tr><th scope="row">setDutyCycle(duty) / set(duty)</th><td>Signed duty fraction, −1…+1.</td></tr><tr><th scope="row">setVelocity(rpm)</th><td>Mechanical rotor RPM.</td></tr><tr><th scope="row">setPosition(rad)</th><td>Rotor radians; requires configured gains.</td></tr><tr><th scope="row">configureMechanism(configs)</th><td>Set host-side ratio and wrapping behavior.</td></tr><tr><th scope="row">setMechanismPosition(rotations)</th><td>Command mechanism turns through that ratio.</td></tr><tr><th scope="row">setControl(Follower)</th><td>Follow a leader through the host library.</td></tr><tr><th scope="row">stopFollowing()</th><td>Return to direct control.</td></tr><tr><th scope="row">disable()</th><td>Drop motion and coast.</td></tr><tr><th scope="row">estop() / releaseEstop()</th><td>Latch / release emergency stop; enable conditions still apply.</td></tr><tr><th scope="row">close()</th><td>Release the transport and object resources.</td></tr></tbody></table></div><h3>Duty, velocity, and position requests</h3><p>Create one controller object at startup, as shown in <a href="code.html#first-program">the complete first program</a>. In these snippets <code>motor</code> is that existing object. Choose one control mode and repeat its command from enabled periodic code; do not paste all three requests into the same loop.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>motor.setDutyCycle(0.10); // 10% output. Negative requests the other direction.</code></pre></div><div class="code-panel"><div class="code-bar">Java</div><pre><code>motor.setVelocity(1500); // Rotor RPM; requires usable velocity gains.</code></pre></div><div class="code-panel"><div class="code-bar">Java</div><pre><code>// Only after configuring position gains and establishing a known reference.
+motor.setPosition(Math.PI / 2); // Quarter rotor turn from that reference.</code></pre></div><h3>Convert mechanism turns</h3><p>A 5:1 ratio means five motor turns for one mechanism turn. Configure it when robot code starts. The target call belongs in periodic code, after homing and position-gain setup.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>MechanismConfigs mechanism = new MechanismConfigs();
+mechanism.SensorToMechanismRatio = 5.0;
+mechanism.ContinuousWrap = false;
+motor.configureMechanism(mechanism);
+// In enabled periodic code, once the reference and gains are valid:
+motor.setMechanismPosition(0.25); // Quarter mechanism turn; 1.25 motor turns.</code></pre></div><h3>Follower and stop</h3><p>Configure both motors’ limits. Here <code>follower</code> is a separate controller object and device 1 is the leader. Choose the alignment that matches the mechanism.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>follower.setControl(new Follower(1, MotorAlignmentValue.Opposed));
+// Later, before sending direct commands to the follower:
+follower.stopFollowing();</code></pre></div><div class="code-panel"><div class="code-bar">Java</div><pre><code>motor.disable(); // Normal stop: remove the request and coast.
+// On a separate emergency-stop event:
+motor.estop();
+// Release only after the cause is resolved and it is safe to re-enable.
+// motor.releaseEstop();</code></pre></div>
+<h2 id="settings">Settings</h2><div class="table-wrap"><table><thead><tr><th scope="col">Call</th><th scope="col">Important constraint</th></tr></thead><tbody><tr><th scope="row">getConfigurator().apply(CurrentLimitsConfigs)</th><td>Check StatusCode; stator ≤95 A, supply ≤40 A.</td></tr><tr><th scope="row">setVelocityGain(KP, KI or KD, value)</th><td>Write velocity kP/kI directly; kD also accepts PID_GAIN_KD on library 0.28.0+.</td></tr><tr><th scope="row">getConfigurator().apply(ClosedLoopGeneralConfigs)</th><td>PositionKP is supported; inspect returned status for other fields.</td></tr><tr><th scope="row">setVelocityDerivativeGain(kD) / getVelocityDerivativeGain()</th><td>Write/read velocity kD; firmware 0.165.0+, library 0.28.0+. Range 0 to 0.001; check StatusCode. Read returns NaN if unavailable.</td></tr><tr><th scope="row">setNeutralMode(COAST or BRAKE)</th><td>Resets on motor restart; set it again at startup.</td></tr><tr><th scope="row">saveConfiguration()</th><td>Save supported device settings while stopped; not every overlay is persistent.</td></tr></tbody></table></div><h3>Apply configuration and check the result</h3><p>Apply while stopped. The 30 A and 20 A values below illustrate the calls; select limits for your mechanism.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>CurrentLimitsConfigs limits = new CurrentLimitsConfigs()
+    .withStatorCurrentLimit(30)
+    .withSupplyCurrentLimit(20);
+StatusCode result = motor.getConfigurator().apply(limits);
+if (!result.isOK()) {
+    motor.disable();
+    System.err.println(result.describe());
+}</code></pre></div><div class="code-panel"><div class="code-bar">Java</div><pre><code>StatusCode neutral = motor.setNeutralMode(SwyftCyclone.NeutralMode.BRAKE);
+if (!neutral.isOK()) System.err.println(neutral.describe());
+// Set neutral mode again after restart; it is not saved to flash.</code></pre></div><p>Use the supported Java gain writer for velocity. Replace <code>kP</code> and <code>kI</code> with the gains selected for your mechanism, within the <a href="code-closedloop.html#gain-meaning">accepted ranges</a>.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>motor.setVelocityGain(SwyftCycloneConstants.PID_GAIN_KP, kP);
+motor.setVelocityGain(SwyftCycloneConstants.PID_GAIN_KI, kI);
+StatusCode derivative = motor.setVelocityDerivativeGain(0.00001); // Example only.
+if (!derivative.isOK()) System.err.println(derivative.describe());</code></pre></div><div class="code-panel"><div class="code-bar">Java</div><pre><code>ClosedLoopGeneralConfigs gains = new ClosedLoopGeneralConfigs();
+gains.PositionKP = positionKp; // Your selected, positive position gain.
+StatusCode result = motor.getConfigurator().apply(gains);
+if (!result.isOK()) System.err.println(result.describe());</code></pre></div><div class="code-panel"><div class="code-bar">Java</div><pre><code>// Save deliberately after checking accepted settings on a stopped motor.
+// Do not put this in periodic code or save the same values on every boot.
+motor.saveConfiguration();</code></pre></div>
+<h2 id="signals">Signals and lights</h2><div class="table-wrap"><table><thead><tr><th scope="col">Call</th><th scope="col">Purpose</th></tr></thead><tbody><tr><th scope="row">getLatest()</th><td>Decoded record with frame timestamps.</td></tr><tr><th scope="row">getVelocityRpm() / getPositionRad()</th><td>Mechanical motion.</td></tr><tr><th scope="row">getSupplyVoltage() / getSupplyCurrent()</th><td>Electrical measurements.</td></tr><tr><th scope="row">getDeviceTemp()</th><td>Board temperature.</td></tr><tr><th scope="row">isAlive(maxAgeSec)</th><td>Connection freshness.</td></tr><tr><th scope="row">hasLikelyRebooted()</th><td>Detect a likely reset before using relative position.</td></tr><tr><th scope="row">hasNewRefusal() / describeRefusal()</th><td>Inspect command refusal.</td></tr><tr><th scope="row">setLEDs(r,g,b) / setLED(index,r,g,b)</th><td>Five user LEDs; RGB components 0–255.</td></tr><tr><th scope="row">clearLEDs() / identify()</th><td>Release the user override / identify the physical device.</td></tr></tbody></table></div><h3>Read measurements and faults</h3><p>Measurements arrive asynchronously. A recent connection does not guarantee every cached signal is fresh. Check the relevant timestamps when a control decision depends on a measurement.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>double rpm = motor.getVelocityRpm();
+double rotorRadians = motor.getPositionRad();
+double volts = motor.getSupplyVoltage();
+double supplyAmps = motor.getSupplyCurrent();
+double boardCelsius = motor.getDeviceTemp();
+boolean connectedRecently = motor.isAlive(0.25);
+SwyftCycloneData data = motor.getLatest();
+double motionReceivedAtSeconds = data.motionTimestampSec;</code></pre></div><div class="code-panel"><div class="code-bar">Java</div><pre><code>if (motor.hasNewRefusal()) {
+    System.err.println(motor.describeRefusal());
 }
-intake.estop();                  // latching kill
-intake.releaseEstop();           // then re-arm</code></pre>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><code>boolean hasHardFault()</code></td><td>True while a hard fault is latched.</td></tr>
-            <tr><td><code>void clearFaults()</code></td><td>Refused while the cause is present.</td></tr>
-            <tr><td><code>void estop()</code></td><td>Latching kill; coasts.</td></tr>
-            <tr><td><code>void releaseEstop()</code></td><td>Clear the e-stop latch.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h2 id="telemetry">Read telemetry</h2>
-      <p>Check the motor is alive, then read a coherent snapshot or an individual value.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>if (intake.isAlive(0.1)) {
-    double rpm  = intake.getVelocityRpm();
-    double amps = intake.getSupplyCurrent();
-    double temp = intake.getDeviceTemp();
-}</code></pre>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><code>SwyftCycloneData getLatest()</code></td><td>A coherent snapshot of all telemetry.</td></tr>
-            <tr><td><code>boolean isAlive(double maxAgeSec)</code></td><td>False if no frame arrived within the age.</td></tr>
-            <tr><td><code>double getVelocityRpm()</code></td><td>Mechanical RPM.</td></tr>
-            <tr><td><code>double getSupplyCurrent()</code></td><td>Bus amperes.</td></tr>
-            <tr><td><code>double getSupplyVoltage()</code></td><td>Bus volts.</td></tr>
-            <tr><td><code>double getDeviceTemp()</code></td><td>Board temperature, °C.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h2 id="leds">LEDs and identify</h2>
-      <p>Set the middle five user lights, or flash the whole strip to find a motor.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>import com.swyftrobotics.cyclone.v4.LedAnimation;
-
-intake.setLEDs(0, 120, 255);                            // all five
-intake.setLED(3, 255, 0, 0);                            // centre
-intake.setLEDs(255, 40, 0, LedAnimation.ChaseForward);  // animation
-intake.clearLEDs();
-intake.identify();                                      // locate it</code></pre>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Signature</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><code>void setLEDs(int r, int g, int b)</code></td><td>All five user lights, channels 0–255.</td></tr>
-            <tr><td><code>void setLEDs(int r, int g, int b, LedAnimation a)</code></td><td>All five with an animation.</td></tr>
-            <tr><td><code>void setLED(int index, int r, int g, int b)</code></td><td>One user light, index 1–5.</td></tr>
-            <tr><td><code>void clearLEDs()</code></td><td>Turn the user lights off.</td></tr>
-            <tr><td><code>void identify()</code></td><td>Flash the status lights white to locate the motor.</td></tr>
-          </tbody>
-        </table>
-      </div>
+if (motor.hasHardFault()) {
+    motor.disable();
+    System.err.println(motor.getPowerStageFaultString());
+}
+if (motor.hasLikelyRebooted()) {
+    motor.disable();
+    // Invalidate your saved home/reference and re-establish it before position control.
+}</code></pre></div><h3>Identify and set user lights</h3><p>The five user LEDs use red, green, and blue values from 0 to 255. The two end status lights remain controlled by the firmware.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>motor.identify();           // Flash the physical motor&#x27;s identify indication.
+motor.setLEDs(0, 80, 255);   // Set all five user lights.
+motor.setLED(1, 255, 0, 0);  // Change user LED 1 to red.
+// Later, release the user-colour override:
+motor.clearLEDs();</code></pre></div><p>Call <code>motor.close()</code> when permanently disposing of the object, not after each command. See <a href="code.html#first-program">the first program</a> for object lifetime and <a href="code-telemetry.html">Status signals</a> for measurement validity.</p>
+<h2 id="unsupported">Unsupported operations</h2><div class="table-wrap"><table><thead><tr><th scope="col">Surface</th><th scope="col">Current behavior</th></tr></thead><tbody><tr><th scope="row">setCurrent()</th><td>Deprecated compatibility method; throws UnsupportedOperationException.</td></tr><tr><th scope="row">Slots 1 and 2</th><td>Not selectable on the public gain path.</td></tr><tr><th scope="row">apply(Slot0Configs) gain writes</th><td>Returns guidance to use setVelocityGain; not an alternative writer.</td></tr><tr><th scope="row">SoftwareLimitSwitchConfigs</th><td>Refused by the public configurator; no claimed mechanism protection.</td></tr><tr><th scope="row">BrakeCurrent / BrakeMaxRpm</th><td>Refused; the neutral brake is not an adjustable current regulator.</td></tr><tr><th scope="row">disarmDriverStationGate()</th><td>Refused. The safety gate is non-disarmable.</td></tr></tbody></table></div>
 
       <nav class="pager">
         <a class="prev" href="code-telemetry.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Status signals</span></a>
@@ -160,14 +82,12 @@ intake.identify();                                      // locate it</code></pre
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#construct">Construct</a>
-    <a href="#output">Command output</a>
-    <a href="#config">Configure</a>
-    <a href="#faults">Faults and e-stop</a>
-    <a href="#telemetry">Read telemetry</a>
-    <a href="#leds">LEDs and identify</a>
+    <a href="#motion">Motor commands and setup</a>
+    <a href="#settings">Settings</a>
+    <a href="#signals">Signals and lights</a>
+    <a href="#unsupported">Unsupported operations</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

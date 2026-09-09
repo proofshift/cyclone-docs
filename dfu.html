@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Firmware & DFU — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,36 +14,23 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › SWYFT Link › Firmware &amp; DFU</div>
       <h1>Firmware &amp; DFU</h1>
-      <p class="sec-lead">Update firmware over USB-C, and recover a motor that will not enumerate.</p>
+      <p class="sec-lead">Update motor firmware from SWYFT Link while the robot is disabled.</p>
 
-      <h2 id="update">Update firmware</h2>
-      <p>Open the <strong>Firmware</strong> page in <a href="swyft-link.html">SWYFT&nbsp;Link</a> and flash an update over USB-C or CAN. It shows the installed version; the status lights go solid white during the transfer, then the motor reboots.</p>
-      <div class="callout warning">
-        <span class="label">Warning</span>
-        <p>Do not remove power or unplug USB-C while the lights are solid white. If a flash is interrupted and the motor will not enumerate afterward, use DFU recovery below.</p>
-      </div>
 
-      <h2 id="dfu">DFU recovery</h2>
-      <p>Use DFU only when a motor will not enumerate — usually after an interrupted flash. It runs over USB-C.</p>
-      <figure class="big">
-        <span class="fig-annot">
-          <img class="zoomable" src="img/status-can.png" alt="Back panel with the DFU button located">
-          <svg class="led-arrow" viewBox="0 0 1272 751" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-            <line x1="645" y1="236" x2="452.99" y2="241.24" stroke="#dc2020" stroke-width="12" stroke-linecap="round"/>
-            <polygon points="425,242 452.58,226.24 453.4,256.24" fill="#dc2020" stroke="#dc2020" stroke-width="4" stroke-linejoin="round"/>
-            <text x="660" y="248" fill="#4db8ea" font-size="34" font-weight="700" text-anchor="start" font-family="Inter, system-ui, sans-serif">DFU button</text>
-          </svg>
-        </span>
-        <figcaption>The DFU button is behind the pinhole on the back panel, beside the DFU marking. The power LED next to it lights when USB-C alone is powering the motor.</figcaption>
-      </figure>
-      <ol>
-        <li>Remove all power from the leads first — no battery, no PDH, no bench supply.</li>
-        <li>Hold the <strong>DFU</strong> button.</li>
-        <li>While holding, connect USB-C. Wait until the power LED beside the DFU pinhole lights from USB alone.</li>
-        <li>Release the button.</li>
-        <li>Flash the image from the <strong>Firmware</strong> page.</li>
-        <li>Disconnect USB-C, power the motor normally, and confirm its identity in SWYFT&nbsp;Link.</li>
-      </ol>
+<h2 id="update">Update through SystemCore</h2>
+<p>You can update over CAN with the motor installed on the robot, using SystemCore and SWYFT Link. Power the robot from a charged battery, keep Driver Station disabled, and open SWYFT Link on SystemCore. Do not update during a mechanism test.</p>
+<ol><li>Select the Cyclone and confirm its device number. Use Identify if needed.</li><li>Open Firmware. Use the offered image, or select the intended <code>.swyftfw</code> file.</li><li>Choose Update. Keep the robot powered and the connection active while the app erases, writes, verifies, and restarts the controller.</li><li>Wait for the app to confirm completion and the expected firmware version. The end of the write progress is not the end of the update.</li><li>Check configuration and device identity after the restart before enabling the mechanism.</li></ol>
+<h2 id="usb">Update over USB-C</h2>
+<p>For a direct update, open <a href="https://swyft-link.vercel.app/" target="_blank" rel="noopener">SWYFT Link in Google Chrome</a> and connect a USB-C data cable to the selected Cyclone. USB alone can power a firmware update. To run the motor afterward, connect a 12 V FRC battery through a fused or breaker-protected power connection; standalone USB-C control does not require Driver Station or CAN. Keep motor output disabled during the update, and do not disconnect while writing or waiting for the controller to reconnect.</p>
+<p><strong>USB-C on a robot:</strong> standalone USB-C testing does not need Driver Station. If the Cyclone is also receiving a robot signal over CAN, USB-C commands still follow Driver Station enable permission. A USB cable does not override a disabled robot.</p>
+<h2 id="files">File types</h2><p>The USB-C version of SWYFT Link is a website, not a file to download. Use the <a href="https://swyft-link.vercel.app/" target="_blank" rel="noopener">live SWYFT Link site</a>.</p>
+<div class="table-wrap"><table><thead><tr><th>File</th><th>Use</th></tr></thead><tbody><tr><td>.ipk</td><td>Installs the SWYFT Link application on SystemCore.</td></tr><tr><td>.swyftfw</td><td>Application firmware accepted by the Firmware page.</td></tr><tr><td>Combined .hex</td><td>Service image; not the file used for a normal team update.</td></tr></tbody></table></div>
+<h2 id="failure">If the update does not complete</h2>
+<p>Record the exact error and keep power stable. If the controller reconnects, check its firmware version before flashing again. Solid white lights indicate the updater state, but do not tell you whether it is progressing.</p>
+<ol><li>Wait for SWYFT Link to report completion or a failure. Do not interrupt an update that is still running.</li><li>After a reported failure, save the exact message. Reconnect using the same connection and check whether the Firmware page can reach the controller.</li><li>If the app offers another update, select the intended <code>.swyftfw</code> image and retry with stable power. If the normal application has returned, check its version first; the write may have finished even if reconnect failed.</li><li>If SWYFT Link cannot reach the controller, stop here and contact <a href="https://www.swyftrobotics.com/support" target="_blank" rel="noopener">SWYFT Support</a>. Include the error, firmware version if known, connection type, and whether the lights remain solid white.</li></ol>
+<h2 id="dfu">DFU and service recovery</h2>
+<p>The DFU Button is a recovery feature. It is not used for normal CAN or USB application updates. If normal update recovery above cannot reach the controller, ask <a href="https://www.swyftrobotics.com/support" target="_blank" rel="noopener">SWYFT Support</a> for the recovery procedure and image for your hardware revision. Do not erase the entire device or use an unapproved service file. Doing so can remove the motor’s calibration and settings.</p>
+
 
       <nav class="pager">
         <a class="prev" href="swyft-link-using.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Using SWYFT Link</span></a>
@@ -54,10 +41,13 @@
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#update">Update firmware</a>
-    <a href="#dfu">DFU recovery</a>
+    <a href="#update">Update through SystemCore</a>
+    <a href="#usb">Update over USB-C</a>
+    <a href="#files">File types</a>
+    <a href="#failure">If the update does not complete</a>
+    <a href="#dfu">DFU and service recovery</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

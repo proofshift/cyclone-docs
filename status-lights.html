@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Status lights — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -16,7 +16,7 @@
       <h1>Status lights</h1>
       <p class="sec-lead">Seven lights: two report the controller, five are yours.</p>
 
-      <p>Under the rear window are seven lights in a row. The two at the ends report controller state and cannot be written by robot code. The five in the middle, numbered 1–5 from left to right, are yours to set. A separate LED beside the DFU pinhole indicates bus power. <a href="wiring.html">Wiring</a></p>
+      <p>Under the rear window are seven lights in a row. The two at the ends report controller state and cannot be written by robot code. The five in the middle, numbered 1–5 from left to right, are yours to set. A separate LED beside the DFU Button indicates bus power. <a href="wiring.html">Wiring</a></p>
 
       <div class="figrow status-figs">
         <figure>
@@ -39,7 +39,7 @@
               <text x="665" y="455" fill="#4db8ea" font-size="34" font-weight="700" text-anchor="start" font-family="Inter, system-ui, sans-serif">End status light</text>
               <line x1="645" y1="236" x2="452.99" y2="241.24" stroke="#dc2020" stroke-width="12" stroke-linecap="round"/>
               <polygon points="425,242 452.58,226.24 453.4,256.24" fill="#dc2020" stroke="#dc2020" stroke-width="4" stroke-linejoin="round"/>
-              <text x="660" y="248" fill="#4db8ea" font-size="34" font-weight="700" text-anchor="start" font-family="Inter, system-ui, sans-serif">DFU pinhole</text>
+              <text x="660" y="248" fill="#4db8ea" font-size="34" font-weight="700" text-anchor="start" font-family="Inter, system-ui, sans-serif">DFU Button</text>
             </svg>
           </span>
           <figcaption>CAN side. The other end status light is next to the screw.</figcaption>
@@ -47,15 +47,15 @@
       </div>
 
       <h2 id="patterns">What the end lights mean</h2>
-      <p class="led-hint">Tap the lights to play the pattern.</p>
+      <p class="led-hint">Select the lights to play one pattern at a time. Select the same pattern again to turn it off. Keyboard: Tab to a pattern, then Enter or Space.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Pattern</th><th>Meaning</th><th>What to do</th></tr></thead>
           <tbody>
             <tr><td><span class="ledpair" data-state="off"><span class="led"></span><span class="led"></span></span>Dark</td><td>No power.</td><td>Check the leads and the breaker.</td></tr>
             <tr><td><span class="ledpair" data-state="red-alt"><span class="led"></span><span class="led"></span></span>Red, alternating</td><td>Powered, but nothing is talking to it.</td><td>Connect USB-C, or bring up CAN and check termination.</td></tr>
-            <tr><td><span class="ledpair" data-state="orange-alt"><span class="led"></span><span class="led"></span></span>Orange, alternating</td><td>On the bus, but no robot program is addressing it.</td><td>Deploy code, or confirm this device number is constructed.</td></tr>
-            <tr><td><span class="ledpair" data-state="orange-together"><span class="led"></span><span class="led"></span></span>Orange, together</td><td>Program present, robot disabled.</td><td>Enable in the Driver Station.</td></tr>
+            <tr><td><span class="ledpair" data-state="orange-alt"><span class="led"></span><span class="led"></span></span>Orange, alternating</td><td>Host communication is present, but there is no live robot signal.</td><td>Normal before enabling in a standalone USB-C session. On a robot, check the SystemCore / Driver Station connection and robot program.</td></tr>
+            <tr><td><span class="ledpair" data-state="orange-together"><span class="led"></span><span class="led"></span></span>Orange, together</td><td>Live robot signal, output disabled.</td><td>For a motor test, enable Driver Station and the intended control source when ready. Driver Station alone does not command motion.</td></tr>
             <tr><td><span class="ledpair" data-state="orange-solid"><span class="led"></span><span class="led"></span></span>Orange, solid</td><td>Enabled, output at rest.</td><td>Command the motor.</td></tr>
             <tr><td><span class="ledpair" data-state="green-solid"><span class="led"></span><span class="led"></span></span>Green, solid</td><td>Driving forward.</td><td>—</td></tr>
             <tr><td><span class="ledpair" data-state="red-solid"><span class="led"></span><span class="led"></span></span>Red, solid</td><td>Driving in reverse.</td><td>—</td></tr>
@@ -63,20 +63,25 @@
             <tr><td><span class="ledpair" data-state="fault"><span class="led"></span><span class="led"></span></span>Red and orange, alternating</td><td>A fault has latched. The motor will not drive.</td><td>Read the fault in SWYFT Link, clear the cause, then clear it. <a href="faults.html">Faults</a></td></tr>
             <tr><td><span class="ledpair" data-state="blue-together"><span class="led"></span><span class="led"></span></span>Blue, flashing together</td><td>Two devices share this number.</td><td>Give one a different number (1–62).</td></tr>
             <tr><td><span class="ledpair" data-state="white-flash"><span class="led"></span><span class="led"></span></span>White, flashing</td><td>Identify — you asked this motor to show itself.</td><td>None. It stops after a couple of seconds.</td></tr>
-            <tr><td><span class="ledpair" data-state="white-solid"><span class="led"></span><span class="led"></span></span>White, solid</td><td>Firmware is being written.</td><td>Wait. If it never clears, recover with <a href="dfu.html">DFU</a>.</td></tr>
+            <tr><td><span class="ledpair" data-state="white-solid"><span class="led"></span><span class="led"></span></span>White, solid</td><td>The resident updater is active.</td><td>Check progress in SWYFT Link. If it fails, follow <a href="dfu.html#failure">update troubleshooting</a>.</td></tr>
           </tbody>
         </table>
       </div>
 
+      <div class="callout note">
+        <span class="label">Note</span>
+        <p>Driving forward and reverse show a solid colour — green or red. It marks direction only; the colour does not brighten or blink faster with speed.</p>
+      </div>
+
       <h2 id="user">Your five lights</h2>
-      <p>Set the middle five from robot code, from SWYFT&nbsp;Link, or from the console. Send colour channels 0–255; the motor caps the brightest channel and scales the rest, so pure white and a dim tint both read cleanly. Colour holds until power is lost, then comes up dark until set again. Setting all five to black hands them back to the controller, which is not the same as off — <code>clearLEDs()</code> is the off path. <a href="code-api.html#leds">LEDs in the API reference</a></p>
+      <p>You can set the five middle lights from robot code or SWYFT&nbsp;Link. Each colour uses red, green, and blue (RGB) values from 0 to 255. The firmware limits their brightness. Set the colours again after the motor restarts. Setting all five to black releases your colour setting; <code>clearLEDs()</code> sends that same release command. <a href="code-api.html#leds">LEDs in the API reference</a></p>
       <div class="callout warning">
         <span class="label">Warning</span>
-        <p>A latched fault always paints the two end lights, and your five cannot override it. Do not rely on the middle five as a driver’s only signal.</p>
+        <p>The two end lights keep showing a fault until it is cleared. Changing the five middle lights cannot hide that indication. Use the end lights and SWYFT Link to check the motor’s status.</p>
       </div>
 
       <h2 id="anim">Animations</h2>
-      <p>Instead of a solid colour you can run one animation across the five: <strong>Static</strong>, <strong>ChaseForward</strong>, <strong>ChaseReverse</strong>, <strong>Breathe</strong>, or <strong>Rainbow</strong>. Colour and animation are exclusive — setting a colour stops an animation.</p>
+      <p>The available choices are <strong>Static</strong> (a steady colour), <strong>ChaseForward</strong>, <strong>ChaseReverse</strong>, <strong>Breathe</strong>, and <strong>Rainbow</strong>. Setting a static colour stops the animation. Animation movement pauses while the motor drives.</p>
 
       <nav class="pager">
         <a class="prev" href="first-power-up.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> First power-up</span></a>
@@ -92,6 +97,6 @@
     <a href="#anim">Animations</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

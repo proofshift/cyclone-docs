@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Wiring — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,11 +14,11 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Getting Started › Wiring</div>
       <h1>Wiring</h1>
-      <p class="sec-lead">Power, CAN FD, and USB-C all connect at the back of the motor.</p>
+      <p class="sec-lead">Power, CAN, and USB-C all connect at the back of the motor.</p>
 
       <figure>
         <img class="zoomable" src="img/rear.png" alt="Rear cover of the Cyclone showing the ports">
-        <figcaption>The rear cover. Power leads exit the bottom; USB-C and CAN sit in the side pockets; the DFU pinhole and its power LED are near the top, under the status window.</figcaption>
+        <figcaption>The rear cover. Power leads exit the bottom; USB-C and CAN sit in the side pockets; the DFU Button and its power LED are near the top, under the status window.</figcaption>
       </figure>
 
       <h2 id="ports">Connections</h2>
@@ -26,46 +26,52 @@
         <table>
           <thead><tr><th>Connection</th><th>What it is</th></tr></thead>
           <tbody>
-            <tr><td>Power leads</td><td>Bus positive (red) and negative (black), out the bottom of the cover</td></tr>
-            <tr><td>CAN</td><td>CAN FD — CAN&nbsp;H and CAN&nbsp;L</td></tr>
-            <tr><td>USB-C</td><td>Full control, configuration, telemetry, and firmware</td></tr>
-            <tr><td>DFU pinhole</td><td>Firmware-recovery button, beside a power LED. <a href="dfu.html">Firmware &amp; DFU</a></td></tr>
+            <tr><td>Power leads</td><td>Red: positive (+). Black: negative (−). These wires exit the bottom of the cover.</td></tr>
+            <tr><td>CAN FD</td><td>CAN&nbsp;H (yellow) and CAN&nbsp;L (green), with two 2-pin Molex connectors: one male and one female.</td></tr>
+            <tr><td>USB-C</td><td>Direct laptop connection for motor testing, settings, live measurements, and firmware updates</td></tr>
+            <tr><td>DFU Button</td><td>Firmware-recovery button, beside a power LED. <a href="dfu.html">Firmware &amp; DFU</a></td></tr>
             <tr><td>Status window</td><td>Seven lights; the two ends report controller state. <a href="status-lights.html">Status lights</a></td></tr>
           </tbody>
         </table>
       </div>
 
       <h2 id="power">Power</h2>
-      <p>Wire the leads to bus positive and negative — <strong>red to positive, black to negative</strong>. The Cyclone operates from 6 to 24&nbsp;V; it will not arm below 6&nbsp;V and cuts output above 24&nbsp;V. Size the branch breaker and wire gauge to the supply current the mechanism draws, and set the <a href="current-limits.html">supply limit</a> to match.</p>
-      <p>The small LED beside the DFU pinhole is lit whenever bus power is present. It is a power indicator, not a status code. If that LED and both end lights are dark, the motor has no power — check the leads and the breaker before looking at CAN or code.</p>
-      <div class="callout warning">
-        <span class="label">Warning</span>
-        <p>Confirm polarity before the first enable: red to positive, black to negative, checked against your harness.</p>
+      <p>Connect the Cyclone’s power wires to a breaker- or fuse-protected output on the robot’s power distribution hub. The robot’s 12 V battery supplies this power. Connect <strong>red to positive and black to negative</strong>. Choose the breaker or fuse and power wire size for your robot’s electrical design and the applicable season rules. Set the <a href="current-limits.html">supply current limit</a> for the mechanism; software current limiting does not replace a breaker or fuse.</p>
+      <p>The small light beside the DFU Button indicates power from the main power wires. It is a power indicator, not a status code. If that light and both end lights are dark, check the motor’s power connection and breaker or fuse before troubleshooting CAN or code.</p>
+      <div class="callout note">
+        <span class="label">Reverse-polarity protection</span>
+        <p>Cyclone includes reverse-polarity protection on its power input. Connect red to positive (+) and black to negative (−). If these wires are connected backwards, turn off robot power and correct the connection before continuing.</p>
       </div>
 
-      <h2 id="can">CAN FD</h2>
+      <h2 id="can">CAN</h2>
       <figure>
-        <img class="zoomable" src="img/side-can.png" alt="CAN side of the Cyclone">
-        <figcaption>The CAN port is in the side pocket marked CAN.</figcaption>
+        <div class="install-callout"><img class="zoomable" src="img/side-can.png" alt="CAN side of the Cyclone; arrow points to the CAN connection"><svg class="install-arrow" viewBox="0 0 1272 748" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="730" y1="430" x2="514.8" y2="524.7" stroke="#dc2020" stroke-width="14" stroke-linecap="round"/><polygon points="480.0,540.0 507.4,508.0 522.1,541.4" fill="#dc2020"/><text x="720" y="400" fill="#4db8ea" font-size="52" font-weight="700" font-family="Inter, system-ui, sans-serif">CAN</text></svg></div>
+        <figcaption>The CAN connection is on the side marked CAN. The supplied wiring has two 2-pin Molex connectors, one male and one female.</figcaption>
       </figure>
-      <p>Crimp CAN&nbsp;H and CAN&nbsp;L to the same conductors as the rest of the bus; reversing them stops communication. Give each Cyclone a unique <a href="specifications.html#communication">device number (CAN ID)</a> from 1 to 62. Two devices sharing a number will not run, and the end lights show blue. <a href="status-lights.html">Status lights</a></p>
+      <p>The CAN bus carries commands and measurements between SystemCore and the devices on your robot. Plug Cyclone into the rest of your robot’s CAN bus loop using its two supplied 2-pin Molex connectors, one male and one female. No crimping is needed for these CAN connections.</p>
+      <p><strong>CAN&nbsp;H is yellow. CAN&nbsp;L is green.</strong> Keep yellow connected to yellow and green connected to green.</p>
+      <p>Give each Cyclone its own <a href="specifications.html#communication">device number (CAN ID)</a> from 1 to 62 so SystemCore can address the correct motor. Blue flashing end lights indicate a detected duplicate number. Change one of the duplicate numbers before running the motors. <a href="status-lights.html">Status lights</a></p>
       <div class="callout">
         <span class="label">Note</span>
-        <p>Terminate the CAN trunk at its two ends, not at the motor. A bus with no end terminators can look like a motor that will not talk.</p>
+        <p>The CAN bus needs a 120-ohm resistor, called a terminator, at each of its two ends. Terminators help the devices communicate reliably. Cyclone does not have one built in. If Cyclone is at an end of the CAN bus, add a terminator there. Some other robot devices already include termination, so check their instructions before adding another. Do not add a terminator at every motor.</p>
       </div>
 
+<figure><img class="zoomable" src="img/can-bus-chain.svg" alt="Yellow CAN H and green CAN L connect SystemCore and two Cyclones, with a 120-ohm terminator across the pair at each end"><figcaption>Example CAN bus with two Cyclones. The connector order is illustrative: each Cyclone has one male and one female 2-pin Molex connector. The CAN bus loop is a chain with two ends; do not join the last device back to the first. Check SystemCore and other devices for existing termination before adding resistors. Power connections are separate.</figcaption></figure>
+
+<p>The Cyclone has a CAN FD interface. Connect CAN H (yellow) and CAN L (green) to the matching wires in the robot’s CAN bus loop.</p>
       <h2 id="usb">USB-C</h2>
       <figure>
-        <img class="zoomable" src="img/side-usb.png" alt="USB-C side of the Cyclone">
+        <div class="install-callout"><img class="zoomable" src="img/side-usb.png" alt="USB-C side of the Cyclone; arrow points to the USB-C port"><svg class="install-arrow" viewBox="0 0 1250 751" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="580" y1="420" x2="754.8" y2="490.7" stroke="#dc2020" stroke-width="14" stroke-linecap="round"/><polygon points="790.0,505.0 747.9,507.7 761.6,473.8" fill="#dc2020"/><text x="475" y="390" fill="#4db8ea" font-size="52" font-weight="700" font-family="Inter, system-ui, sans-serif">USB-C</text></svg></div>
         <figcaption>USB-C is in the side pocket marked USB.</figcaption>
       </figure>
-      <p>USB-C is a full control path — configuration, telemetry, firmware, and output — and enumerates as a standard serial device, with no driver to install. Open <a href="swyft-link.html">SWYFT&nbsp;Link</a> in a browser and connect this port. Anything you can do over CAN you can do over USB-C, and the reverse. Command a motor from one place at a time.</p>
+      <p>Open <a href="https://swyft-link.vercel.app/" target="_blank" rel="noopener">SWYFT Link</a> in Google Chrome on your laptop and connect a USB-C data cable to the Cyclone. USB-C is useful for testing off the robot or running a quick check before the CAN bus is connected. To run the motor, connect a 12 V FRC battery through a fused or breaker-protected power connection. CAN, SystemCore, and Driver Station are not required for standalone USB-C control. USB alone is enough for settings and firmware updates. Use either robot code or SWYFT Link to command a motor, not both at the same time.</p>
 
+<p><strong>USB-C on a robot:</strong> standalone USB-C testing does not need Driver Station. If the Cyclone is also receiving a robot signal over CAN, USB-C commands still follow Driver Station enable permission. A USB cable does not override a disabled robot.</p>
       <h2 id="check">Before you enable</h2>
       <ol>
-        <li>Motor held or mounted with the shaft free. <a href="mounting.html">Mounting</a></li>
-        <li>Power leads on the correct polarity; the DFU-adjacent LED is lit.</li>
-        <li>On CAN: H and L match the bus, the trunk is terminated at both ends, and the device number is unique.</li>
+        <li>Motor mounted securely, with the mechanism supported and its travel clear. <a href="mounting.html">Mounting</a></li>
+        <li>Red power wire connected to positive (+), black to negative (−), and the power light beside the DFU Button is on.</li>
+        <li>For SystemCore control over CAN: CAN connectors plugged into the robot’s CAN bus loop, with H (yellow) connected to yellow and L (green) connected to green. Check both end terminators and give each Cyclone its own device number.</li>
         <li>Current limits set for the mechanism. <a href="current-limits.html">Current limits</a></li>
       </ol>
 
@@ -80,11 +86,11 @@
     <p class="toc-title">On this page</p>
     <a href="#ports">Connections</a>
     <a href="#power">Power</a>
-    <a href="#can">CAN FD</a>
+    <a href="#can">CAN</a>
     <a href="#usb">USB-C</a>
     <a href="#check">Before you enable</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

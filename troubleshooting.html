@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Troubleshooting — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,47 +14,29 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Troubleshooting › Troubleshooting</div>
       <h1>Troubleshooting</h1>
-      <p class="sec-lead">Start at the status lights — they name the problem before the code does.</p>
+      <p class="sec-lead">Connection, motor-control, settings, and update checks for SystemCore and standalone USB-C.</p>
 
-      <p>Read the two end lights first (<a href="status-lights.html">Status lights</a>), then match the symptom below.</p>
 
-      <h2 id="nomove">The motor will not move</h2>
-      <p class="led-hint">Tap the lights to play the pattern.</p>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
-          <tbody>
-            <tr><td><span class="ledpair" data-state="off"><span class="led"></span><span class="led"></span></span>Dark</td><td>No power</td><td>Check the leads, polarity, and the breaker.</td></tr>
-            <tr><td><span class="ledpair" data-state="red-alt"><span class="led"></span><span class="led"></span></span>Red, alternating</td><td>Nothing is talking to it</td><td>Seat USB-C, or fix CAN wiring and add trunk terminators.</td></tr>
-            <tr><td><span class="ledpair" data-state="orange-alt"><span class="led"></span><span class="led"></span></span>Orange, alternating</td><td>On the bus, no program addressing it</td><td>Deploy code; confirm the device number is constructed in code.</td></tr>
-            <tr><td><span class="ledpair" data-state="orange-together"><span class="led"></span><span class="led"></span></span>Orange, together</td><td>Robot disabled</td><td>Enable in the Driver Station.</td></tr>
-            <tr><td><span class="ledpair" data-state="orange-solid"><span class="led"></span><span class="led"></span></span>Orange, solid</td><td>No command arriving</td><td>Send a command — duty, velocity, position, or current.</td></tr>
-            <tr><td><span class="ledpair" data-state="blue-together"><span class="led"></span><span class="led"></span></span>Blue, flashing together</td><td>Duplicate device number</td><td>Give one motor a different number (1–62).</td></tr>
-          </tbody>
-        </table>
-      </div>
+<span id="behaviour"></span><span id="comms"></span><span id="nomove"></span>
+<h2 id="connection">No Cyclone appears through SystemCore</h2>
+<ol><li>Confirm the robot is powered and SystemCore is reachable.</li><li>Check the Cyclone’s red and black power wires, its breaker or fuse, and the status lights.</li><li>Check that the supplied CAN connectors are fully plugged into the robot’s CAN bus loop. CAN&nbsp;H (yellow) connects to yellow, and CAN&nbsp;L (green) connects to green. Check the terminators at the two ends; see <a href="wiring.html#can">CAN wiring</a>.</li><li>Check for a duplicate device number. Blue flashing end lights indicate a detected conflict.</li></ol>
+<h2 id="usb-connection">No Cyclone appears over USB-C</h2>
+<ol><li>Use <a href="https://swyft-link.vercel.app/" target="_blank" rel="noopener">SWYFT Link in Google Chrome</a> on your laptop. Choose <strong>Connect over USB-C</strong> to open the serial-port chooser.</li><li>If no port appears, check that the cable carries data; a charging-only cable will not work. Try another USB port or a known data cable.</li><li>If Chrome cannot open the port, close any serial monitor or other SWYFT Link tab using that Cyclone, then reconnect.</li><li>Confirm the device and firmware once connected. USB alone can connect and update; running the motor also needs the 12 V battery connection.</li></ol>
 
-      <h2 id="behaviour">It moves, but wrong</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
-          <tbody>
-            <tr><td>Turns the wrong way</td><td>Direction not set</td><td>Invert in SWYFT&nbsp;Link, not in code. <a href="orientation.html">Orientation</a></td></tr>
-            <tr><td>Weak or stalls short</td><td>Stator limit too low</td><td>Raise the stator limit in small steps. <a href="current-limits.html">Current limits</a></td></tr>
-            <tr><td>Loses torque under load</td><td>Thermal fold</td><td>Gear down or lower the limit so it does not overheat. <a href="power-thermal.html">Power &amp; thermal budget</a></td></tr>
-            <tr><td>Breaker trips</td><td>Supply draw above the breaker</td><td>Lower the supply limit below the breaker rating.</td></tr>
-          </tbody>
-        </table>
-      </div>
+<h2 id="motion">The motor appears but does not move</h2>
+<p>Read the message explaining why the command was rejected or why the motor stopped. For SystemCore control over CAN, check Driver Station state and that your code uses the correct device number and sends fresh commands. For standalone USB-C testing, Driver Station and CAN are not required; check the motor enable state in SWYFT Link and the 12 V battery connection. Velocity and position require tuning values called gains; see <a href="code-closedloop.html">Closed-loop control</a>. Check supply voltage during the command, not only while idle.</p>
+<p>Use one command source at a time. Robot code and a SWYFT Link control session should not compete for the same motor. Disable before changing the setup.</p>
+<p><strong>USB-C on a robot:</strong> standalone USB-C testing does not need Driver Station. If the Cyclone is also receiving a robot signal over CAN, USB-C commands still follow Driver Station enable permission. A USB cable does not override a disabled robot.</p>
+<h2 id="load">It slows down or stops under load</h2>
+<p>Compare applied duty, current, voltage, and temperature. Current limiting can reduce duty; temperature can reduce the stator current limit; low voltage or a hard fault can stop output. Inspect the battery, connections, mechanism friction, and gearing before increasing limits.</p>
+<h2 id="settings">Settings change after a restart</h2>
+<p>Confirm the configuration write succeeded and supported settings were saved. Coast or Brake resets when the motor restarts. The gear ratio and wrapping options are stored in your robot program. Set these options again at startup. Check live current limits after cycling robot power.</p>
+<h2 id="update">A firmware update fails</h2>
+<p>Keep the error message and note whether failure occurred during erase, write, verify, or reconnect. Maintain robot power and the connection. If the application returned, check its version before attempting another update. Follow <a href="dfu.html">Firmware &amp; DFU</a> for the next step.</p>
+<p>For help beyond these checks, contact <a href="https://www.swyftrobotics.com/support" target="_blank" rel="noopener">SWYFT Support</a> or email <a href="mailto:support@swyftrobotics.com">support@swyftrobotics.com</a>. Include the details below.</p>
+<h2 id="report">Information to include when requesting help</h2>
+<ul><li>Cyclone firmware, SWYFT Link package version, and Java library version.</li><li>Device number and whether you are connected through SystemCore CAN or USB-C.</li><li>The exact message and LED pattern.</li><li>The command or action that caused the problem.</li><li>Voltage, current, and temperature when it happened, plus whether other mechanisms were running.</li></ul>
 
-      <h2 id="comms">USB-C or CAN will not connect</h2>
-      <ul>
-        <li><strong>USB-C not detected:</strong> try a data-capable cable and a different port. The motor enumerates as a serial device with no driver — nothing to install.</li>
-        <li><strong>CAN device missing:</strong> confirm H/L are not swapped, the trunk is terminated at both ends, and the device number is unique and in range (1–62).</li>
-        <li><strong>Will not enumerate after a flash:</strong> recover with <a href="dfu.html">DFU</a>.</li>
-      </ul>
-
-      <p>For a latched fault (red and orange alternating), see <a href="faults.html">Faults &amp; errors</a>.</p>
 
       <nav class="pager">
         <a class="prev" href="dfu.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Firmware &amp; DFU</span></a>
@@ -65,11 +47,15 @@
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#nomove">The motor will not move</a>
-    <a href="#behaviour">It moves, but wrong</a>
-    <a href="#comms">USB-C or CAN will not connect</a>
+    <a href="#connection">No Cyclone appears in SWYFT Link</a>
+    <a href="#usb-connection">USB-C connection</a>
+    <a href="#motion">The motor appears but does not move</a>
+    <a href="#load">It slows down or stops under load</a>
+    <a href="#settings">Settings change after a restart</a>
+    <a href="#update">A firmware update fails</a>
+    <a href="#report">Information to include when requesting help</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

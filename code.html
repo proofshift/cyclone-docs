@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Setup & install — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,95 +14,53 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › Setup &amp; install</div>
       <h1>Setup &amp; install</h1>
-      <p class="sec-lead">Add the vendor library and drive a motor in a few lines.</p>
+      <p class="sec-lead">Install the Java library, configure a Cyclone, and command it from your robot program.</p>
 
-      <p>This page takes a robot project from no vendor library to a Cyclone spinning under joystick control. It assumes the motor is wired (<a href="wiring.html">Wiring</a>) and has a device number set in <a href="swyft-link.html">SWYFT&nbsp;Link</a>.</p>
 
-      <h2 id="vendordep">1. Install the vendor library</h2>
-      <p>The Cyclone ships as a WPILib vendor dependency for the 2027 season.</p>
-      <ol>
-        <li>Download <a href="files/SwyftCycloneV4.json" download="SwyftCycloneV4.json">SwyftCycloneV4.json</a>.</li>
-        <li>Copy it into the robot project’s <code>vendordeps/</code> folder.</li>
-        <li>Rebuild the project so the build picks up the library.</li>
-      </ol>
-      <p>The device class is <code>com.swyftrobotics.cyclone.v4.SwyftCyclone</code>. If the build cannot resolve it, confirm the <code>.json</code> is in <code>vendordeps/</code> and rebuild.</p>
+<span id="construct"></span><span id="drive"></span><span id="full"></span><span id="limits"></span><span id="next"></span><span id="vendordep"></span>
+<h2 id="install">Install the vendor library</h2><p>These examples use Cyclone Java library 0.28.0 and the SystemCore WPILib 2027 API. Check the version in your project’s Cyclone vendordep before using them.</p>
+<p>In WPILib, open <strong>Manage Vendor Libraries</strong>, choose <strong>Install new libraries (online)</strong>, and enter this URL:</p>
+<p><a href="https://cyclone.docs.swyftrobotics.com/files/vendor-lib/2027/SwyftCycloneV4.json">https://cyclone.docs.swyftrobotics.com/files/vendor-lib/2027/SwyftCycloneV4.json</a></p>
+<p>You can also <a href="files/vendor-lib/2027/SwyftCycloneV4.json">open the installer JSON</a> to check its version. It selects <strong>0.28.0</strong> for the SystemCore WPILib 2027 API. Keep one Cyclone library version in the project and build before deploying. Java imports use <code>com.swyftrobotics.cyclone.v4</code>.</p>
+<h2 id="first-program">A complete first program</h2><p>This example uses device 1 and repeats a 10% duty request while teleop is enabled. The 30 A stator and 20 A supply limits illustrate the configuration calls. Choose limits for your mechanism and check that the device accepted them. Keep the mechanism’s travel clear before enabling.</p><div class="code-panel" data-example="Robot.java"><div class="code-bar">Java · Robot.java</div><pre><code>package frc.robot;
 
-      <h2 id="construct">2. Construct the motor</h2>
-      <p>Create one <code>SwyftCyclone</code> per physical motor, with the device number you assigned in SWYFT&nbsp;Link. Construct it once, as a field — not inside a periodic method.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone;
-
-// device number 5, on the default CAN bus
-private final SwyftCyclone intake = new SwyftCyclone(5);
-
-// on a specific CAN bus:
-// private final SwyftCyclone intake = new SwyftCyclone(5, 1);</code></pre>
-      </div>
-
-      <h2 id="limits">3. Set current limits at start-up</h2>
-      <p>Set current limits once, in <code>robotInit()</code>, before the motor is enabled. The limits protect the motor and the battery; size them for the mechanism, not at the ceiling. <a href="current-limits.html">How the limits work</a></p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>@Override
-public void robotInit() {
-    intake.setTeamLimits(75, 85, 40);   // warn °C, trip °C, stator A
-}</code></pre>
-      </div>
-
-      <h2 id="drive">4. Drive it every loop</h2>
-      <p>Command the Cyclone in one of four modes — duty, velocity, position, or current (<a href="code-control.html">Control requests</a>). The example below uses duty cycle, a signed fraction of the bus from −1 to +1. A setpoint expires after about 100&nbsp;ms, so command the motor <strong>every loop</strong>, and stop it when the robot is disabled.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>@Override
-public void teleopPeriodic() {
-    intake.setDutyCycle(operator.getRightY());   // -1 .. +1, every loop
-}
-
-@Override
-public void disabledInit() {
-    intake.disable();   // coast when disabled
-}</code></pre>
-      </div>
-      <p>Set the direction in SWYFT&nbsp;Link, not in the constructor. <a href="orientation.html">Orientation</a></p>
-
-      <h2 id="full">Full first program</h2>
-      <p>The three steps above, as one complete <code>TimedRobot</code>. Deploy this, enable in teleop, and the intake follows the operator’s right stick.</p>
-      <div class="code-panel">
-        <div class="code-bar">Robot.java</div>
-        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
+import org.wpilib.framework.TimedRobot;
+import com.swyftrobotics.cyclone.v4.CurrentLimitsConfigs;
+import com.swyftrobotics.cyclone.v4.StatusCode;
+import com.swyftrobotics.cyclone.v4.SwyftCyclone;
 
 public class Robot extends TimedRobot {
-    private final SwyftCyclone intake = new SwyftCyclone(5);
-    private final XboxController operator = new XboxController(0);
+    private final SwyftCyclone motor = new SwyftCyclone(1);
+    private boolean configured;
 
-    @Override
-    public void robotInit() {
-        intake.setTeamLimits(75, 85, 40);   // warn °C, trip °C, stator A
+    public Robot() {
+        CurrentLimitsConfigs limits = new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(30)
+            .withSupplyCurrentLimit(20);
+        StatusCode result = motor.getConfigurator().apply(limits);
+        configured = result.isOK();
+        if (!configured) System.err.println(result.describe());
     }
 
     @Override
     public void teleopPeriodic() {
-        intake.setDutyCycle(operator.getRightY());
+        if (configured) motor.setDutyCycle(0.10);
+        else motor.disable();
     }
 
     @Override
     public void disabledInit() {
-        intake.disable();
+        motor.disable();
     }
-}</code></pre>
-      </div>
 
-      <h2 id="next">Next</h2>
-      <ul>
-        <li><a href="code-config.html">Configuration</a> — current limits, neutral mode, saving to the device.</li>
-        <li><a href="code-control.html">Control requests</a> — duty, velocity, position, current, and follower.</li>
-        <li><a href="code-closedloop.html">Closed-loop control</a> — tune velocity and position gains.</li>
-        <li><a href="code-telemetry.html">Status signals</a> — read speed, current, temperature, and faults.</li>
-        <li><a href="code-api.html">API reference</a> — every method.</li>
-      </ul>
+    @Override
+    public void close() {
+        motor.close();
+        super.close();
+    }
+}</code></pre></div>
+<h2 id="lifecycle">Create the motor once</h2><p>Create one <code>SwyftCyclone</code> object for each motor when your robot program starts. Keep using that object; do not create a new one every time the periodic code runs. The library sends an enable heartbeat, a repeated message confirming that control is active. Your code must also repeat the intended motor command. Call <code>close()</code> when the object will no longer be used.</p>
+<h2 id="before-motion">Before enabling</h2><ul><li>Give the device a unique number and verify the CAN bus connection.</li><li>Choose a consistent sign convention and a safe first test.</li><li>Read configuration failures instead of assuming that a write succeeded.</li><li>Keep the DriverStation gate in use. It cannot be disarmed through the public API.</li></ul>
 
       <nav class="pager">
         <a class="prev" href="status-lights.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Status lights</span></a>
@@ -113,14 +71,12 @@ public class Robot extends TimedRobot {
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#vendordep">1. Install the vendor library</a>
-    <a href="#construct">2. Construct the motor</a>
-    <a href="#limits">3. Set current limits</a>
-    <a href="#drive">4. Drive it every loop</a>
-    <a href="#full">Full first program</a>
-    <a href="#next">Next</a>
+    <a href="#install">Install the vendor library</a>
+    <a href="#first-program">A complete first program</a>
+    <a href="#lifecycle">Create the motor once</a>
+    <a href="#before-motion">Before enabling</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

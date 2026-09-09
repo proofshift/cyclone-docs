@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Limits by mechanism — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,28 +14,18 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Safety &amp; Current Limits › Limits by mechanism</div>
       <h1>Limits by mechanism</h1>
-      <p class="sec-lead">Starting points to tune from, not final values.</p>
+      <p class="sec-lead">Select current limits from the behavior of your robot’s mechanisms.</p>
 
-      <p>Read <a href="current-limits.html">How the limits work</a> first. The values below are conservative starting points for common FRC mechanisms. Set them, run a practice match, then adjust: raise the stator limit only if a move cannot finish and the motor is not hot; keep the supply limit at or below the branch breaker.</p>
 
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Mechanism</th><th>Stator (start)</th><th>Supply (start)</th><th>Why</th></tr></thead>
-          <tbody>
-            <tr><td>Drivetrain / traction</td><td>100–120 A</td><td>60 A</td><td>Wants torque, but is limited by traction and the breaker.</td></tr>
-            <tr><td>Swerve azimuth (steering)</td><td>40 A</td><td>40 A</td><td>Light, fast moves; rarely needs high torque.</td></tr>
-            <tr><td>Elevator / arm</td><td>60 A</td><td>40 A</td><td>Enough to lift the load; hold with a limit or a brake.</td></tr>
-            <tr><td>Intake / feeder</td><td>40 A</td><td>30 A</td><td>Low continuous draw; protect against a jam.</td></tr>
-          </tbody>
-        </table>
-      </div>
+<span id="tune"></span>
+<h2 id="starting">What to measure</h2>
+<p>There is no single current setting for every drivetrain, arm, elevator, or intake. Gear ratio, motor count, mechanism mass, friction, and control tuning change the demand. Use the supported ranges of 1–95 A stator and 1–40 A supply, then choose lower values that suit your mechanism and its breaker or fuse.</p>
+<div class="table-wrap"><table><thead><tr><th>Mechanism</th><th>Test conditions</th><th>Measurements to inspect</th></tr></thead><tbody><tr><td>Drivetrain</td><td>Acceleration, turning under load, and repeated starts.</td><td>Wheel slip, acceleration, supply current, and battery voltage.</td></tr><tr><td>Swerve steering</td><td>Direction changes and holding the commanded angle.</td><td>Position error, overshoot, current, and temperature.</td></tr><tr><td>Elevator / arm</td><td>Full travel with the expected load, including holding and lowering.</td><td>Current through the move, position error, heating while holding, and stopping behavior.</td></tr><tr><td>Intake / feeder</td><td>Acquisition, normal feeding, and a controlled jam response.</td><td>Current rise, how quickly code stops a jam, and heating during repeated cycles.</td></tr></tbody></table></div>
+<h2 id="adjust">Adjusting the limits</h2>
+<ol><li>Begin with conservative limits and test one mechanism while the robot is supported.</li><li>Compare requested motion with measured motion and applied duty. Read any refusal or protection message.</li><li>If the current limit prevents a required move, first check gearing, binding, and battery voltage. Change one setting at a time and repeat the test.</li><li>Run the mechanisms together in the combinations your robot uses. A limit that works alone can still contribute to a voltage drop when other motors accelerate.</li><li>Record the selected limits in robot code and repeat the checks after a configuration or mechanical change.</li></ol>
+<h2 id="holding">Holding a load</h2>
+<p>An arm or elevator may draw substantial winding current while barely moving. Monitor temperature during the actual holding time. Neutral Brake is not a mechanical holding brake or a position controller. Plan how the mechanism behaves when the robot is disabled or power is lost.</p>
 
-      <h2 id="tune">Tuning from the start point</h2>
-      <ul>
-        <li><strong>The move is sluggish or stalls short.</strong> Raise the stator limit in small steps until it completes, then stop.</li>
-        <li><strong>The motor gets hot or folds.</strong> The mechanism is drawing more than it needs — lower the stator limit, or gear the mechanism down. <a href="power-thermal.html">Power &amp; thermal budget</a></li>
-        <li><strong>The breaker trips.</strong> Lower the supply limit below the breaker rating.</li>
-      </ul>
 
       <nav class="pager">
         <a class="prev" href="current-limits.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> How the limits work</span></a>
@@ -46,9 +36,11 @@
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#tune">Tuning from the start point</a>
+    <a href="#starting">What to measure</a>
+    <a href="#adjust">Adjusting the limits</a>
+    <a href="#holding">Holding a load</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

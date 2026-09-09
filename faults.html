@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Faults & errors — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,40 +14,13 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Troubleshooting › Faults &amp; errors</div>
       <h1>Faults &amp; errors</h1>
-      <p class="sec-lead">A hard fault latches and cuts output. A warning stays live and does not.</p>
+      <p class="sec-lead">Identify whether output stopped because of a protection fault or a refused command.</p>
 
-      <p>The Cyclone reports two kinds of condition. A <strong>hard fault</strong> latches, de-energises the bridge, and holds the motor off until the cause clears and you clear the fault. A <strong>warning</strong> flags a condition without stopping the motor. The end lights show a latched fault as red and orange alternating. <a href="status-lights.html">Status lights</a></p>
-
-      <h2 id="hard">Hard faults</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Fault</th><th>Condition</th><th>Possible fix</th></tr></thead>
-          <tbody>
-            <tr><td>Under-voltage</td><td>Bus below the lockout. The motor will not arm.</td><td>Charge or swap the battery; check the breaker and lead connections. USB-C alone does not power the windings.</td></tr>
-            <tr><td>Over-voltage</td><td>Bus above the trip. Output is cut.</td><td>Keep the bus within 6–24&nbsp;V; check the battery count and that nothing drives it above 24&nbsp;V.</td></tr>
-            <tr><td>Over-temperature</td><td>Board temperature reached the trip. Output is cut.</td><td>Let it cool, then lower the current limit or gear down so it stays out of the <a href="power-thermal.html">thermal fold</a>.</td></tr>
-            <tr><td>Encoder</td><td>Shaft angle became untrustworthy while driving.</td><td>Power-cycle the motor. If it repeats, the motor needs service — <a href="mailto:support@swyftrobotics.com">contact support</a>.</td></tr>
-            <tr><td>Gate driver</td><td>The power stage reported its own fault.</td><td>Power-cycle the motor. If it repeats, take it out of service and <a href="mailto:support@swyftrobotics.com">contact support</a>.</td></tr>
-            <tr><td>Over-current</td><td>Current exceeded the firmware limit.</td><td>Clear any mechanical jam. Lower the load, or raise the <a href="current-limits.html">stator limit</a> if the motor is not hot.</td></tr>
-            <tr><td>Communication</td><td>The command or heartbeat link went silent past its watchdog.</td><td>Check CAN wiring and terminators, or the USB-C cable; confirm the robot program is running and enabled.</td></tr>
-            <tr><td>Over-speed</td><td>The rotor ran past its ceiling.</td><td>Command a lower speed; check the gearing and that the mechanism is not back-driving the motor.</td></tr>
-            <tr><td>Bus sag</td><td>The bus collapsed under load.</td><td>Check battery health and the main connections; lower the <a href="current-limits.html">supply limit</a>; use adequate-gauge leads.</td></tr>
-            <tr><td>Stall</td><td>The velocity loop could not move the shaft.</td><td>Clear the jam. Raise the <a href="current-limits.html">stator limit</a> if the motor is not hot, or gear down for more torque.</td></tr>
-            <tr><td>E-stop</td><td>A pit or host kill latched the motor off.</td><td>Release the e-stop (<code>releaseEstop()</code>), then clear any remaining fault.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h2 id="warn">Warnings</h2>
-      <p>Warnings do not stop the motor. They report that a hard fault is near, or that something upstream is degraded: temperature approaching the trip, the bus below the lockout right now (as on USB-C with no battery), CAN traffic dropping, or the enable heartbeat gone stale.</p>
-
-      <h2 id="clear">Clearing a fault</h2>
-      <ol>
-        <li>Read the active fault in <a href="swyft-link.html">SWYFT&nbsp;Link</a>, on the <strong>Health</strong> page.</li>
-        <li>Fix the cause — cool the motor, restore the bus, fix the wiring.</li>
-        <li>Clear the fault. From robot code, <code>clearFaults()</code>; it is refused while the cause is still present.</li>
-      </ol>
-      <p>An e-stop is separate: it holds the motor off and refuses to re-arm until you release it (<code>releaseEstop()</code>), then clear any remaining fault. <a href="code-control.html">Control requests</a></p>
+<span id="clear"></span><span id="estop"></span><span id="stops"></span>
+<p>A fault reports a detected problem. A hard fault stops motor output. A warning reports a condition to check but does not always stop output. A refusal means the controller did not accept a command or setting.</p>
+<h2 id="lights">What a fault looks like on the motor</h2><p>Select a pair of lights to play its pattern. Selecting another turns the first off; select the same pair again to stop. These are demonstrations of the two end lights, not a live connection.</p><div class="table-wrap"><table><thead><tr><th scope="col">End lights</th><th scope="col">Meaning</th><th scope="col">Next step</th></tr></thead><tbody><tr><th scope="row"><span class="ledpair" data-state="fault"><span class="led"></span><span class="led"></span></span>Red and orange, alternating</th><td>A non-thermal fault has latched. Both end lights swap between red and orange.</td><td>Open Health to identify the cause. The light pattern alone does not identify which fault occurred.</td></tr><tr><th scope="row"><span class="ledpair" data-state="orange-offset"><span class="led"></span><span class="led"></span></span>Orange, brief offset flashes</th><td>Thermal protection has stopped output. Each end flashes briefly, offset from the other.</td><td>Disable, let the motor cool, and inspect load, limits, and cooling before testing again.</td></tr><tr><td>Current Measurement Invalid</td><td>The controller cannot trust its current measurement and stops output.</td><td>Check battery power and connections. If it returns after the cause is cleared, stop testing and contact SWYFT support.</td></tr><tr><td>Current Control Stopped</td><td>Current control cannot maintain a valid switching window.</td><td>Check for a jam and review current limits. If it returns, stop testing and contact SWYFT support.</td></tr></tbody></table></div><p>A command refusal does not necessarily create a fault-light pattern. Read the app’s message as well as the lights. See <a href="status-lights.html#patterns">all status patterns</a> for communication, enable, identify, and updater states.</p>
+<h2 id="hard">Protection causes in this release</h2><div class="table-wrap"><table><thead><tr><th scope="col">Cause</th><th scope="col">Behavior</th><th scope="col">Next action</th></tr></thead><tbody><tr><th scope="row">Power-stage fault</th><td>The electronics that switch power to the motor detected a fault and stopped output.</td><td>Stop requests; inspect the power-stage report, wiring and load.</td></tr><tr><th scope="row">Undervoltage</th><td>Bus voltage is inadequate or collapses during drive.</td><td>Check battery voltage and power connections while the mechanism is trying to move.</td></tr><tr><th scope="row">Over-temperature</th><td>Sustained high board temperature stops output.</td><td>Let it cool; inspect load, limits and cooling.</td></tr><tr><th scope="row">Overvoltage</th><td>Voltage at the motor’s power input is too high.</td><td>Check voltage at the motor and whether the problem occurs when stopping or reversing.</td></tr><tr><th scope="row">Encoder loss</th><td>Motion angle is no longer valid.</td><td>Stop and inspect the sensor/reference before rearming.</td></tr><tr><th scope="row">Invalid temperature sensor</th><td>A sensor fault is treated as a thermal protection condition.</td><td>Inspect the hardware; do not treat it as a temperature to tune around.</td></tr><tr><th scope="row">Emergency stop</th><td>An emergency-stop command keeps output disabled until it is released.</td><td>Resolve the reason, release the latch, then satisfy enable conditions.</td></tr></tbody></table></div><h2 id="warnings">Warnings are not all hard faults</h2><p>Temperature warning, low bus voltage, communication history and receive-loss evidence can be reported without meaning the same thing as a latched protection stop. Use the current library’s decoded state or the app’s health view. Do not test <code>faultMask != 0</code> as a substitute for <code>hasHardFault()</code>.</p>
+<h2 id="refused">Common refusals</h2><div class="table-wrap"><table><thead><tr><th scope="col">Refusal type</th><th scope="col">Response</th></tr></thead><tbody><tr><th scope="row">No gains / unsupported mode</th><td>Choose a supported mode and configure the required gains.</td></tr><tr><th scope="row">DriverStation or enable gate</th><td>For SystemCore control over CAN, check Driver Station and motor enable state. For standalone USB-C testing without CAN, Driver Station is not required; check the motor enable state in SWYFT Link. If a robot signal is present over CAN, USB-C motion also follows Driver Station permission.</td></tr><tr><th scope="row">Controller armed during configuration</th><td>Stop output, then apply the supported setting again.</td></tr><tr><th scope="row">Field unsupported</th><td>Use a supported setting from the <a href="code-api.html">API reference</a>.</td></tr><tr><th scope="row">Out of range</th><td>Check units and the device’s accepted range.</td></tr><tr><th scope="row">Another command owner</th><td>Use either robot code or SWYFT Link to command the motor, not both at the same time.</td></tr></tbody></table></div><h2 id="rearm">Clear the problem before enabling again</h2><p>Disable motor output and fix the reported problem first. On a robot, also disable Driver Station. Then clear the fault or release the emergency stop, as appropriate, before enabling and sending a new command. Do not repeatedly clear a fault that returns; that can hide an unresolved electrical, mechanical, or temperature problem. Check the <a href="status-lights.html">status lights</a> and the message in SWYFT Link together.</p>
 
       <nav class="pager">
         <a class="prev" href="troubleshooting.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Troubleshooting</span></a>
@@ -57,11 +30,13 @@
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#hard">Hard faults</a>
-    <a href="#warn">Warnings</a>
-    <a href="#clear">Clearing a fault</a>
+    <a href="#lights">Animated fault lights</a>
+    <a href="#hard">Protection causes in this release</a>
+    <a href="#warnings">Warnings are not all hard faults</a>
+    <a href="#refused">Common refusals</a>
+    <a href="#rearm">Clear the problem before enabling again</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

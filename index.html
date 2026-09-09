@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,34 +14,19 @@
     <article class="content">
       <div class="breadcrumb">Cyclone › Overview</div>
       <h1>SWYFT Cyclone</h1>
-      <p class="sec-lead">A brushless motor, its controller, and an absolute encoder in one housing. Built for FRC.</p>
+      <p class="sec-lead">Motor, controller, and encoder documentation for FRC teams using SystemCore.</p>
 
-      <figure>
-        <img src="img/side-usb.png" alt="SWYFT Cyclone, USB-C side">
-        <figcaption>Power, CAN, and USB-C all land on the motor. The rear-cover layout is on <a href="wiring.html">Wiring</a>.</figcaption>
-      </figure>
 
-      <h2 id="what">What it is</h2>
-      <p>The Cyclone is one integrated unit — a brushless motor, its controller, and a 14-bit absolute encoder in a single package, not a controller wired to a separate motor. It commutates itself with sensored trapezoidal control and reads its own shaft angle. Power, CAN&nbsp;FD, and USB-C connect at the back of the unit. Configure it from the vendor library in robot code, or from <a href="swyft-link.html">SWYFT&nbsp;Link</a>.</p>
-      <ul>
-        <li>Motor, controller, and absolute encoder in one unit</li>
-        <li>14-bit encoder — 16,384 counts per turn</li>
-        <li>CAN&nbsp;FD and USB-C, each a full control path</li>
-        <li>Configurable stator and supply current limits with thermal protection</li>
-        <li>Direction and offset calibrated on the motor and kept across a re-flash</li>
-        <li>Seven-light status and user LED strip</li>
-        <li>Runs on the 2027 SystemCore</li>
-      </ul>
+<figure><div class="install-callout"><img src="img/side-usb.png" alt="SWYFT Cyclone, USB-C side; arrow points to the USB-C port"><svg class="install-arrow" viewBox="0 0 1250 751" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="580" y1="420" x2="754.8" y2="490.7" stroke="#dc2020" stroke-width="14" stroke-linecap="round"/><polygon points="790.0,505.0 747.9,507.7 761.6,473.8" fill="#dc2020"/><text x="475" y="390" fill="#4db8ea" font-size="52" font-weight="700" font-family="Inter, system-ui, sans-serif">USB-C</text></svg></div><figcaption>Power, CAN, and USB-C connections are on the motor. See <a href="wiring.html">Wiring</a> for the connector locations.</figcaption></figure>
+<h2 id="what">Using Cyclone on your robot</h2>
+<p>Cyclone combines a brushless motor, motor controller, and 14-bit absolute encoder in one housing. Connect its red and black power wires to a breaker- or fuse-protected output on the robot’s power distribution hub. Plug its supplied CAN connectors into the robot’s CAN bus loop. CAN&nbsp;H is yellow and CAN&nbsp;L is green. Your robot program sends commands and reads measurements over CAN.</p>
+<p>SWYFT Link runs on SystemCore and provides configuration, device identification, live measurements, and firmware updates. USB-C connects your laptop directly to a Cyclone for setup, updates, or motor testing before CAN is connected. Running the motor requires 12 V battery power; standalone USB-C testing does not require SystemCore or Driver Station. If a robot signal is also present over CAN, Driver Station permission still applies.</p>
+<ul><li>Duty, velocity, and position control through the Java API</li><li>Adjustable limits for current inside the motor (stator) and current drawn from the battery (supply)</li><li>Temperature protection and reported fault states</li><li>Shaft angle measurement and a count of complete turns since power-up</li><li>Two status lights and five user-controlled lights</li></ul>
+<h2 id="start">Getting started</h2>
+<ol><li>Mount and wire the motor. Follow <a href="mounting.html">Mounting</a> and <a href="wiring.html">Wiring</a>.</li><li>Open <a href="swyft-link.html">SWYFT Link on SystemCore</a>. Identify each Cyclone and assign a unique device number.</li><li>Set current limits for the mechanism, then follow <a href="first-power-up.html">First power-up</a>.</li><li>Add the <a href="code.html">Java library</a> to your robot project and send commands from your periodic control code.</li></ol>
+<h2 id="reference">Reference</h2>
+<p>Use <a href="specifications.html">Specifications</a> for dimensions and supported settings, <a href="status-lights.html">Status lights</a> to interpret the controller, and <a href="troubleshooting.html">Troubleshooting</a> when a motor does not respond as expected. <a href="dfu.html">Firmware &amp; DFU</a> explains normal updates and recovery.</p>
 
-      <h2 id="start">Where to go</h2>
-      <ul>
-        <li><a href="wiring.html">Wiring</a> and <a href="first-power-up.html">First power-up</a> — get a motor running.</li>
-        <li><a href="specifications.html">Specifications</a>, <a href="mounting.html">Mounting</a>, <a href="orientation.html">Orientation</a> — the hardware reference.</li>
-        <li><a href="code.html">Robot code</a> — install the vendor library and drive the motor.</li>
-        <li><a href="swyft-link.html">SWYFT&nbsp;Link</a> — configure, tune, and recover from a browser or the SystemCore.</li>
-        <li><a href="current-limits.html">Safety &amp; current limits</a> — protect the motor and pick limits per mechanism.</li>
-        <li><a href="status-lights.html">Status lights</a> and <a href="troubleshooting.html">Troubleshooting</a> — read the motor and fix problems.</li>
-      </ul>
 
       <nav class="pager">
         <a class="next" href="wiring.html"><span class="pg-label">Next</span><span>Wiring <span class="chev">›</span></span></a>
@@ -51,10 +36,11 @@
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#what">What it is</a>
-    <a href="#start">Where to go</a>
+    <a href="#what">Using Cyclone on your robot</a>
+    <a href="#start">Getting started</a>
+    <a href="#reference">Reference</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Install & connect — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,19 +14,13 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › SWYFT Link › Install &amp; connect</div>
       <h1>Install &amp; connect</h1>
-      <p class="sec-lead">Configure and tune a Cyclone from a browser over USB-C, or on the SystemCore over CAN.</p>
+      <p class="sec-lead">Use SWYFT Link through SystemCore on your robot or connect directly from a laptop over USB-C.</p>
 
-      <p><strong>SWYFT&nbsp;Link</strong> is the tool for setting up Cyclones. In a browser it drives one motor over USB-C. On the 2027 SystemCore it reaches every Cyclone on the CAN bus. <a href="swyft-link-using.html">Using SWYFT&nbsp;Link</a></p>
+      <p><strong>SWYFT&nbsp;Link</strong> is the tool for setting up Cyclones. On SystemCore it connects to the Cyclones on the CAN bus. The USB-C version connects a laptop directly to one Cyclone. <a href="swyft-link-using.html">Using SWYFT&nbsp;Link</a></p>
 
-      <h2 id="usb">Connect over USB-C</h2>
-      <ol>
-        <li>Plug a Cyclone into your laptop with USB-C.</li>
-        <li>Open SWYFT&nbsp;Link in a supported browser. It detects the motor on its own — there is no connect step.</li>
-        <li>Power the motor from a battery or supply on its power leads (6–24&nbsp;V) for it to spin.</li>
-      </ol>
-
-      <h2 id="systemcore">Install on the SystemCore</h2>
-      <p>Download the package: <a href="files/SWYFT%20Link%202026.08.29.ipk" download="SWYFT Link 2026.08.29.ipk">SWYFT Link 2026.08.29.ipk</a></p>
+      <p>For a Cyclone installed on an FRC robot, install the SystemCore package below and use CAN. Keep the robot disabled during setup. Use the USB-C application for testing off the robot or a quick motor check before the CAN bus is connected. Standalone USB-C control does not require SystemCore or Driver Station.</p>
+<h2 id="systemcore">Install on the SystemCore</h2>
+      <p>Download <a href="files/SWYFT-Link-SystemCore.ipk" download="SWYFT-Link-SystemCore.ipk">SWYFT Link for SystemCore</a>.</p>
       <ol>
         <li>Open the SystemCore home page in a browser and select <strong>Add package</strong>.
           <div class="install-step"><div class="install-callout">
@@ -39,7 +33,7 @@
             <img src="img/install-drop-ipk.png" alt="Install package, drop target">
             <svg class="install-arrow" viewBox="0 0 860 500" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="231.1" y1="432.3" x2="401.1" y2="192.2" stroke="#dc2020" stroke-width="10.3" stroke-linecap="round"/><polygon points="419.0,167.0 404.2,207.0 386.2,194.2" fill="#dc2020" stroke="#dc2020" stroke-width="2.7" stroke-linejoin="round"/><text x="40" y="478" fill="#4db8ea" font-size="36" font-weight="700" text-anchor="start" font-family="Inter, system-ui, sans-serif">Drop the .ipk here</text></svg>
           </div></div>
-          <div class="install-step"><div class="install-callout"><img src="img/install-success.png" alt="Installation successful"></div></div>
+          <p>When installation succeeds, select <strong>Close</strong>.</p><div class="install-step"><div class="install-callout"><img src="img/install-success.png" alt="Installation successful; arrow points to the green Close button"><svg class="install-arrow" viewBox="0 0 1000 850" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><line x1="650" y1="785" x2="819.4" y2="712.8" stroke="#dc2020" stroke-width="14" stroke-linecap="round"/><polygon points="847.0,701.0 825.1,726.0 813.8,699.5" fill="#dc2020"/><text x="560" y="810" fill="#4db8ea" font-size="44" font-weight="700" font-family="Inter, system-ui, sans-serif">Close</text></svg></div></div>
         </li>
         <li>Open the <strong>SWYFT&nbsp;Link</strong> tile from the home page.
           <div class="install-step"><div class="install-callout">
@@ -50,7 +44,12 @@
         <li>Cyclones on the CAN bus appear in the device list.</li>
       </ol>
 
-      <nav class="pager">
+      <h2 id="usb">Connect over USB-C</h2>
+<ol><li>Connect the Cyclone to your laptop with a USB-C data cable.</li><li><a href="https://swyft-link.vercel.app/" target="_blank" rel="noopener">Open SWYFT Link</a> in <strong>Google Chrome</strong> on your laptop. Chrome supports the USB connection used by the app.</li><li>Choose <strong>Connect over USB-C</strong> and select the Cyclone&#8217;s serial port in the browser prompt. Previously authorized ports can reconnect automatically.</li><li>Confirm the selected Cyclone and its firmware version. To run the motor, connect a 12 V FRC battery to the Cyclone through a fused or breaker-protected power connection. Standalone USB-C control does not require CAN, SystemCore, or Driver Station. Secure the motor, keep the mechanism clear, and use the motor enable and control buttons in SWYFT Link.</li></ol>
+<p><strong>USB-C on a robot:</strong> standalone USB-C testing does not need Driver Station. If the Cyclone is also receiving a robot signal over CAN, USB-C commands still follow Driver Station enable permission. A USB cable does not override a disabled robot.</p>
+<p>For your first motor run, follow the <a href="first-power-up.html#usb-test">USB-C test steps</a>.</p>
+<h2 id="downloads">Download for SystemCore</h2><ul><li><a href="files/SWYFT-Link-SystemCore.ipk" download="SWYFT-Link-SystemCore.ipk">SWYFT Link for SystemCore</a></li></ul><p>Both applications load this documentation in the Docs tab. Internet access is needed to load the documentation; the motor connection itself remains local.</p>
+<nav class="pager">
         <a class="prev" href="orientation.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Orientation</span></a>
         <a class="next" href="swyft-link-using.html"><span class="pg-label">Next</span><span>Using SWYFT Link <span class="chev">›</span></span></a>
       </nav>
@@ -59,10 +58,11 @@
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#usb">Connect over USB-C</a>
     <a href="#systemcore">Install on the SystemCore</a>
+    <a href="#usb">Connect over USB-C</a>
+    <a href="#downloads">Get SWYFT Link</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

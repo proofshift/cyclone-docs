@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Closed-loop control — SWYFT Cyclone</title>
-  <link rel="stylesheet" href="css/docs.css?v=36">
+  <link rel="stylesheet" href="css/docs.css?v=20260907-guide1">
 </head>
 <body>
 <div class="layout">
@@ -14,96 +14,37 @@
     <article class="content">
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › Closed-loop control</div>
       <h1>Closed-loop control</h1>
-      <p class="sec-lead">Tune the velocity and position loops so a Cyclone holds a setpoint under load.</p>
+      <p class="sec-lead">Configure velocity and position control for your mechanism.</p>
 
-      <p>Velocity, position, and current commands close their loop on the controller, at the motor. The loop compares the setpoint to the encoder and adjusts output to close the gap. Each mechanism needs gains that match its inertia and load; the defaults are a starting point, not a final answer. This page sets the velocity and position gains and walks through tuning one mechanism.</p>
 
-      <h2 id="gains">Set velocity gains</h2>
-      <p>The velocity loop is a PI controller. <code>kP</code> reacts to the present speed error; <code>kI</code> removes the small steady error <code>kP</code> alone leaves behind. Apply them through <code>Slot0Configs</code>.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>import com.swyftrobotics.cyclone.v4.Slot0Configs;
 
-var gains = new Slot0Configs();
-gains.kP = 0.0008;   // output per unit of speed error
-gains.kI = 0.004;    // removes steady-state error
-shooter.getConfigurator().apply(gains);
-shooter.saveConfiguration();   // keep the gains across a power cycle</code></pre>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Gain</th><th>Default</th><th>Range</th><th>Raise it when…</th></tr></thead>
-          <tbody>
-            <tr><td><code>kP</code></td><td>0.0006</td><td>0–0.01</td><td>the motor is slow to reach speed</td></tr>
-            <tr><td><code>kI</code></td><td>0.003</td><td>0–0.1</td><td>it settles just short of the target</td></tr>
-          </tbody>
-        </table>
-      </div>
+<span id="example"></span><span id="gains"></span><span id="tune"></span>
+<p>Closed-loop control compares the target with the measured motion and adjusts motor output to reduce the difference. Gains are the tuning values that determine how strongly it responds. Tune one mechanism at a time with space for it to move safely.</p>
+<h2 id="velocity">Set velocity gains</h2><p>The public Java setter supports velocity kP and kI. Pass gains you have selected for your setup; tune on measured response with conservative output and current limits. Velocity error is the difference between requested and measured speed. Gains use this error in radians per second (rad/s), even though <code>setVelocity()</code> accepts RPM.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>// motor is an existing controller; kP and kI are your validated gains.
+motor.setVelocityGain(SwyftCycloneConstants.PID_GAIN_KP, kP);
+motor.setVelocityGain(SwyftCycloneConstants.PID_GAIN_KI, kI);</code></pre></div><p><code>apply(Slot0Configs)</code> does not set these gains; its result directs you to <code>setVelocityGain()</code> instead. Other numbered slots are not selectable. For kD, use the acknowledged setter below or apply a Slot0Configs containing only kD. Public feedforward setters are not supported.</p>
+<h2 id="gain-meaning">What the velocity gains change</h2>
+<p><strong>kP</strong> changes output in proportion to the current speed error. Too little can leave a slow response; too much can make speed overshoot or oscillate, repeatedly rising above and falling below the target. <strong>kI</strong> responds to error that remains over time. It can remove a lasting speed shortfall, but too much can also cause overshoot or oscillation.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">Java velocity gain</th><th scope="col">Accepted range</th></tr></thead><tbody><tr><td>kP</td><td>0.00005 to 0.01</td></tr><tr><td>kI</td><td>0.0002 to 0.05</td></tr><tr><td>kD</td><td>0 to 0.001; zero disables derivative action</td></tr></tbody></table></div>
+<p><strong>kD (derivative gain)</strong> adds damping based on how quickly measured motor speed changes. Cyclone applies D to measured velocity, with a 5 ms filter, so changing the target alone does not produce a derivative kick. Start at zero, tune kP and kI, then increase kD in small steps if the response needs damping. Too much D can amplify measurement noise and make output jitter. Its units are duty per rad/s², with a resolution of 0.00000001.</p><p>Velocity kD requires firmware 0.165.0 or later and Java library 0.28.0 or later. Configure it while output is disabled and check the result:</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>StatusCode result = motor.setVelocityDerivativeGain(0.00001); // Example, not a universal tune.
+if (!result.isOK()) System.err.println(result.describe());
+double appliedKD = motor.getVelocityDerivativeGain(); // NaN means unavailable/no reply.
+// Save deliberately after testing: motor.saveConfiguration();</code></pre></div>
+<p>These are accepted values, not recommended settings for every mechanism. The kP and kI setters reject zero; kD accepts zero to turn the derivative term off. All three reject values outside their ranges. The loop measures velocity in rad/s internally, even though Java speed requests use RPM.</p>
 
-      <h2 id="tune">Tune a velocity loop</h2>
-      <p>Tune one mechanism at a time, on the real robot, with the mechanism under its normal load.</p>
-      <ol>
-        <li>Start from the defaults. Command a mid-range speed with <code>setVelocity</code> and watch the measured speed with <code>getVelocityRpm</code>.</li>
-        <li>Raise <code>kP</code> until the motor reaches speed quickly. If it oscillates around the target, <code>kP</code> is too high — lower it until the wobble stops.</li>
-        <li>If the motor holds a speed slightly below the target, raise <code>kI</code> in small steps until the error closes. Too much <code>kI</code> makes it overshoot then swing back.</li>
-        <li>Test at the speeds you actually use, and under the load the mechanism sees in a match. Save when it holds.</li>
-      </ol>
-      <div class="callout tip">
-        <span class="label">Tip</span>
-        <p>A value outside its range is refused, not clamped, and <code>apply</code> returns the failing <code>StatusCode</code>. Check <code>isOK()</code> while tuning so a rejected gain does not look like a bad tune.</p>
-      </div>
-
-      <h2 id="position">Set the position gain</h2>
-      <p>Position mode runs a proportional loop whose output is a velocity request into the velocity loop above. Tune the velocity loop first, then set the position gain <code>PositionKP</code> through <code>ClosedLoopGeneralConfigs</code>.</p>
-      <div class="code-panel">
-        <div class="code-bar">Java</div>
-        <pre><code>import com.swyftrobotics.cyclone.v4.ClosedLoopGeneralConfigs;
-
-var pos = new ClosedLoopGeneralConfigs();
-pos.PositionKP = 2.0;   // 0–5.0; higher drives to target faster
-arm.getConfigurator().apply(pos);</code></pre>
-      </div>
-
-      <h2 id="example">Full example — a velocity subsystem</h2>
-      <p>A complete command-based subsystem that configures a shooter, holds a speed, and reports when it is up to speed.</p>
-      <div class="code-panel">
-        <div class="code-bar">ShooterSubsystem.java</div>
-        <pre><code>import com.swyftrobotics.cyclone.v4.SwyftCyclone;
-import com.swyftrobotics.cyclone.v4.Slot0Configs;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-public class ShooterSubsystem extends SubsystemBase {
-    private final SwyftCyclone motor = new SwyftCyclone(9);
-    private double targetRpm = 0;
-
-    public ShooterSubsystem() {
-        // current limits protect the motor; gains make it hold speed
-        motor.setTeamLimits(75, 85, 60);
-
-        var gains = new Slot0Configs();
-        gains.kP = 0.0008;
-        gains.kI = 0.004;
-        motor.getConfigurator().apply(gains);
-        motor.saveConfiguration();
-    }
-
-    /** Command a flywheel speed in RPM. */
-    public void setSpeed(double rpm) {
-        targetRpm = rpm;
-        motor.setVelocity(rpm);
-    }
-
-    public void stop() {
-        targetRpm = 0;
-        motor.disable();
-    }
-
-    /** True once the flywheel is within 100 RPM of target. */
-    public boolean atSpeed() {
-        return Math.abs(motor.getVelocityRpm() - targetRpm) < 100;
-    }
-}</code></pre>
-      </div>
+<h2 id="position">Position gains</h2><p>Confirm speed feedback, direction and the mechanism’s reference first. A fresh configuration has zero position kP and refuses position entry. The public <code>ClosedLoopGeneralConfigs.PositionKP</code> path sets the position gain; other fields in that class are not general-purpose tuning controls.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>ClosedLoopGeneralConfigs gains = new ClosedLoopGeneralConfigs();
+gains.PositionKP = positionKp; // Your validated positive position gain.
+StatusCode result = motor.getConfigurator().apply(gains);
+if (!result.isOK()) System.err.println(result.describe());</code></pre></div>
+<h2 id="mechanism">Mechanism units</h2><p><code>SensorToMechanismRatio</code> is the number of motor-shaft turns for one turn of the mechanism. For example, enter <code>5.0</code> if the motor turns five times for one mechanism turn. The Java helpers use that ratio to convert your target into motor-shaft angle.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>MechanismConfigs mechanism = new MechanismConfigs();
+mechanism.SensorToMechanismRatio = 5.0;
+mechanism.ContinuousWrap = false;
+motor.configureMechanism(mechanism);
+motor.setMechanismPosition(0.25); // Quarter mechanism turn.</code></pre></div>
+<h2 id="measure">Tune from the measured response</h2>
+<ol><li>Record the current gains and limits so you can restore them. Verify direction and speed feedback with a small duty request first.</li><li>Choose a reachable speed and repeat the same start and stop with the mechanism supported. Plot target speed, measured speed, applied duty, current, and supply voltage.</li><li>If speed falls short, check whether duty or current has reached a limit, the mechanism is binding, or supply voltage is falling. Gain changes cannot remove these restrictions.</li><li>Disable output before changing a gain. If the response is slow without overshoot or limiting, try a small increase in kP within its accepted range. Repeat the same test. If it overshoots or oscillates more, return to the previous value.</li><li>Once the response is stable, a persistent speed shortfall under a steady load may need a small kI increase. Change only kI for that trial. Restore the earlier value if the response becomes less stable.</li><li>Repeat at the speeds and loads the mechanism will actually use. Save supported settings deliberately, then confirm behavior after restarting.</li></ol>
+<p><strong>Example of reading a plot:</strong> suppose the target is 1,500 RPM and speed settles at 1,350 RPM, with steady voltage and no current or output limit active. That is a 150 RPM steady error; it suggests investigating integral response. If speed repeatedly swings between 1,200 and 1,800 RPM, do not keep raising gains to chase the low points. These numbers illustrate how to interpret a plot; they are not measurements from a qualified Cyclone test.</p>
+<p>Position control has its own inner speed-loop gains. Tuning velocity kP/kI above does not tune that position loop. Start with short position moves from a known reference and check overshoot and holding behavior. Use <a href="orientation.html#reference">the reference example</a> to translate a mechanism position into a rotor target.</p>
 
       <nav class="pager">
         <a class="prev" href="code-control.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Control requests</span></a>
@@ -114,12 +55,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
-    <a href="#gains">Set velocity gains</a>
-    <a href="#tune">Tune a velocity loop</a>
-    <a href="#position">Set the position gain</a>
-    <a href="#example">Full example</a>
+    <a href="#velocity">Set velocity gains</a>
+    <a href="#gain-meaning">Velocity gain ranges</a>
+    <a href="#position">Position gains</a>
+    <a href="#mechanism">Mechanism units</a>
+    <a href="#measure">Tuning procedure</a>
   </aside>
 </div>
-<script src="js/docs.js?v=36"></script>
+<script src="js/docs.js?v=20260907-guide1"></script>
 </body>
 </html>

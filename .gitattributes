@@ -1,0 +1,2 @@
+# Download manifests verify exact distributed bytes on Windows and Linux.
+files/** -text

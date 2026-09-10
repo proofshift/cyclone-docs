@@ -17,6 +17,9 @@
       <p class="sec-lead">Update motor firmware from SWYFT Link while the robot is disabled.</p>
 
 
+<h2 id="current-release">Current app and firmware</h2>
+<p>The current SystemCore download is <strong>SWYFT Link 2026.09.10-port3</strong>, with Cyclone firmware <strong>0.166.3</strong>. The <a href="https://swyft-link.vercel.app/" target="_blank" rel="noopener">USB-C website</a> offers the same firmware. This release includes corrected acceleration readback and saving, separate profile settings for Velocity and Position, thermal-fold switch readback over CAN, and position-profile precision for accumulated shaft movement. It also includes the LED communication correction for unexpected colours; the <a href="status-lights.html">status-light meanings</a> are unchanged.</p>
+<p><strong>Updating SWYFT Link does not update the motor automatically.</strong> On SystemCore, install the <a href="swyft-link.html#systemcore">current IPK</a>, then open SWYFT Link again. For USB-C, stop output and reload the website in Chrome before reconnecting. In either app, open Firmware and update each intended Cyclone, then confirm its reported version is 0.166.3. Record settings first and re-check them after the update.</p>
 <h2 id="update">Update through SystemCore</h2>
 <p>You can update over CAN with the motor installed on the robot, using SystemCore and SWYFT Link. Power the robot from a charged battery, keep Driver Station disabled, and open SWYFT Link on SystemCore. Do not update during a mechanism test.</p>
 <ol><li>Select the Cyclone and confirm its device number. Use Identify if needed.</li><li>Open Firmware. Use the offered image, or select the intended <code>.swyftfw</code> file.</li><li>Choose Update. Keep the robot powered and the connection active while the app erases, writes, verifies, and restarts the controller.</li><li>Wait for the app to confirm completion and the expected firmware version. The end of the write progress is not the end of the update.</li><li>Check configuration and device identity after the restart before enabling the mechanism.</li></ol>
@@ -41,6 +44,7 @@
 
   <aside class="toc">
     <p class="toc-title">On this page</p>
+    <a href="#current-release">Current release</a>
     <a href="#update">Update through SystemCore</a>
     <a href="#usb">Update over USB-C</a>
     <a href="#files">File types</a>

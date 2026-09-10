@@ -36,6 +36,8 @@ double appliedKD = motor.getVelocityDerivativeGain(); // NaN means unavailable/n
 gains.PositionKP = positionKp; // Your validated positive position gain.
 StatusCode result = motor.getConfigurator().apply(gains);
 if (!result.isOK()) System.err.println(result.describe());</code></pre></div>
+<p>With position profiling enabled, a new move after a stop starts its profile from the measured shaft position. If a supported mechanism is moved while output is disabled, the next move starts from that new position. Changing the target during an active move continues the existing profile. This does not establish home after a power cycle: your robot code must still establish a valid mechanism reference.</p>
+<p>For USB-C testing, follow <a href="swyft-link-using.html#profiles">Acceleration and cruise speed</a> to adjust and confirm the profile settings. Those app fields are separate from the gain settings above.</p>
 <h2 id="mechanism">Mechanism units</h2><p><code>SensorToMechanismRatio</code> is the number of motor-shaft turns for one turn of the mechanism. For example, enter <code>5.0</code> if the motor turns five times for one mechanism turn. The Java helpers use that ratio to convert your target into motor-shaft angle.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>MechanismConfigs mechanism = new MechanismConfigs();
 mechanism.SensorToMechanismRatio = 5.0;
 mechanism.ContinuousWrap = false;

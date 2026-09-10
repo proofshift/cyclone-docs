@@ -30,7 +30,11 @@
 <h2 id="load">It slows down or stops under load</h2>
 <p>Compare applied duty, current, voltage, and temperature. Current limiting can reduce duty; temperature can reduce the stator current limit; low voltage or a hard fault can stop output. Inspect the battery, connections, mechanism friction, and gearing before increasing limits.</p>
 <h2 id="settings">Settings change after a restart</h2>
-<p>Confirm the configuration write succeeded and supported settings were saved. Coast or Brake resets when the motor restarts. The gear ratio and wrapping options are stored in your robot program. Set these options again at startup. Check live current limits after cycling robot power.</p>
+<p>Confirm the configuration write succeeded and supported settings were saved. Coast or Brake, position acceleration and position cruise speed reset when the motor restarts. USB-C velocity acceleration is saved only after its save confirmation succeeds. The gear ratio and wrapping options are stored in your robot program. Set these options again at startup. Check live current limits after cycling robot power.</p>
+<h2 id="profile-settings">Acceleration or cruise speed will not apply</h2>
+<p>These fields require the USB-C app. Check the selected mode and <a href="swyft-link-using.html#profiles">its range and units</a>; Velocity and Position have different acceleration limits. Wait for a confirmed value. If the field says Unknown, reconnect or use Read settings again after the error. If the app reports a save failure, keep output disabled and read the setting again: it may be applied for this session but not saved. Position acceleration and cruise speed always reset on reboot.</p>
+<h2 id="unexpected-lights">Lights show unexpected colours</h2>
+<p>First distinguish the two end status lights from the five user lights. Check whether robot code or a SWYFT Link LED preset is setting the user lights, and compare the end lights with <a href="status-lights.html#patterns">the status patterns</a>. If unexplained colours appear while communicating over USB, check for the <a href="dfu.html#current-release">current firmware</a>, which includes a correction to LED communication. If it continues, record the pattern, firmware version, connection and what the app was doing, and contact support. An unexpected colour alone does not identify a motor fault.</p>
 <h2 id="update">A firmware update fails</h2>
 <p>Keep the error message and note whether failure occurred during erase, write, verify, or reconnect. Maintain robot power and the connection. If the application returned, check its version before attempting another update. Follow <a href="dfu.html">Firmware &amp; DFU</a> for the next step.</p>
 <p>For help beyond these checks, contact <a href="https://www.swyftrobotics.com/support" target="_blank" rel="noopener">SWYFT Support</a> or email <a href="mailto:support@swyftrobotics.com">support@swyftrobotics.com</a>. Include the details below.</p>
@@ -52,6 +56,8 @@
     <a href="#motion">The motor appears but does not move</a>
     <a href="#load">It slows down or stops under load</a>
     <a href="#settings">Settings change after a restart</a>
+    <a href="#profile-settings">Profile settings will not apply</a>
+    <a href="#unexpected-lights">Unexpected LED colours</a>
     <a href="#update">A firmware update fails</a>
     <a href="#report">Information to include when requesting help</a>
   </aside>

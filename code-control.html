@@ -32,7 +32,7 @@ follower.stopFollowing();</code></pre></div>
 // Emergency path, when needed:
 motor.estop();         // Keep output stopped until released.
 motor.releaseEstop();  // Release the stop; normal enable checks still apply.</code></pre></div><div class="callout note"><span class="label">Current control is not a public mode</span><p><code>setCurrent()</code> remains for compatibility but throws <code>UnsupportedOperationException</code>. Set current <em>limits</em> with <code>CurrentLimitsConfigs</code>; amperes are not a supported public motion setpoint.</p></div>
-<h2 id="timing">Keep sending the intended command</h2><p>Send the intended command each time your periodic control code runs. A CAN motion command expires after 100 ms without a refresh. The library also sends a separate enable heartbeat to show that control is still active; it does not replace repeated motion commands.</p>
+<h2 id="timing">Keep sending the intended command</h2><p>Send the intended command each time your periodic control code runs. A CAN motion command expires after 100 ms without a refresh. The library also sends a separate enable heartbeat to show that control is still active; it does not replace repeated motion commands.</p><p>The controller also requires a live robot heartbeat that permits motor output. Driver Station disable or loss of the required heartbeat stops output. Recovered heartbeats alone do not replay the last setpoint; your program must send a fresh intended command. See <a href="swyft-link-using.html#connection-loss">connection-loss behavior</a> for CAN and USB-C.</p>
 
       <nav class="pager">
         <a class="prev" href="code-config.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Configuration</span></a>

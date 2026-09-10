@@ -18,10 +18,10 @@
 
 
 <span id="construct"></span><span id="drive"></span><span id="full"></span><span id="limits"></span><span id="next"></span><span id="vendordep"></span>
-<h2 id="install">Install the vendor library</h2><p>These examples use Cyclone Java library 0.28.0 and the SystemCore WPILib 2027 API. Check the version in your project’s Cyclone vendordep before using them.</p>
+<h2 id="install">Install the vendor library</h2><p>These examples use Cyclone Java library 0.29.0 and the SystemCore WPILib 2027 API. Check the version in your project’s Cyclone vendordep before using them.</p>
 <p>In WPILib, open <strong>Manage Vendor Libraries</strong>, choose <strong>Install new libraries (online)</strong>, and enter this URL:</p>
 <p><a href="https://cyclone.docs.swyftrobotics.com/files/vendor-lib/2027/SwyftCycloneV4.json">https://cyclone.docs.swyftrobotics.com/files/vendor-lib/2027/SwyftCycloneV4.json</a></p>
-<p>You can also <a href="files/vendor-lib/2027/SwyftCycloneV4.json">open the installer JSON</a> to check its version. It selects <strong>0.28.0</strong> for the SystemCore WPILib 2027 API. Keep one Cyclone library version in the project and build before deploying. Java imports use <code>com.swyftrobotics.cyclone.v4</code>.</p>
+<p>You can also <a href="files/vendor-lib/2027/SwyftCycloneV4.json">open the installer JSON</a> to check its version. It selects <strong>0.29.0</strong> for the SystemCore WPILib 2027 API. Keep one Cyclone library version in the project and build before deploying. Java imports use <code>com.swyftrobotics.cyclone.v4</code>.</p>
 <h2 id="first-program">A complete first program</h2><p>This example uses device 1 and repeats a 10% duty request while teleop is enabled. The 30 A stator and 20 A supply limits illustrate the configuration calls. Choose limits for your mechanism and check that the device accepted them. Keep the mechanism’s travel clear before enabling.</p><div class="code-panel" data-example="Robot.java"><div class="code-bar">Java · Robot.java</div><pre><code>package frc.robot;
 
 import org.wpilib.framework.TimedRobot;
@@ -59,6 +59,22 @@ public class Robot extends TimedRobot {
         super.close();
     }
 }</code></pre></div>
+<h2 id="gamepad">Use a PS5 controller or another gamepad</h2><p>The motor accepts commands from robot code; it does not depend on a particular handheld controller. In SystemCore WPILib 2027, <code>Gamepad</code> uses the Driver Station's standard gamepad mapping. Connect the controller to the Driver Station computer and confirm its port and axes there. A recognized PS5 controller can use this path. Other joysticks need their own axis mapping through GenericHID.</p><p>The example below reads the left stick on gamepad port 0, removes a small center deadband and limits the request to 10% duty. Call this in teleopPeriodic after configuration has succeeded. It deliberately disables the motor if the gamepad is disconnected. In disabledInit, call motor.disable(). Replace the port and axis choice to match the Driver Station, and choose output limits for the mechanism.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>import org.wpilib.driverstation.Gamepad;
+
+// Create once as a field in your robot class:
+Gamepad pad = new Gamepad(0);
+// In teleopPeriodic:
+if (!pad.isConnected()) {
+    motor.disable();
+    return;
+}
+double stick = -pad.getLeftY();
+if (!Double.isFinite(stick)) {
+    motor.disable();
+    return;
+}
+double duty = Math.abs(stick) &lt; 0.08 ? 0 : stick * 0.10;
+motor.setDutyCycle(duty);</code></pre></div><p>Driver Station must be enabled for robot-code motion. The motor still enforces command freshness, current limits and protection. See the <a href="https://wpilib.org/blog/the-2027-first-driver-station" target="_blank" rel="noopener">WPILib 2027 Driver Station gamepad explanation</a> for its controller mapping.</p>
 <h2 id="lifecycle">Create the motor once</h2><p>Create one <code>SwyftCyclone</code> object for each motor when your robot program starts. Keep using that object; do not create a new one every time the periodic code runs. The library sends an enable heartbeat, a repeated message confirming that control is active. Your code must also repeat the intended motor command. Call <code>close()</code> when the object will no longer be used.</p>
 <h2 id="before-motion">Before enabling</h2><ul><li>Give the device a unique number and verify the CAN bus connection.</li><li>Choose a consistent sign convention and a safe first test.</li><li>Read configuration failures instead of assuming that a write succeeded.</li><li>Keep the DriverStation gate in use. It cannot be disarmed through the public API.</li></ul>
 
@@ -73,6 +89,7 @@ public class Robot extends TimedRobot {
     <p class="toc-title">On this page</p>
     <a href="#install">Install the vendor library</a>
     <a href="#first-program">A complete first program</a>
+    <a href="#gamepad">PS5 and other gamepads</a>
     <a href="#lifecycle">Create the motor once</a>
     <a href="#before-motion">Before enabling</a>
   </aside>

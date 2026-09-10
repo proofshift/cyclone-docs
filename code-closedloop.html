@@ -21,8 +21,11 @@
 <span id="example"></span><span id="gains"></span><span id="tune"></span>
 <p>Closed-loop control compares the target with the measured motion and adjusts motor output to reduce the difference. Gains are the tuning values that determine how strongly it responds. Tune one mechanism at a time with space for it to move safely.</p>
 <h2 id="velocity">Set velocity gains</h2><p>The public Java setter supports velocity kP and kI. Pass gains you have selected for your setup; tune on measured response with conservative output and current limits. Velocity error is the difference between requested and measured speed. Gains use this error in radians per second (rad/s), even though <code>setVelocity()</code> accepts RPM.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>// motor is an existing controller; kP and kI are your validated gains.
-motor.setVelocityGain(SwyftCycloneConstants.PID_GAIN_KP, kP);
-motor.setVelocityGain(SwyftCycloneConstants.PID_GAIN_KI, kI);</code></pre></div><p><code>apply(Slot0Configs)</code> does not set these gains; its result directs you to <code>setVelocityGain()</code> instead. Other numbered slots are not selectable. For kD, use the acknowledged setter below or apply a Slot0Configs containing only kD. Public feedforward setters are not supported.</p>
+Slot0Configs velocityGains = new Slot0Configs();
+velocityGains.kP = kP;
+velocityGains.kI = kI;
+StatusCode gainResult = motor.getConfigurator().apply(velocityGains);
+if (!gainResult.isOK()) System.err.println(gainResult.describe());</code></pre></div><p>With firmware 0.167.0 and Java 0.29.0, <code>apply(Slot0Configs)</code> writes kP, kI and kD with device readback. Unset gains are left alone. Other numbered Java slots are not selectable alternate tunes. Public feedforward setters remain unsupported.</p>
 <h2 id="gain-meaning">What the velocity gains change</h2>
 <p><strong>kP</strong> changes output in proportion to the current speed error. Too little can leave a slow response; too much can make speed overshoot or oscillate, repeatedly rising above and falling below the target. <strong>kI</strong> responds to error that remains over time. It can remove a lasting speed shortfall, but too much can also cause overshoot or oscillation.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">Java velocity gain</th><th scope="col">Accepted range</th></tr></thead><tbody><tr><td>kP</td><td>0.00005 to 0.01</td></tr><tr><td>kI</td><td>0.0002 to 0.05</td></tr><tr><td>kD</td><td>0 to 0.001; zero disables derivative action</td></tr></tbody></table></div>
@@ -37,7 +40,7 @@ gains.PositionKP = positionKp; // Your validated positive position gain.
 StatusCode result = motor.getConfigurator().apply(gains);
 if (!result.isOK()) System.err.println(result.describe());</code></pre></div>
 <p>With position profiling enabled, a new move after a stop starts its profile from the measured shaft position. If a supported mechanism is moved while output is disabled, the next move starts from that new position. Changing the target during an active move continues the existing profile. This does not establish home after a power cycle: your robot code must still establish a valid mechanism reference.</p>
-<p>For USB-C testing, follow <a href="swyft-link-using.html#profiles">Acceleration and cruise speed</a> to adjust and confirm the profile settings. Those app fields are separate from the gain settings above.</p>
+<p>For USB-C or SystemCore testing, follow <a href="swyft-link-using.html#profiles">Acceleration and cruise speed</a> to adjust and confirm the profile settings. Those app fields are separate from the gain settings above.</p>
 <h2 id="mechanism">Mechanism units</h2><p><code>SensorToMechanismRatio</code> is the number of motor-shaft turns for one turn of the mechanism. For example, enter <code>5.0</code> if the motor turns five times for one mechanism turn. The Java helpers use that ratio to convert your target into motor-shaft angle.</p><div class="code-panel"><div class="code-bar">Java</div><pre><code>MechanismConfigs mechanism = new MechanismConfigs();
 mechanism.SensorToMechanismRatio = 5.0;
 mechanism.ContinuousWrap = false;

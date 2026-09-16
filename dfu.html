@@ -18,8 +18,9 @@
 
 
 <h2 id="current-release">Current app and firmware</h2>
-<p><strong>SWYFT Link 2026.09.16-product266-can-identity1</strong> for SystemCore and build <strong>2026.09.16-product266-usb-auto1</strong> on the <a href="https://swyft-link.vercel.app/" target="_blank" rel="noopener">USB-C website</a> include Cyclone firmware <strong>2.6.6</strong>. Controllers with older firmware remain on the Firmware page and cannot receive motor commands through the app until updated. STOP and firmware recovery remain available.</p>
+<p><strong>SWYFT Link 2026.09.16-product266-can-clear1</strong> for SystemCore and build <strong>2026.09.16-product266-usb-auto1</strong> on the <a href="https://swyft-link.vercel.app/" target="_blank" rel="noopener">USB-C website</a> include Cyclone firmware <strong>2.6.6</strong>. Controllers with older firmware remain on the Firmware page and cannot receive motor commands through the app until updated. STOP and firmware recovery remain available.</p>
 <p>The SystemCore app now recognizes firmware 2.6.6 reported over CAN, fixing an incorrect firmware-update lock on already-updated controllers. Install the current IPK to receive this app correction; controllers already on 2.6.6 do not need reflashing.</p>
+<p>Clear Sticky is now supported over CAN. Disable the motor before clearing faults. The app checks the controller's acknowledgement and reports refusals or missing replies; clearing never enables the motor. The fault list updates from controller telemetry.</p>
 <p>This firmware uses a speed-based duty governor. Supply current is displayed, but supply and stator current-limit settings are inactive compatibility fields and do not limit current. There is no stator-current measurement in this release.</p>
 <p>The USB-C app automatically reacquires an already-authorized returning port during an unambiguous single-controller update. If browser permission or controller selection is needed, the app still asks you to choose a port. Firmware updates report completion only after the controller returns with the expected firmware version.</p>
 <p>Firmware releases use a decimal counter: after 1.6.9 comes 1.7.0; after 1.9.9 comes 2.0.0.</p>

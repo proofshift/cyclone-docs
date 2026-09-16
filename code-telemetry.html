@@ -15,6 +15,8 @@
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › Status signals</div>
       <h1>Status signals</h1>
       <p class="sec-lead">Read motion, electrical measurements, temperature, and faults from robot code.</p>
+<p><strong>Java 0.33.0 / firmware 2.6.6:</strong> zero duty coasts; brake is unsupported. Stator and supply current-limit settings are inactive compatibility fields and do not limit amperes. Supply current is observational; stator current is unavailable. The speed-based duty governor can reduce applied output.</p>
+
 
 
 <span id="alive"></span><span id="example"></span><span id="getters"></span><span id="snapshot"></span><span id="thermal"></span>
@@ -32,7 +34,7 @@ if (motor.hasHardFault()) {
     motor.disable();
     System.err.println(motor.getPowerStageFaultString());
 }</code></pre></div><p>Use <code>hasHardFault()</code> to check for a fault that stops output. Testing whether any fault bit is set can also match warnings that do not stop the motor. SWYFT Link and the library report the controller’s protection faults.</p>
-<h2 id="plots">Use plots to answer one question</h2><p>For a slow mechanism, compare requested motion, measured speed and applied duty. For current limiting, compare stator current, supply current and duty. For heating, include temperature over time. Use the temperature reading for thermal monitoring. The i²t getter does not report an active thermal-budget limiter in this release.</p>
+<h2 id="plots">Use plots to answer one question</h2><p>For a slow mechanism, compare requested motion, measured speed and applied duty. Supply current can be plotted as observational telemetry; stator current and active current limiting are unavailable on 2.6.6. For heating, include temperature over time. Use the temperature reading for thermal monitoring. The i²t getter does not report an active thermal-budget limiter in this release.</p>
 
       <nav class="pager">
         <a class="prev" href="code-closedloop.html"><span class="pg-label">Previous</span><span><span class="chev">‹</span> Closed-loop control</span></a>

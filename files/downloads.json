@@ -1,6 +1,6 @@
 {
-  "SWYFT-Link-SystemCore.ipk": "d03923715a2301e7ac54d049e57f0d0b2251fa5b21008ddc7434371ce0b9377d",
-  "vendor-lib/2027/SwyftCycloneV4.json": "e4898d099ac9f4d035cc90eef851c5ffa91d3a80f0f7908f19c3942546875478",
+  "SWYFT-Link-SystemCore.ipk": "06fae7a419786d602500ec0d3f3a6a110d62a44184d3bab5ebb2e2e7693a66e3",
+  "vendor-lib/2027/SwyftCycloneV4.json": "f533f830cf5c746672df4c12b5cc87d173bb699042efacad6db363d8b306cdcb",
   "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.28.0/cyclone-v4-0.28.0.jar": "1c16cbc47f62125351edef47a69785edce9b4ec7697bd45034600d6788fe2963",
   "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.28.0/cyclone-v4-0.28.0.jar.md5": "b87f141071f38478c99fb27126e44d5ad0044283a8681017fc41d5724c141c9e",
   "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.28.0/cyclone-v4-0.28.0.jar.sha1": "f01252d8da6272a508084eb84d074a684133944a4b95c5a46b8d07b87ceec3f7",
@@ -60,5 +60,15 @@
   "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.33.0/cyclone-v4-0.33.0.pom.md5": "c0bafd311ace51ac7c3572c5f383e5ae39a7153ebe305ec2f09f06eafc1dc034",
   "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.33.0/cyclone-v4-0.33.0.pom.sha1": "27cd8887f18cb2064661bdbcc2e7f08d7656e21adffbfef83746b451f36ddc27",
   "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.33.0/cyclone-v4-0.33.0.pom.sha256": "ecace38642cc53af3f1f616007ad8fbb82621d101776eaa0af405df8ce2efc2b",
-  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.33.0/cyclone-v4-0.33.0.pom.sha512": "a408c327555b07feca87c60263cd7cab0a6cf9eab75c4b4cf12fd09098f9c8c0"
+  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.33.0/cyclone-v4-0.33.0.pom.sha512": "a408c327555b07feca87c60263cd7cab0a6cf9eab75c4b4cf12fd09098f9c8c0",
+  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.34.0/cyclone-v4-0.34.0.jar": "017563f8e850b424c5cd560911be1457f7f698d3ab99a9e54952ae3574684566",
+  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.34.0/cyclone-v4-0.34.0.jar.md5": "be5b90fcd98ad50e592818f6d1cec6f4847b994f6cd3358728f7a9cf1414621f",
+  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.34.0/cyclone-v4-0.34.0.jar.sha1": "deefcbf09c967f5710fafb0f8bf562e725bdf93c120b5259949d3261c30371ba",
+  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.34.0/cyclone-v4-0.34.0.jar.sha256": "a3b00745f5f7cb9496e04dea928b8a8d9398cdc5ceffe78db7f0bbd551462850",
+  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.34.0/cyclone-v4-0.34.0.jar.sha512": "b6f67a262d2cfa8bc75bd3f731b10b7595fc84f17fc9bf45edc852f6e23d597a",
+  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.34.0/cyclone-v4-0.34.0.pom": "f1e56f7b73745c647e836e634bb3ee50dcb54e2b13dc0b2c3ced52658217a86b",
+  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.34.0/cyclone-v4-0.34.0.pom.md5": "4a2abb99d19afeb898f695dce83f3c18ea6225433c346523e1d7d94624bf4157",
+  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.34.0/cyclone-v4-0.34.0.pom.sha1": "6a42920f13dd7e45b3c573601f32dd2ec315b2ceb5f8294174c27d03aa0290fb",
+  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.34.0/cyclone-v4-0.34.0.pom.sha256": "2968b78f253e286e4c71c81e682aa69ceef458525a91173b60a552878a1f389d",
+  "vendor-lib/releases/com/swyftrobotics/cyclone-v4/0.34.0/cyclone-v4-0.34.0.pom.sha512": "a4d4f1bd407f6c362f150082cef65a213108a46e3536fc9f022f40d88163e595"
 }

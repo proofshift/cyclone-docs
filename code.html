@@ -15,15 +15,16 @@
       <div class="breadcrumb"><a href="index.html">Cyclone</a> › Robot Code › Setup &amp; install</div>
       <h1>Setup &amp; install</h1>
       <p class="sec-lead">Install the Java library, configure a Cyclone, and command it from your robot program.</p>
-<p><strong>Java 0.33.0 / firmware 2.6.6:</strong> zero duty coasts; brake is unsupported. Stator and supply current-limit settings are inactive compatibility fields and do not limit amperes. Supply current is observational; stator current is unavailable. The speed-based duty governor can reduce applied output.</p>
+<p>Java 0.34.0 adds deduplicated controller stop/refusal messages to robot standard error when telemetry is polled. Existing public control APIs are retained. Rebuild and redeploy robot code after updating the vendor dependency.</p>
+<p><strong>Java 0.34.0 / firmware 2.7.4:</strong> zero duty coasts; brake is unsupported. Stator and supply current-limit settings are inactive compatibility fields and do not limit amperes. Supply current is observational; stator current is unavailable. The speed-based duty governor can reduce applied output.</p>
 
 
 
 <span id="construct"></span><span id="drive"></span><span id="full"></span><span id="limits"></span><span id="next"></span><span id="vendordep"></span>
-<h2 id="install">Install the vendor library</h2><p>These examples use Cyclone Java library 0.33.0 and the SystemCore WPILib 2027 API. Check the version in your project’s Cyclone vendordep before using them.</p>
+<h2 id="install">Install the vendor library</h2><p>These examples use Cyclone Java library 0.34.0 and the SystemCore WPILib 2027 API. Check the version in your project’s Cyclone vendordep before using them.</p>
 <p>In WPILib, open <strong>Manage Vendor Libraries</strong>, choose <strong>Install new libraries (online)</strong>, and enter this URL:</p>
 <p><a href="https://cyclone.docs.swyftrobotics.com/files/vendor-lib/2027/SwyftCycloneV4.json">https://cyclone.docs.swyftrobotics.com/files/vendor-lib/2027/SwyftCycloneV4.json</a></p>
-<p>You can also <a href="files/vendor-lib/2027/SwyftCycloneV4.json">open the installer JSON</a> to check its version. It selects <strong>0.33.0</strong> for the SystemCore WPILib 2027 API. Keep one Cyclone library version in the project and build before deploying. Java imports use <code>com.swyftrobotics.cyclone.v4</code>.</p>
+<p>You can also <a href="files/vendor-lib/2027/SwyftCycloneV4.json">open the installer JSON</a> to check its version. It selects <strong>0.34.0</strong> for the SystemCore WPILib 2027 API. Keep one Cyclone library version in the project and build before deploying. Java imports use <code>com.swyftrobotics.cyclone.v4</code>.</p>
 <h2 id="first-program">A complete first program</h2><p>This example uses device 1 and the left stick on gamepad port 0, with output limited to 10% duty. After enabling, release the stick before requesting motion. Current-limit settings are inactive on firmware 2.6.6 and are omitted from startup. Keep the mechanism’s travel clear before enabling.</p><div class="code-panel" data-example="Robot.java"><div class="code-bar">Java · Robot.java</div><pre><code>package frc.robot;
 
 import org.wpilib.framework.TimedRobot;
@@ -60,7 +61,7 @@ public class Robot extends TimedRobot {
 }</code></pre></div>
 <h2 id="gamepad">Use a PS5 controller or another gamepad</h2>
 <p>The motor receives targets from robot code, not joystick positions. In SystemCore WPILib 2027, <code>Gamepad</code> uses the Driver Station mapping for recognized controllers, including PS5. For another joystick, use its GenericHID mapping and normalize each motion input so released is zero.</p>
-<p>The complete example above uses <code>NeutralStartInterlock</code> from Java 0.33.0. It starts locked and locks again on disable or controller disconnection. A held stick, trigger or motion button cannot unlock it: the controls must be released during an enabled loop first. Call <code>reset()</code> in <code>disabledInit()</code>, and check the interlock before every motion request.</p>
+<p>The complete example above uses <code>NeutralStartInterlock</code> from Java 0.34.0. It starts locked and locks again on disable or controller disconnection. A held stick, trigger or motion button cannot unlock it: the controls must be released during an enabled loop first. Call <code>reset()</code> in <code>disabledInit()</code>, and check the interlock before every motion request.</p>
 <p>Pass <strong>every individual input that can request motion</strong>, including motion buttons. Do not check only the final combined target: two held inputs can cancel each other and appear to be zero. The helper works with any controller mapping; it does not discover your robot's bindings automatically.</p>
 <div class="code-panel"><div class="code-bar">Java</div><pre><code>import org.wpilib.driverstation.Gamepad;
 import org.wpilib.driverstation.RobotState;
